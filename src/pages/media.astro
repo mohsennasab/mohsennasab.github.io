@@ -1,0 +1,104 @@
+---
+import { Image } from 'astro:assets';
+import Base from '../layouts/Base.astro';
+import PageHeader from '../components/PageHeader.astro';
+import SectionHead from '../components/SectionHead.astro';
+import podcastPhoto from '../assets/podcast.jpg';
+import headerBg from '../assets/photos/photo-39.jpg';
+
+type Item = { title: string; outlet: string; kind: string; href: string; year?: string };
+
+const items: Item[] = [
+  {
+    title: 'Drought revives calls to ship Mississippi water West',
+    outlet: 'MPR News (Minnesota Public Radio)', kind: 'News', year: '2022',
+    href: 'https://www.mprnews.org/story/2022/09/07/drought-revives-ideas-to-shift-water-from-mississippi-to-help-west',
+  },
+  {
+    title: 'St. Thomas engineering professor on using Mississippi River water to help the drought',
+    outlet: 'University of St. Thomas Newsroom', kind: 'Interview', year: '2022',
+    href: 'https://news.stthomas.edu/in-the-news-st-thomas-engineering-professor-on-using-mississippi-river-water-to-help-the-drought/',
+  },
+  {
+    title: 'Barges idling along the Mississippi: a sign of supply-chain woes to come if drought worsens',
+    outlet: 'ABC News', kind: 'News', year: '2022',
+    href: 'https://abcnews.go.com/US/barges-idling-mississippi-river-sign-supply-chain-woes/story?id=91300170',
+  },
+  {
+    title: 'Training engineers to think holistically',
+    outlet: 'University of St. Thomas Newsroom', kind: 'Profile',
+    href: 'https://news.stthomas.edu/publication-article/training-engineers-to-think-holistically/',
+  },
+  {
+    title: "The Schoenecker Center construction site at St. Thomas is a 'living lab'",
+    outlet: 'University of St. Thomas Newsroom', kind: 'Feature',
+    href: 'https://news.stthomas.edu/schoenecker-center-construction-site-at-st-thomas-is-a-living-lab/',
+  },
+];
+---
+
+<Base title="Media" description="Interviews, podcasts, and press featuring Dr. Mohsen Tahmasebi Nasab on water resources, drought, and engineering education.">
+  <PageHeader
+    eyebrow="// in the press"
+    title="Media"
+    lede="A few places my work and the things I think about, water, drought, and how we train engineers, have shown up."
+    bgImage={headerBg}
+    bgPos="center 55%"
+  />
+
+  <section class="section">
+    <div class="wrap">
+      <!-- Featured: podcast -->
+      <article class="featured-media">
+        <div class="fm-img">
+          <Image src={podcastPhoto} alt="Mohsen Tahmasebi Nasab recording a podcast episode" widths={[420, 640, 860]} sizes="(max-width: 760px) 100vw, 360px" />
+        </div>
+        <div class="fm-body">
+          <span class="eyebrow">// podcast</span>
+          <h2>The Professor Podcast: Dr. Mohsen Tahmasebi Nasab</h2>
+          <p class="muted">
+            An episode of the University of St. Thomas Libraries' "in the library with a microphone" series,
+            talking about my research and how I ended up doing it.
+          </p>
+          <div class="cta-row">
+            <a class="btn btn--primary" href="https://libguides.stthomas.edu/profpodcast/Tahmasebi_Nasab" target="_blank" rel="noopener">Listen to the episode</a>
+          </div>
+        </div>
+      </article>
+
+      <SectionHead eyebrow={`// articles & interviews · ${items.length}`} title="Articles and interviews" />
+      <div class="grid grid--2">
+        {items.map((m) => (
+          <article class="card">
+            <span class="idx">{m.outlet}{m.year ? ` · ${m.year}` : ''}</span>
+            <h3><a class="card-link" href={m.href} target="_blank" rel="noopener">{m.title}</a></h3>
+            <div class="card-foot">
+              <div class="chips">
+                <span class="chip">{m.kind}</span>
+                <span class="card-arrow">Read
+                  <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M9 7h8v8"/></svg>
+                </span>
+              </div>
+            </div>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .featured-media {
+    display: grid; grid-template-columns: 0.85fr 1.5fr; gap: clamp(1.4rem, 4vw, 2.6rem);
+    align-items: center; border: 1px solid var(--border); border-radius: var(--radius);
+    padding: clamp(1.3rem, 3.5vw, 2rem);
+    background: radial-gradient(420px 220px at 0% 0%, var(--accent-soft), transparent 70%), var(--bg-elev);
+    margin-bottom: clamp(1.8rem, 4vw, 2.8rem);
+  }
+  @media (max-width: 760px) { .featured-media { grid-template-columns: 1fr; } }
+  .fm-img { border-radius: var(--radius-sm); overflow: hidden; border: 1px solid var(--border-soft); aspect-ratio: 4/3; }
+  .fm-img :global(img) { width: 100%; height: 100%; object-fit: cover; object-position: center 30%; }
+  .fm-body h2 { margin-bottom: 0.6rem; font-size: clamp(1.3rem, 1.05rem + 1vw, 1.7rem); }
+  .fm-body .cta-row { margin-top: 1.1rem; }
+  .card .idx { text-transform: none; letter-spacing: 0.01em; font-weight: 600; }
+</style>

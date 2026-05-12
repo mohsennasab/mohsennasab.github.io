@@ -1,0 +1,45 @@
+---
+import Base from '../../layouts/Base.astro';
+import PageHeader from '../../components/PageHeader.astro';
+import headerBg from '../../assets/photos/photo-30.jpg';
+
+// Posts carried over from the previous site. Full text is being moved into
+// Markdown here; for now these are the topics.
+const posts = [
+  { date: 'HEC-RAS', title: 'Getting started with HEC-RAS: 1D, 2D, and when to use which', excerpt: 'A practical first pass at HEC-RAS, geometry, flow data, the difference between 1D and 2D runs, and the things that trip people up early.', tags: ['HEC-RAS', 'hydraulics'] },
+  { date: 'FEMA', title: "FEMA's Future of Flood Risk Data (FFRD), in plain terms", excerpt: 'What FFRD is, how it differs from the legacy FIS and FIRM products, and what it means for engineers and the communities they work with.', tags: ['FEMA', 'flood risk'] },
+  { date: 'USGS', title: 'Pulling water data with the USGS Water Data APIs', excerpt: 'A short tour of the modern USGS data APIs, what changed, how to query them, and a small Python example to get you going.', tags: ['USGS', 'Python', 'data'] },
+];
+---
+
+<Base title="Blog" description="Short, practical write-ups on HEC-RAS, FEMA flood-risk data, the USGS APIs, and related topics by Dr. Mohsen Tahmasebi Nasab.">
+  <PageHeader
+    eyebrow="// writing"
+    title="Blog"
+    lede="Short, practical write-ups, the kind of thing I wish I had found when I was figuring it out. New posts go here; for now, these are the ones moving over from the previous site."
+    bgImage={headerBg}
+    bgPos="center 45%"
+  />
+
+  <section class="section">
+    <div class="wrap">
+      <ol class="entry-list">
+        {posts.map((p) => (
+          <li class="entry">
+            <div class="entry-year">{p.date}</div>
+            <div class="entry-body">
+              <h3>{p.title}</h3>
+              <p class="muted" style="margin:.15rem 0 .6rem">{p.excerpt}</p>
+              <div class="chips">{p.tags.map((t) => <span class="chip">{t}</span>)}<span class="chip">post being migrated</span></div>
+            </div>
+          </li>
+        ))}
+      </ol>
+
+      <p class="faint" style="margin-top:2rem;font-size:.86rem">
+        Want one of these sooner, or have a question it should answer? <a href="mailto:mohsen.tahmasebi.n@gmail.com">Email me</a>.
+        See also the <a href="/media">media page</a> for interviews and press.
+      </p>
+    </div>
+  </section>
+</Base>

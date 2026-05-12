@@ -1,0 +1,131 @@
+---
+import Base from '../layouts/Base.astro';
+import PageHeader from '../components/PageHeader.astro';
+import SectionHead from '../components/SectionHead.astro';
+import { GITHUB_USER, gh } from '../consts';
+import headerBg from '../assets/photos/photo-19.jpg';
+
+type Tool = { name: string; repo: string; desc: string; tags: string[]; live?: boolean };
+
+// Interactive apps and web tools
+const apps: Tool[] = [
+  { name: 'NOAA AORC Viewer', repo: 'noaa-aorc-viewer', desc: 'Web app for pulling NOAA AORC climate data. Draw an area or pick a watershed and get the data back, in the browser.', tags: ['web app', 'AORC', 'precipitation'], live: true },
+  { name: 'CN Generator', repo: 'CN_Generator', desc: 'Gradio app that builds SCS Curve Number maps from land use and soil data, with the zonal summaries you need for hydrology.', tags: ['Gradio app', 'Curve Number'] },
+  { name: 'GageMap', repo: 'GageMap', desc: 'Upload a project boundary and get the USGS streamflow gaging stations inside it, ready to use.', tags: ['app', 'USGS', 'streamflow'] },
+  { name: 'StreamSmith', repo: 'StreamSmith', desc: 'A normalized unit hydrograph generator for quick, defensible UH development.', tags: ['app', 'unit hydrograph'] },
+  { name: 'NRCS DUH', repo: 'NRCS_DUH', desc: 'Interactive NRCS dimensionless unit hydrograph generator, shaped to your watershed parameters.', tags: ['app', 'NRCS', 'unit hydrograph'] },
+  { name: 'RainDetect', repo: 'RainDetect', desc: 'Find nearby rainfall stations and pull out storm events from their records.', tags: ['app', 'rainfall', 'storms'] },
+  { name: 'HydroImpact', repo: 'HydroImpact', desc: 'Post-processes HEC-RAS dam-breach output to summarize downstream flood impacts.', tags: ['HEC-RAS', 'dam breach'] },
+];
+
+// Python tools for data access and processing
+const pkgs: Tool[] = [
+  { name: 'pyprism', repo: 'pyprism', desc: 'Download and process PRISM climate data for hydrologic work, without the manual steps.', tags: ['Python', 'PRISM', 'climate data'] },
+  { name: 'pysnodas', repo: 'pysnodas', desc: 'Grab and process NOAA/NSIDC SNODAS snow data assimilation output.', tags: ['Python', 'SNODAS', 'snow'] },
+  { name: 'uasnow', repo: 'uasnow', desc: 'Automated download and processing of the University of Arizona snow water equivalent dataset.', tags: ['Python', 'SWE', 'snow'] },
+  { name: 'Atlas14GridMiner', repo: 'Atlas14GridMiner', desc: 'Download, process, and clip NOAA Atlas 14 precipitation-frequency grids for a study area.', tags: ['Python', 'NOAA Atlas 14'] },
+  { name: 'aorc-annual-max-precip', repo: 'aorc-annual-max-precip', desc: 'Extract watershed-based annual maximum precipitation from AORC data.', tags: ['Python', 'AORC', 'extremes'] },
+  { name: 'HMS-GridGen', repo: 'HMS-GridGen', desc: 'Generate precipitation-frequency grid files in the format HEC-HMS expects.', tags: ['Python', 'HEC-HMS'] },
+];
+
+// ArcGIS Pro
+const arcgis: Tool[] = [
+  { name: 'SCS Curve Number Generator (ArcGIS Pro Toolbox)', repo: 'SCS-Curve-Number-Generator-ArcGIS-Pro-Toolbox', desc: 'The Curve Number workflow as an ArcGIS Pro toolbox: drop it in your toolbox and run it on land use and soil data.', tags: ['ArcGIS Pro', 'toolbox', 'Curve Number'] },
+];
+
+function rows(t: Tool[]) { return t; }
+---
+
+<Base title="Tools & Apps" description="Open-source Python tools, web apps, and an ArcGIS Pro toolbox for water resources work, by Dr. Mohsen Tahmasebi Nasab.">
+  <PageHeader
+    eyebrow="// build"
+    title="Tools & Apps"
+    lede="Small, open-source tools I have built to take the tedium out of everyday water resources work: pulling climate, snow, and streamflow data; building unit hydrographs; processing precipitation grids; and post-processing HEC output. Most live on GitHub; a few are interactive apps you can run in the browser."
+    bgImage={headerBg}
+    bgPos="center 40%"
+  >
+    <div class="cta-row"><a class="btn btn--sm btn--primary" href={`https://github.com/${GITHUB_USER}?tab=repositories`} target="_blank" rel="noopener">All repositories on GitHub</a></div>
+  </PageHeader>
+
+  <section class="section">
+    <div class="wrap">
+      <SectionHead eyebrow="// interactive" title="Apps and web tools" lede="Point-and-click tools. The AORC Viewer runs entirely in the browser." />
+      <div class="grid grid--3">
+        {rows(apps).map((t) => (
+          <article class="card">
+            <h3>{t.name}</h3>
+            <p>{t.desc}</p>
+            <div class="chips" style="margin-bottom:.9rem">
+              {t.live && <span class="chip chip--accent">runs in browser</span>}
+              {t.tags.map((x) => <span class="chip">{x}</span>)}
+            </div>
+            <div class="card-foot">
+              <a class="card-arrow" href={gh(t.repo)} target="_blank" rel="noopener">View on GitHub
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M9 7h8v8"/></svg>
+              </a>
+            </div>
+          </article>
+        ))}
+      </div>
+
+      <hr />
+
+      <SectionHead eyebrow="// python packages" title="Data access and processing" lede="Libraries and scripts for getting hydrology data in and getting it into shape." />
+      <div class="grid grid--3">
+        {rows(pkgs).map((t) => (
+          <article class="card">
+            <h3>{t.name}</h3>
+            <p>{t.desc}</p>
+            <div class="chips" style="margin-bottom:.9rem">{t.tags.map((x) => <span class="chip">{x}</span>)}</div>
+            <div class="card-foot">
+              <a class="card-arrow" href={gh(t.repo)} target="_blank" rel="noopener">View on GitHub
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M9 7h8v8"/></svg>
+              </a>
+            </div>
+          </article>
+        ))}
+      </div>
+
+      <hr />
+
+      <SectionHead eyebrow="// arcgis pro" title="ArcGIS Pro toolbox" />
+      <div class="grid grid--2">
+        {rows(arcgis).map((t) => (
+          <article class="card">
+            <h3>{t.name}</h3>
+            <p>{t.desc}</p>
+            <div class="chips" style="margin-bottom:.9rem">{t.tags.map((x) => <span class="chip">{x}</span>)}</div>
+            <div class="card-foot">
+              <a class="card-arrow" href={gh(t.repo)} target="_blank" rel="noopener">View on GitHub
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M9 7h8v8"/></svg>
+              </a>
+            </div>
+          </article>
+        ))}
+        <article class="card">
+          <h3>And a few more</h3>
+          <p>There are other repos on GitHub too, including data subsets for published work and a couple of forks I have built on. The full list is one click away.</p>
+          <div class="card-foot">
+            <a class="card-arrow" href={`https://github.com/${GITHUB_USER}?tab=repositories`} target="_blank" rel="noopener">Browse all repositories
+              <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M9 7h8v8"/></svg>
+            </a>
+          </div>
+        </article>
+      </div>
+
+      <hr />
+
+      <SectionHead eyebrow="// on this site" title="Running these here" as={3} />
+      <p class="muted prose">
+        A standalone HTML app, like the AORC Viewer, can live in this site's <code>public/</code> folder and
+        be served straight from <code>hydromohsen.com</code>, framed by the site's header and footer. That was
+        one of the reasons for moving off Google Sites: it would not let me host my own pages. If you want one
+        of these embedded on the site rather than just linked, tell me which.
+      </p>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .cta-row { margin-top: 1.2rem; }
+</style>

@@ -1,0 +1,39 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:www.hydromohsen.com)",
+      "Bash(npm --version)",
+      "Bash(git --version)",
+      "PowerShell(node --version)",
+      "PowerShell(npm --version)",
+      "PowerShell($paths = @\\(\"$env:ProgramFiles\\\\nodejs\\\\node.exe\", \"${env:ProgramFiles\\(x86\\)}\\\\nodejs\\\\node.exe\", \"$env:APPDATA\\\\npm\\\\node.exe\", \"$env:LOCALAPPDATA\\\\Programs\\\\nodejs\\\\node.exe\", \"$env:USERPROFILE\\\\scoop\\\\shims\\\\node.exe\", \"$env:LOCALAPPDATA\\\\fnm_multishells\", \"$env:APPDATA\\\\nvm\"\\); foreach \\($p in $paths\\) { if \\(Test-Path $p\\) { \"FOUND: $p\" } else { \"missing: $p\" } }; Get-Command winget -ErrorAction SilentlyContinue | Select-Object Name, Source)",
+      "PowerShell(Get-Command winget -ErrorAction SilentlyContinue | Format-List Name, Version, Source; \"exit:$LASTEXITCODE\"; winget --version)",
+      "PowerShell(winget install --id OpenJS.NodeJS.LTS -e --accept-source-agreements --accept-package-agreements --silent --disable-interactivity; \"winget-exit:$LASTEXITCODE\")",
+      "Bash(ls -la \"C:/Users/TahmasebiNasabM/.claude/projects/c--OneDrive-OneDrive---AECOM-Automation-Projects-Website/memory/\" 2>/dev/null && echo \"---MEMORY.md---\" && cat \"C:/Users/TahmasebiNasabM/.claude/projects/c--OneDrive-OneDrive---AECOM-Automation-Projects-Website/memory/MEMORY.md\" 2>/dev/null || echo \"\\(empty or not present\\)\")",
+      "Read(//c/Users/TahmasebiNasabM/.claude/projects/c--OneDrive-OneDrive---AECOM-Automation-Projects-Website/memory/**)",
+      "Bash(ffmpeg -hide_banner -version)",
+      "Bash(ffmpeg -hide_banner -decoders)",
+      "WebFetch(domain:scholar.google.com)",
+      "WebFetch(domain:github.com)",
+      "Bash(rm -f src/assets/photos/_heictest.jpg)",
+      "Bash(which python *)",
+      "Bash(python -c \"import PIL; print\\('Pillow', PIL.__version__\\)\")",
+      "Bash(python -c \"import pillow_heif; print\\('pillow_heif OK'\\)\")",
+      "Bash(python -c \"import cv2; print\\('cv2', cv2.__version__\\)\")",
+      "Bash(python -m pip install --quiet pillow-heif)",
+      "Bash(python -c \"import pillow_heif; print\\('pillow_heif', pillow_heif.__version__\\)\")",
+      "Bash(python _convert_images.py)",
+      "Bash(export PATH=\"$HOME/nodejs/node-v24.15.0-win-x64:$PATH\")",
+      "Bash(npm install *)",
+      "Bash(echo \"exit:$?\")",
+      "WebFetch(domain:www.mdpi.com)",
+      "Bash(python -c ' *)",
+      "Bash(python -c \"from PIL import Image; im=Image.open\\('Mohsen/Teaching2.png'\\); print\\('Teaching2.png', im.size, im.mode\\)\")",
+      "Bash(rm -f src/pages/tutorials.astro)",
+      "Bash(ls src/pages/tutorials/)",
+      "WebFetch(domain:www.youtube.com)",
+      "Bash(git config *)",
+      "Bash(gh --version)"
+    ]
+  }
+}

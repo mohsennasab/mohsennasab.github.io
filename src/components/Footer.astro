@@ -1,0 +1,56 @@
+---
+import { NAV, SITE } from '../consts';
+import Socials from './Socials.astro';
+const year = new Date().getFullYear();
+---
+
+<footer class="site-footer">
+  <div class="wrap inner">
+    <div class="col brand-col">
+      <p class="name">{SITE.name}</p>
+      <p class="tag">{SITE.role} · {SITE.tagline}</p>
+      <div class="footer-socials"><Socials /></div>
+    </div>
+
+    <nav class="col" aria-label="Footer">
+      <p class="col-title">Pages</p>
+      <ul>
+        {NAV.map((item) => <li><a href={item.href}>{item.label}</a></li>)}
+      </ul>
+    </nav>
+
+    <div class="col">
+      <p class="col-title">Contact</p>
+      <ul>
+        <li><a href={`mailto:${SITE.email}`}>{SITE.email}</a></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="wrap bottom">
+    <span>© {year} {SITE.name}</span>
+    <span class="dot" aria-hidden="true">·</span>
+    <span>Built with <a href="https://astro.build" rel="noopener">Astro</a>, hosted on GitHub Pages</span>
+  </div>
+</footer>
+
+<style>
+  .site-footer { border-top: 1px solid var(--border-soft); margin-top: clamp(3rem, 8vw, 6rem); background: color-mix(in oklab, var(--bg-elev) 45%, transparent); }
+  .inner { display: grid; grid-template-columns: 1.6fr 1fr 1fr; gap: clamp(1.5rem, 4vw, 3rem); padding-block: clamp(2.4rem, 5vw, 3.4rem); }
+  @media (max-width: 720px) { .inner { grid-template-columns: 1fr 1fr; } .brand-col { grid-column: 1 / -1; } }
+  @media (max-width: 460px) { .inner { grid-template-columns: 1fr; } }
+
+  .name { font-family: var(--font-head); font-weight: 600; font-size: 1.05rem; }
+  .tag { color: var(--text-dim); font-size: 0.9rem; max-width: 42ch; margin-top: 0.2rem; }
+  .footer-socials { margin-top: 1rem; }
+
+  .col-title { font: 650 0.72rem/1 var(--font-sans); letter-spacing: 0.16em; text-transform: uppercase; color: var(--text-faint); margin-bottom: 0.75rem; }
+  .col ul { list-style: none; padding: 0; margin: 0; }
+  .col li { margin: 0.32rem 0; }
+  .col a { color: var(--text-dim); font-size: 0.92rem; }
+  .col a:hover { color: var(--text); text-decoration: none; }
+
+  .bottom { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem; padding-bottom: 1.6rem; color: var(--text-faint); font-size: 0.82rem; }
+  .bottom a { color: var(--text-dim); }
+  .dot { color: var(--border); }
+</style>

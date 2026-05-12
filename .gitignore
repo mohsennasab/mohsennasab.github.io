@@ -1,0 +1,27 @@
+# build output
+dist/
+
+# generated types
+.astro/
+
+# dependencies
+node_modules/
+
+# logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# environment variables
+.env
+.env.production
+
+# macOS / Windows / editors
+.DS_Store
+Thumbs.db
+
+# source photo originals (resized copies live in src/assets/); not committed
+/Mohsen/
+/Photos/
+_convert_images.py

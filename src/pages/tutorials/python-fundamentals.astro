@@ -1,0 +1,162 @@
+---
+import { Image } from 'astro:assets';
+import Base from '../../layouts/Base.astro';
+import SectionHead from '../../components/SectionHead.astro';
+import { gh, YT } from '../../consts';
+import headerBg from '../../assets/photos/photo-02.jpg';
+import courseBanner from '../../assets/banner.png';
+
+const REPO = gh('python-fundamentals-hh');
+const ytIcon = '<svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16"><path d="M23.5 7.2a3 3 0 0 0-2.1-2.1C19.5 4.6 12 4.6 12 4.6s-7.5 0-9.4.5A3 3 0 0 0 .5 7.2 31.2 31.2 0 0 0 0 12a31.2 31.2 0 0 0 .5 4.8 3 3 0 0 0 2.1 2.1c1.9.5 9.4.5 9.4.5s7.5 0 9.4-.5a3 3 0 0 0 2.1-2.1A31.2 31.2 0 0 0 24 12a31.2 31.2 0 0 0-.5-4.8zM9.6 15.6V8.4l6.3 3.6z"/></svg>';
+
+const approaches = [
+  { t: 'Real engineering work, not toy problems', d: 'Every notebook is built around an actual H&H task: time series, spatial data, stream gages, precipitation grids. If it would not come up on a project, it is not in the course.' },
+  { t: 'Clear code over clever code', d: 'Readable, well-commented code and practical automation. The goal is work you can hand to a colleague, not a tour of advanced tricks.' },
+  { t: 'AI as a working tool', d: 'Large language models are treated as a normal part of the workflow, for learning, debugging, and tightening up code, with example prompts you can reuse.' },
+];
+
+const modules = [
+  { n: '01', t: 'Setup and Fundamentals', d: 'Get a Python environment going (or jump straight into Colab), then the basics: variables, lists, dictionaries, loops, functions, and reading files.' },
+  { n: '02', t: 'Time Series', d: 'Dated records the way hydrology needs them: parsing dates, resampling, filling gaps, rolling statistics, and plotting with pandas.' },
+  { n: '03', t: 'Vector Data', d: 'Points, lines, and polygons (watersheds, gages, reaches): reading shapefiles and GeoPackages with geopandas, spatial joins, and clips.' },
+  { n: '04', t: 'Raster Data', d: 'DEMs, land cover, and climate grids: reading and writing rasters, clipping to a watershed, reclassifying, and zonal summaries.' },
+  { n: '05', t: 'Stream Data', d: 'Pull years of USGS streamflow and stage data, compute flow metrics, deal with data quality, and export tidy CSV reports.' },
+  { n: '06', t: 'Precipitation Data', d: 'Gridded and gage precipitation (AORC, PRISM, NOAA): basin-average time series and a first look at extremes.' },
+];
+---
+
+<Base title="Python Fundamentals for H&H Modeling and Analysis" description="A free, hands-on Python course for water resources engineers, built around real hydrologic and hydraulic workflows. Notebooks run in Google Colab. By Dr. Mohsen Tahmasebi Nasab.">
+  <section class="page-header has-bg">
+    <Image class="ph-bg" src={headerBg} alt="" aria-hidden="true" loading="eager" widths={[800, 1200, 1800]} sizes="100vw" style="object-position:center 55%" />
+    <div class="ph-bg-fade" aria-hidden="true"></div>
+    <div class="wrap ph-inner">
+      <a class="back-link" href="/tutorials">← Tutorials</a>
+      <span class="eyebrow" style="margin-top:.6rem">// the course</span>
+      <h1>Python Fundamentals for H&amp;H Modeling and Analysis</h1>
+      <p class="lede">A practical Python course for water resources engineers. It teaches Python through real hydrologic and hydraulic workflows, time series, spatial data, stream gages, precipitation, instead of abstract exercises. The notebooks are built for Google Colab, so there is nothing to install to get started.</p>
+    </div>
+  </section>
+
+  <section class="section section--tight">
+    <div class="wrap">
+      <article class="featured">
+        <figure class="fc-banner">
+          <Image src={courseBanner} alt="Python Fundamentals for H&H Modeling and Analysis: a laptop with Python code, climate and hydrology data icons, a terrain model, and output charts" widths={[700, 1100, 1600]} sizes="(max-width: 960px) 100vw, 920px" loading="eager" />
+        </figure>
+        <div class="featured-grid">
+          <div class="featured-body">
+            <div class="cta-row">
+              <a class="btn btn--primary" href={REPO} target="_blank" rel="noopener">Open the course on GitHub</a>
+              <a class="btn btn--ghost" href={REPO} target="_blank" rel="noopener">Notebooks run in Colab
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+              </a>
+            </div>
+            <p class="faint" style="font-size:.85rem;margin-top:.9rem">Built for Python 3.8+. Contributions are welcome, and accepted ones are credited. Start with the video below, then work through the modules in order.</p>
+          </div>
+          <ul class="featured-meta">
+            <li><span class="m-k">Level</span><span class="m-v">Beginner friendly</span></li>
+            <li><span class="m-k">Modules</span><span class="m-v">6, all available</span></li>
+            <li><span class="m-k">Runs in</span><span class="m-v">Google Colab</span></li>
+            <li><span class="m-k">Cost</span><span class="m-v">Free, open source</span></li>
+          </ul>
+        </div>
+      </article>
+
+      <hr />
+
+      <SectionHead eyebrow="// start here" title="Getting started" lede="A short walk-through: accessing the repository, opening the notebooks in Colab, and how the course is organized." />
+      <div class="video-embed">
+        <iframe
+          src={`https://www.youtube-nocookie.com/embed/${YT.ids.pythonGettingStarted}`}
+          title="Getting Started with Python for H&H"
+          loading="lazy"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+          referrerpolicy="strict-origin-when-cross-origin"
+          allowfullscreen
+        ></iframe>
+      </div>
+      <p class="muted" style="margin-top:0.9rem"><a class="yt" href={YT.pythonGettingStarted} target="_blank" rel="noopener"><span set:html={ytIcon} /> Watch on YouTube</a></p>
+
+      <hr />
+
+      <SectionHead eyebrow="// how it's built" title="What makes it different" />
+      <div class="grid grid--3">
+        {approaches.map((a, i) => (
+          <article class="card">
+            <span class="idx">{String(i + 1).padStart(2, '0')}</span>
+            <h3>{a.t}</h3>
+            <p>{a.d}</p>
+          </article>
+        ))}
+      </div>
+
+      <hr />
+
+      <SectionHead eyebrow={`// modules · ${modules.length}`} title="What's in it" lede="Six modules, meant to be worked through in order. Each one is a set of Colab notebooks." />
+      <div class="grid grid--3">
+        {modules.map((m) => (
+          <article class="card module-card">
+            <span class="mod-n">{m.n}</span>
+            <h3>{m.t}</h3>
+            <p>{m.d}</p>
+          </article>
+        ))}
+      </div>
+
+      <hr />
+
+      <SectionHead eyebrow="// after the basics" title="Where to go next" as={3} />
+      <p class="muted prose">
+        Once the fundamentals click, a few open-source projects are worth knowing: HyRiver for hydrology data, pysheds
+        for terrain and flow, Pastas for groundwater time series, SPOTPY for calibration, and xarray for gridded data.
+        For the kind of work this leads to, see the <a href="/tools">tools and apps</a> I have built and the
+        <a href="/projects"> project work</a> at AECOM. More videos, including recorded course lectures, are on the
+        <a href={YT.channel} target="_blank" rel="noopener">YouTube channel</a>.
+      </p>
+      <p style="margin-top:1.4rem"><a class="btn btn--primary" href={REPO} target="_blank" rel="noopener">Open the course on GitHub</a> <a class="btn" href="/tutorials">Back to all tutorials</a></p>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .page-header { padding-top: clamp(2.6rem, 6vw, 4rem); padding-bottom: clamp(1.2rem, 3.5vw, 2rem); }
+  .page-header.has-bg { position: relative; overflow: hidden; padding-top: clamp(4.5rem, 11vw, 7.5rem); padding-bottom: clamp(3.2rem, 7.5vw, 5rem); }
+  .page-header.has-bg h1 { font-size: clamp(2.2rem, 1.5rem + 3vw, 3.6rem); margin-bottom: 0.7rem; }
+  .ph-bg { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: 0; opacity: 0.50; filter: saturate(0.95); }
+  :global([data-theme='light']) .ph-bg { opacity: 0.6; }
+  .ph-bg-fade { position: absolute; inset: 0; z-index: 0;
+    background:
+      linear-gradient(180deg, color-mix(in oklab, var(--bg) 32%, transparent), var(--bg) 96%),
+      linear-gradient(95deg, color-mix(in oklab, var(--bg) 48%, transparent), transparent 60%),
+      radial-gradient(720px 320px at 86% -8%, var(--accent-soft), transparent 70%); }
+  .ph-inner { position: relative; z-index: 1; }
+  .page-header h1 { font-size: clamp(1.9rem, 1.2rem + 2.4vw, 2.9rem); margin-bottom: 0.7rem; }
+  .page-header .lede { font-size: 1.1rem; color: var(--text-dim); max-width: 64ch; }
+  .back-link { display: inline-block; font: 600 0.82rem/1 var(--font-sans); color: var(--text-faint); }
+  .back-link:hover { color: var(--accent); text-decoration: none; }
+
+  .featured {
+    display: flex; flex-direction: column; gap: clamp(1.2rem, 3vw, 1.8rem);
+    max-width: 920px; margin-inline: auto;
+    border: 1px solid var(--border); border-radius: var(--radius); padding: clamp(1.2rem, 3.2vw, 1.8rem);
+    background: radial-gradient(480px 240px at 100% 0%, var(--accent-soft), transparent 70%), var(--bg-elev);
+  }
+  .fc-banner { margin: 0; border-radius: var(--radius-sm); overflow: hidden; border: 1px solid var(--border-soft); background: #f4f6fa; }
+  .fc-banner :global(img) { width: 100%; height: auto; display: block; }
+  .featured-grid { display: grid; grid-template-columns: 1.6fr 0.85fr; gap: clamp(1.4rem, 4vw, 2.6rem); padding-inline: clamp(0.2rem, 1vw, 0.6rem); }
+  @media (max-width: 820px) { .featured-grid { grid-template-columns: 1fr; } }
+  .featured .cta-row { display: flex; flex-wrap: wrap; gap: 0.7rem; }
+  .featured-meta { list-style: none; padding: 0; margin: 0; align-self: center; display: grid; gap: 0.7rem; }
+  .featured-meta li { display: flex; flex-direction: column; gap: 0.1rem; border-left: 2px solid var(--accent-line); padding-left: 0.8rem; }
+  .featured-meta .m-k { font: 600 0.66rem/1 var(--font-sans); letter-spacing: 0.14em; text-transform: uppercase; color: var(--text-faint); }
+  .featured-meta .m-v { font-family: var(--font-head); font-weight: 650; font-size: 0.95rem; }
+
+  .module-card { position: relative; }
+  .mod-n { font: 800 1.6rem/1 var(--font-head); color: color-mix(in oklab, var(--accent) 35%, transparent); letter-spacing: -0.02em; margin-bottom: 0.4rem; display: block; }
+
+  .yt { display: inline-flex; align-items: center; gap: 0.45rem; }
+  .yt :global(svg) { flex: none; color: var(--accent); }
+
+  .video-embed { position: relative; aspect-ratio: 16 / 9; border-radius: var(--radius); overflow: hidden; border: 1px solid var(--border-soft); background: #000; max-width: 860px; }
+  .video-embed iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+</style>

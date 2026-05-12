@@ -1,0 +1,61 @@
+---
+import { Image } from 'astro:assets';
+
+interface Props {
+  eyebrow?: string;
+  title: string;
+  lede?: string;
+  /** Optional faded photo behind the header. */
+  bgImage?: ImageMetadata;
+  /** CSS object-position for the background photo (default "center 38%"). */
+  bgPos?: string;
+}
+const { eyebrow, title, lede, bgImage, bgPos = 'center 38%' } = Astro.props;
+---
+
+<section class:list={['page-header', bgImage && 'has-bg']}>
+  {bgImage && (
+    <Image
+      class="ph-bg"
+      src={bgImage}
+      alt=""
+      aria-hidden="true"
+      loading="eager"
+      widths={[800, 1200, 1800]}
+      sizes="100vw"
+      style={`object-position:${bgPos}`}
+    />
+  )}
+  {bgImage && <div class="ph-bg-fade" aria-hidden="true"></div>}
+
+  <div class="wrap ph-inner">
+    {eyebrow && <span class="eyebrow">{eyebrow}</span>}
+    <h1>{title}</h1>
+    {lede && <p class="lede">{lede}</p>}
+    <slot />
+  </div>
+</section>
+
+<style>
+  .page-header { padding-top: clamp(2.6rem, 6vw, 4rem); padding-bottom: clamp(1.4rem, 3.5vw, 2.2rem); }
+  .page-header.has-bg {
+    position: relative; overflow: hidden;
+    padding-top: clamp(4.5rem, 11vw, 7.5rem); padding-bottom: clamp(3.2rem, 7.5vw, 5rem);
+  }
+  .ph-bg {
+    position: absolute; inset: 0; width: 100%; height: 100%;
+    object-fit: cover; z-index: 0; opacity: 0.50; filter: saturate(0.95);
+  }
+  :global([data-theme='light']) .ph-bg { opacity: 0.6; }
+  .ph-bg-fade {
+    position: absolute; inset: 0; z-index: 0;
+    background:
+      linear-gradient(180deg, color-mix(in oklab, var(--bg) 32%, transparent), var(--bg) 96%),
+      linear-gradient(95deg, color-mix(in oklab, var(--bg) 48%, transparent), transparent 60%),
+      radial-gradient(720px 320px at 86% -8%, var(--accent-soft), transparent 70%);
+  }
+  .ph-inner { position: relative; z-index: 1; }
+  .page-header h1 { font-size: clamp(2rem, 1.3rem + 2.6vw, 3.1rem); margin-bottom: 0.7rem; }
+  .page-header.has-bg h1 { font-size: clamp(2.2rem, 1.5rem + 3vw, 3.6rem); }
+  .lede { font-size: 1.1rem; color: var(--text-dim); max-width: 62ch; }
+</style>

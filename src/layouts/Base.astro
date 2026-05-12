@@ -1,0 +1,131 @@
+---
+import { ViewTransitions } from 'astro:transitions';
+import { SITE } from '../consts';
+import Nav from '../components/Nav.astro';
+import Footer from '../components/Footer.astro';
+import '@fontsource-variable/inter';
+import '@fontsource-variable/jetbrains-mono';
+import '../styles/global.css';
+
+interface Props {
+  /** Page <title>. The site name is appended automatically. */
+  title?: string;
+  /** Meta description for this page. */
+  description?: string;
+}
+
+const { title, description = SITE.description } = Astro.props;
+const pageTitle = title ? `${title} · ${SITE.name}` : `${SITE.name} · ${SITE.role}`;
+const canonical = new URL(Astro.url.pathname, Astro.site ?? SITE.url).toString();
+const ogImage = new URL(SITE.ogImage, Astro.site ?? SITE.url).toString();
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <meta name="generator" content={Astro.generator} />
+
+    <title>{pageTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    <meta name="theme-color" content="#232f3a" media="(prefers-color-scheme: dark)" />
+    <meta name="theme-color" content="#f3f7fb" media="(prefers-color-scheme: light)" />
+
+    <!-- Open Graph / Twitter -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={SITE.name} />
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImage} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={pageTitle} />
+    <meta name="twitter:description" content={description} />
+
+    <!-- Set theme before first paint (no flash). Dark is the default. -->
+    <script is:inline>
+      (function () {
+        try {
+          var t = localStorage.getItem('theme');
+          document.documentElement.dataset.theme = t === 'light' ? 'light' : 'dark';
+        } catch (e) {
+          document.documentElement.dataset.theme = 'dark';
+        }
+      })();
+    </script>
+
+    <ViewTransitions />
+  </head>
+
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+    <Nav />
+    <main id="main">
+      <slot />
+    </main>
+    <Footer />
+
+    <!-- Theme toggle + mobile menu, via event delegation so it survives
+         view-transition page swaps. -->
+    <script is:inline>
+      (function () {
+        if (window.__siteInit) return;
+        window.__siteInit = true;
+
+        function applyTheme() {
+          try {
+            var t = localStorage.getItem('theme');
+            document.documentElement.dataset.theme = t === 'light' ? 'light' : 'dark';
+          } catch (e) {}
+        }
+        document.addEventListener('astro:after-swap', applyTheme);
+
+        document.addEventListener('click', function (e) {
+          var target = e.target instanceof Element ? e.target : null;
+          if (!target) return;
+
+          // theme toggle
+          var toggle = target.closest('#theme-toggle');
+          if (toggle) {
+            var cur = document.documentElement.dataset.theme === 'light' ? 'light' : 'dark';
+            var next = cur === 'light' ? 'dark' : 'light';
+            document.documentElement.dataset.theme = next;
+            try { localStorage.setItem('theme', next); } catch (e) {}
+            return;
+          }
+
+          // mobile menu open/close
+          var menuBtn = target.closest('[data-menu-toggle]');
+          var nav = document.querySelector('[data-nav]');
+          if (menuBtn && nav) {
+            var open = nav.getAttribute('data-open') === 'true';
+            nav.setAttribute('data-open', String(!open));
+            menuBtn.setAttribute('aria-expanded', String(!open));
+            return;
+          }
+          // close the menu when a link inside it is clicked or when clicking outside
+          if (nav && nav.getAttribute('data-open') === 'true') {
+            if (!target.closest('[data-nav]') || target.closest('[data-nav] a')) {
+              nav.setAttribute('data-open', 'false');
+              var b = nav.querySelector('[data-menu-toggle]');
+              if (b) b.setAttribute('aria-expanded', 'false');
+            }
+          }
+        });
+
+        document.addEventListener('keydown', function (e) {
+          if (e.key !== 'Escape') return;
+          var nav = document.querySelector('[data-nav][data-open="true"]');
+          if (nav) {
+            nav.setAttribute('data-open', 'false');
+            var b = nav.querySelector('[data-menu-toggle]');
+            if (b) b.setAttribute('aria-expanded', 'false');
+          }
+        });
+      })();
+    </script>
+  </body>
+</html>

@@ -1,0 +1,22 @@
+---
+interface Props {
+  /** Small mono label above the heading. */
+  eyebrow?: string;
+  /** Heading text (rendered as <h2>). */
+  title: string;
+  /** Optional supporting line below the heading. */
+  lede?: string;
+  /** Heading level override (default 2). */
+  as?: 2 | 3;
+  id?: string;
+}
+const { eyebrow, title, lede, as = 2, id } = Astro.props;
+const Tag = as === 3 ? 'h3' : 'h2';
+---
+
+<header class="section-head" id={id}>
+  {eyebrow && <span class="eyebrow">{eyebrow}</span>}
+  <Tag>{title}</Tag>
+  {lede && <p>{lede}</p>}
+  <slot />
+</header>

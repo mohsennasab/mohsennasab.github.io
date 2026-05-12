@@ -1,0 +1,222 @@
+---
+import { Image } from 'astro:assets';
+import Base from '../../layouts/Base.astro';
+import SectionHead from '../../components/SectionHead.astro';
+import { gh, YT } from '../../consts';
+import bgPhoto from '../../assets/photos/photo-05.jpg';
+import teaching2 from '../../assets/teaching2.jpg';
+import courseBanner from '../../assets/banner.png';
+
+const ytIcon = '<svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16"><path d="M23.5 7.2a3 3 0 0 0-2.1-2.1C19.5 4.6 12 4.6 12 4.6s-7.5 0-9.4.5A3 3 0 0 0 .5 7.2 31.2 31.2 0 0 0 0 12a31.2 31.2 0 0 0 .5 4.8 3 3 0 0 0 2.1 2.1c1.9.5 9.4.5 9.4.5s7.5 0 9.4-.5a3 3 0 0 0 2.1-2.1A31.2 31.2 0 0 0 24 12a31.2 31.2 0 0 0-.5-4.8zM9.6 15.6V8.4l6.3 3.6z"/></svg>';
+const arrowSvg = '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M9 7h8v8"/></svg>';
+const playSvg = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>';
+
+const ytPlaylists = [
+  { t: 'Water Resources Engineering', d: 'Recorded lectures from my water resources course: hydrology, hydraulics, pipe and channel flow, and the design pieces.', href: YT.playlists.waterResources },
+  { t: 'Fluid Mechanics', d: 'Recorded lectures from my fluid mechanics course: hydrostatics, the conservation laws, viscous and potential flow, and open channels.', href: YT.playlists.fluidMechanics },
+];
+
+const resources = [
+  { t: 'ArcGIS Pro in Water Resources Engineering', d: 'A walk-through series on using ArcGIS Pro for water work: mapping, raster analysis, watershed delineation, and floodplain mapping.', href: YT.playlists.arcgisWRE, kind: 'yt', label: 'Watch the playlist' },
+  { t: 'Recorded course lectures', d: 'Full lecture series from my water resources engineering and fluid mechanics courses. They live on the channel and are also listed on the teaching page.', href: '/teaching', kind: 'page', label: 'See the teaching page' },
+  { t: 'Culvert Hydraulics 101', d: 'A short introduction to culvert hydraulics, worked through with HY-8 examples.', href: gh('culvert-hydraulic-design-101'), kind: 'gh', label: 'View on GitHub' },
+];
+---
+
+<Base title="Tutorials" description="Free tutorials and courses for water resources engineers by Dr. Mohsen Tahmasebi Nasab: a hands-on Python course, ArcGIS Pro walk-throughs, recorded lectures, and short videos on the HydroMohsen YouTube channel.">
+  <section class="t-header">
+    <Image class="t-bg" src={bgPhoto} alt="" widths={[900, 1400, 1800]} sizes="100vw" aria-hidden="true" />
+    <div class="t-bg-fade" aria-hidden="true"></div>
+    <div class="wrap t-header-inner">
+      <span class="eyebrow">// learn</span>
+      <h1>Tutorials</h1>
+      <p class="lede">Teaching is the part of being a professor I missed most, so I kept doing it. This is the home for the free courses, video series, and walk-throughs I make for water resources engineers. Some have their own page; the rest live on GitHub or YouTube.</p>
+    </div>
+  </section>
+
+  <section class="section section--tight">
+    <div class="wrap">
+      <figure class="t-banner">
+        <Image src={teaching2} alt="Mohsen Tahmasebi Nasab recording a fluid mechanics lecture on a lightboard" widths={[700, 1100, 1500]} sizes="(max-width: 1100px) 100vw, 1080px" />
+        <figcaption>Recording one of the lecture videos. A lot of this started as classroom material and grew from there.</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <!-- YouTube -->
+  <section class="section">
+    <div class="wrap">
+      <article class="yt-block">
+        <div class="yt-head">
+          <span class="eyebrow"><span class="yt-icon" set:html={ytIcon} /> youtube.com/@HydroMohsen</span>
+          <h2>HydroMohsen on YouTube</h2>
+          <p class="lead">
+            The channel is where most of my short-form teaching lives. You will find recorded course lectures
+            (water resources engineering and fluid mechanics), ArcGIS Pro walk-throughs, the Python for H&amp;H
+            videos that go with the course on this site, short demos of the open-source tools, and one-off
+            explainers on whatever I am thinking about. New videos go up there.
+          </p>
+          <div class="cta-row">
+            <a class="btn btn--primary" href={YT.channel} target="_blank" rel="noopener">Open the channel</a>
+            <a class="btn btn--ghost" href={YT.channel + '?sub_confirmation=1'} target="_blank" rel="noopener">Subscribe</a>
+          </div>
+        </div>
+
+        <h3 class="yt-subhead">A few sample videos</h3>
+        <div class="grid grid--4 yt-samples">
+          {YT.samples.map((v) => (
+            <a class="yt-card" href={`https://youtu.be/${v.id}`} target="_blank" rel="noopener">
+              <span class="yt-thumb">
+                <img src={`https://i.ytimg.com/vi/${v.id}/hqdefault.jpg`} alt="" loading="lazy" />
+                <span class="yt-play" aria-hidden="true"><span set:html={playSvg} /></span>
+              </span>
+              <span class="yt-title">{v.title}</span>
+              <span class="yt-meta"><span class="yt-icon" set:html={ytIcon} /> Watch on YouTube</span>
+            </a>
+          ))}
+        </div>
+
+        <h3 class="yt-subhead">Course playlists</h3>
+        <div class="grid grid--2">
+          {ytPlaylists.map((p) => (
+            <article class="card">
+              <h3 style="margin-bottom:.4rem">{p.t}</h3>
+              <p>{p.d}</p>
+              <div class="card-foot">
+                <a class="card-arrow yt" href={p.href} target="_blank" rel="noopener">
+                  <span class="yt-icon" set:html={ytIcon} /> Watch the playlist
+                  <span set:html={arrowSvg} />
+                </a>
+              </div>
+            </article>
+          ))}
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <!-- Featured: Python Fundamentals -->
+  <section class="section">
+    <div class="wrap">
+      <article class="feature-course">
+        <figure class="fc-image">
+          <Image src={courseBanner} alt="Python Fundamentals for H&H Modeling and Analysis course banner: a laptop with Python code, climate and hydrology data icons, a terrain model, and output charts" widths={[700, 1100, 1600]} sizes="(max-width: 920px) 100vw, 880px" />
+        </figure>
+        <div class="fc-body">
+          <span class="eyebrow">// course</span>
+          <h2><a href="/tutorials/python-fundamentals">Python Fundamentals for H&amp;H Modeling and Analysis</a></h2>
+          <p class="lead">A free, hands-on Python course for water resources engineers, built around real hydrologic and hydraulic workflows rather than abstract exercises. Six modules, all in Google Colab, with a getting-started video to walk you in. There is nothing to install.</p>
+          <div class="chips" style="margin-bottom:1.1rem">
+            <span class="chip">Python</span><span class="chip">6 modules</span><span class="chip">runs in Colab</span><span class="chip">free and open source</span>
+          </div>
+          <a class="btn btn--primary" href="/tutorials/python-fundamentals">Open the course
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          </a>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <!-- More -->
+  <section class="section">
+    <div class="wrap">
+      <SectionHead eyebrow="// more" title="Other tutorials and series" lede="Video series and short courses outside the main course and the channel." />
+      <div class="grid grid--3">
+        {resources.map((r) => (
+          <article class="card">
+            <h3>{r.t}</h3>
+            <p>{r.d}</p>
+            <div class="card-foot">
+              <a class:list={["card-arrow", r.kind === 'yt' && 'yt']} href={r.href} target={r.kind === 'page' ? undefined : '_blank'} rel="noopener">
+                {r.kind === 'yt' && <span class="yt-icon" set:html={ytIcon} />}
+                {r.label}
+                <span set:html={r.kind === 'page' ? '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>' : arrowSvg} />
+              </a>
+            </div>
+          </article>
+        ))}
+      </div>
+
+      <p class="faint" style="margin-top:2rem;font-size:.86rem">
+        Want a walk-through of something specific, or a topic covered next? <a href="mailto:mohsen.tahmasebi.n@gmail.com">Email me</a>.
+      </p>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .t-header { position: relative; overflow: hidden; padding-top: clamp(4.5rem, 11vw, 7.5rem); padding-bottom: clamp(3.2rem, 7.5vw, 5rem); }
+  .t-bg { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center 32%; opacity: 0.50; z-index: 0; filter: saturate(0.95); }
+  :global([data-theme="light"]) .t-bg { opacity: 0.6; }
+  .t-bg-fade { position: absolute; inset: 0; z-index: 0;
+    background:
+      linear-gradient(180deg, color-mix(in oklab, var(--bg) 32%, transparent), var(--bg) 96%),
+      linear-gradient(95deg, color-mix(in oklab, var(--bg) 48%, transparent), transparent 60%),
+      radial-gradient(720px 320px at 86% -8%, var(--accent-soft), transparent 70%); }
+  .t-header-inner { position: relative; z-index: 1; }
+  .t-header h1 { font-size: clamp(2.2rem, 1.4rem + 3vw, 3.4rem); margin-bottom: 0.7rem; }
+  .t-header .lede { font-size: 1.12rem; color: var(--text-dim); max-width: 64ch; }
+
+  .t-banner { margin: 0; border-radius: var(--radius); overflow: hidden; border: 1px solid var(--border-soft); background: var(--bg-elev); }
+  .t-banner :global(img) { width: 100%; height: auto; display: block; }
+  .t-banner figcaption { padding: 0.6rem 0.9rem; font-size: 0.82rem; color: var(--text-faint); border-top: 1px solid var(--border-soft); }
+
+  /* ----- YouTube block ----- */
+  .yt-block {
+    border: 1px solid var(--border); border-radius: var(--radius);
+    padding: clamp(1.5rem, 4vw, 2.4rem);
+    background: radial-gradient(520px 280px at 0% 0%, var(--accent-soft), transparent 70%), var(--bg-elev);
+  }
+  .yt-head h2 { font-size: clamp(1.6rem, 1.2rem + 1.5vw, 2.2rem); margin: .35rem 0 .7rem; }
+  .yt-head .eyebrow { display: inline-flex; align-items: center; gap: 0.5rem; }
+  .yt-head .eyebrow::before { display: none; }
+  .yt-head .yt-icon :global(svg) { color: var(--accent); }
+  .yt-head .lead { max-width: 70ch; }
+  .yt-head .cta-row { display: flex; flex-wrap: wrap; gap: 0.6rem; margin: 1rem 0 1.8rem; }
+  .yt-subhead { font-size: .82rem; font-weight: 650; letter-spacing: 0.14em; text-transform: uppercase; color: var(--text-faint); margin: 1.6rem 0 0.8rem; }
+  .yt-subhead:first-of-type { margin-top: 0.4rem; }
+
+  /* video sample cards */
+  .yt-samples { gap: 0.9rem; }
+  .yt-card {
+    display: flex; flex-direction: column; gap: 0.55rem;
+    color: var(--text); text-decoration: none;
+    transition: transform .22s var(--ease);
+  }
+  .yt-card:hover { text-decoration: none; transform: translateY(-2px); }
+  .yt-thumb {
+    position: relative; aspect-ratio: 16 / 9; border-radius: var(--radius-sm);
+    overflow: hidden; border: 1px solid var(--border-soft); background: #000;
+  }
+  .yt-thumb img { width: 100%; height: 100%; object-fit: cover; object-position: center; display: block; }
+  .yt-play {
+    position: absolute; inset: 0; margin: auto; width: 48px; height: 48px;
+    display: grid; place-items: center; border-radius: 50%; color: #fff;
+    background: rgba(15,22,30,.55); border: 1px solid rgba(255,255,255,.3); backdrop-filter: blur(4px);
+    transition: transform .2s var(--ease), background .2s var(--ease);
+  }
+  .yt-play :global(svg) { width: 18px; height: 18px; margin-left: 2px; }
+  .yt-card:hover .yt-play { transform: scale(1.08); background: rgba(15,22,30,.7); }
+  .yt-title { font-family: var(--font-head); font-weight: 650; line-height: 1.35; font-size: 0.95rem; color: var(--text); }
+  .yt-card:hover .yt-title { color: var(--accent); }
+  .yt-meta { display: inline-flex; align-items: center; gap: 0.4rem; font: 600 0.76rem/1 var(--font-sans); letter-spacing: .04em; color: var(--text-faint); }
+  .yt-meta .yt-icon :global(svg) { color: var(--accent); }
+
+  /* ----- Featured course: banner photo + description, same width ----- */
+  .feature-course {
+    display: flex; flex-direction: column; gap: clamp(1.2rem, 3vw, 1.8rem);
+    max-width: 920px; margin-inline: auto;
+    border: 1px solid var(--border); border-radius: var(--radius);
+    padding: clamp(1.2rem, 3.2vw, 1.8rem);
+    background: radial-gradient(420px 220px at 100% 0%, var(--accent-soft), transparent 70%), var(--bg-elev);
+  }
+  .fc-image { margin: 0; border-radius: var(--radius-sm); overflow: hidden; border: 1px solid var(--border-soft); background: #f4f6fa; }
+  .fc-image :global(img) { width: 100%; height: auto; display: block; }
+  .fc-body { padding-inline: clamp(0.2rem, 1vw, 0.6rem); }
+  .feature-course h2 { font-size: clamp(1.5rem, 1.1rem + 1.5vw, 2.1rem); margin-bottom: 0.6rem; }
+  .feature-course h2 a { color: var(--text); }
+  .feature-course h2 a:hover { color: var(--accent); text-decoration: none; }
+
+  .card-arrow { display: inline-flex; align-items: center; gap: 0.4rem; }
+  .card-arrow.yt :global(.yt-icon svg) { color: var(--accent); flex: none; }
+</style>

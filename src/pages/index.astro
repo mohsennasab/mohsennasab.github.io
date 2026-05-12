@@ -1,0 +1,140 @@
+---
+import { Image } from 'astro:assets';
+import Base from '../layouts/Base.astro';
+import Hero from '../components/Hero.astro';
+import SectionHead from '../components/SectionHead.astro';
+import Card from '../components/Card.astro';
+import portrait from '../assets/photos/photo-11.jpg';
+
+const explore = [
+  { i: 'Research', t: 'Publications', href: '/publications', d: 'Peer-reviewed work on hydrologic modeling, cold-climate hydrology, snowmelt and frozen ground, and depression-dominated watersheds.' },
+  { i: 'Practice', t: 'Projects', href: '/projects', d: 'Consulting and project work at AECOM: 2D hydraulic and watershed modeling, flood-risk reduction, technical reviews, and automation for federal and state clients.' },
+  { i: 'Learn', t: 'Tutorials', href: '/tutorials', d: 'A free, hands-on Python course for water resources engineers, plus recorded course lectures and how-to playlists on YouTube.' },
+  { i: 'Build', t: 'Tools & Apps', href: '/tools', d: 'Open-source Python tools and small apps for precipitation, snow, streamflow, and HEC modeling, plus an ArcGIS Pro toolbox.' },
+  { i: 'Teach', t: 'Teaching', href: '/teaching', d: 'Courses I taught at St. Thomas, Bucknell, and NDSU, my teaching philosophy, the lectures on YouTube, and what students had to say.' },
+  { i: 'See', t: 'Photography', href: '/photography', d: 'A hobby gallery: water, light, mountains, the field, and a very good dog named Olive.' },
+  { i: 'Read', t: 'Blog & Media', href: '/blog', d: 'Short write-ups on HEC-RAS, FEMA flood-risk data, and the USGS APIs, plus interviews and press.' },
+];
+
+const focus = ['Hydrologic and hydraulic modeling', 'Cold-climate hydrology', 'Snowmelt and frozen ground', 'Depression-dominated watersheds', 'Flood-risk reduction', 'Climate resilience', 'Python for water resources', 'HEC-RAS and HEC-HMS', 'GIS and remote sensing', 'AI-assisted modeling'];
+
+const experience = [
+  { when: 'Since 2023', what: 'Water Resources Engineer · H&H Technical Excellence Practice Leader', where: 'AECOM, Minnesota' },
+  { when: '2020 to 2023', what: 'Assistant Professor', where: 'University of St. Thomas, School of Engineering, Minnesota' },
+  { when: '2019 to 2020', what: 'Visiting Assistant Professor', where: 'Bucknell University, Pennsylvania' },
+  { when: '2015 to 2019', what: 'Research and Teaching Assistant', where: 'North Dakota State University' },
+];
+const education = [
+  { when: 'PhD, 2019', what: 'Civil Engineering', where: 'North Dakota State University' },
+  { when: 'M.S., 2014', what: 'Hydraulic Structures Engineering', where: 'University of Tehran' },
+  { when: 'B.S., 2012', what: 'Water Resources Engineering', where: 'Gorgan University of Agricultural Sciences and Natural Resources' },
+];
+---
+
+<Base>
+  <Hero />
+
+  <!-- Experience + Education -->
+  <section class="section">
+    <div class="wrap">
+      <div class="cols-2">
+        <div>
+          <SectionHead eyebrow="// path" title="Experience" as={3} />
+          <ul class="timeline">
+            {experience.map((e) => (
+              <li><span class="tl-when">{e.when}</span><p class="tl-what">{e.what}</p><span class="tl-where">{e.where}</span></li>
+            ))}
+          </ul>
+        </div>
+        <div>
+          <SectionHead eyebrow="// training" title="Education" as={3} />
+          <ul class="timeline">
+            {education.map((e) => (
+              <li><span class="tl-when">{e.when}</span><p class="tl-what">{e.what}</p><span class="tl-where">{e.where}</span></li>
+            ))}
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- About -->
+  <section class="section" id="about">
+    <div class="wrap">
+      <div class="cols-2 cols-2--bias about-grid">
+        <div>
+          <SectionHead eyebrow="// about" title="A bit more about me" />
+          <p class="lead" style="margin-bottom:1rem">
+            I build and use models to understand how water moves through real places, then I try to make
+            that work easier for other engineers to do.
+          </p>
+          <p class="muted">
+            At AECOM I lead the H&amp;H Technical Excellence Practice, so a lot of my day is hydrologic and
+            hydraulic modeling, flood-risk reduction, dam-breach and floodplain studies, technical reviews,
+            and figuring out where AI actually helps in H&amp;H work. Before AECOM, most of my research was on
+            cold-climate and depression-dominated landscapes, where snow, frozen ground, and shallow surface
+            storage change the rules. I built Macro-HyProS, a macro-scale hydrologic simulator for those
+            settings, and have written about snowmelt, frozen-ground recession, DEM resolution, and watershed
+            delineation. There is more on the <a href="/projects">projects</a> and <a href="/publications">publications</a> pages.
+          </p>
+          <p class="muted">
+            I taught water resources, hydrology, fluid mechanics, GIS, and senior design as a professor at the
+            University of St. Thomas and Bucknell, and as a teaching assistant at North Dakota State. I still
+            enjoy teaching, so I keep at it through a <a href="/tutorials">Python course</a>, recorded lectures
+            on YouTube, and the open-source <a href="/tools">tools</a> on my GitHub. Outside of work I take a lot
+            of photos (see the <a href="/photography">photography page</a>), usually of water, and usually with
+            my dog Olive somewhere nearby.
+          </p>
+          <div class="eyebrow" style="margin-top:1.6rem">// focus areas</div>
+          <div class="chips">{focus.map((f) => <span class="chip">{f}</span>)}</div>
+        </div>
+
+        <div class="about-aside">
+          <div class="figure figure--portrait">
+            <Image src={portrait} alt="A waterfall in a green gorge, one of the photos from my photography page" widths={[360, 540, 720]} sizes="(max-width: 800px) 100vw, 360px" />
+          </div>
+          <p class="aside-note">Water Resources Engineer at AECOM, leading the H&amp;H Technical Excellence Practice. Formerly a professor of civil engineering. PhD from North Dakota State University.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Explore -->
+  <section class="section">
+    <div class="wrap">
+      <SectionHead eyebrow="// the rest of the site" title="What you'll find here" lede="Research, project work, teaching, tools, writing, and photography, all in one place." />
+      <div class="grid grid--3">
+        {explore.map((c) => <Card title={c.t} href={c.href} index={c.i}>{c.d}</Card>)}
+      </div>
+    </div>
+  </section>
+
+  <!-- Contact -->
+  <section class="section">
+    <div class="wrap">
+      <div class="contact-card">
+        <div>
+          <div class="eyebrow">// get in touch</div>
+          <h2 style="margin-bottom:.4rem">Let's talk water.</h2>
+          <p class="muted" style="margin:0">Questions, collaborations, a talk, a course, or comparing notes on cold-climate models. I read every email.</p>
+        </div>
+        <a class="btn btn--primary" href="mailto:mohsen.tahmasebi.n@gmail.com">Email me</a>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .about-grid { align-items: start; }
+  .about-aside { display: flex; flex-direction: column; gap: 0.9rem; position: sticky; top: calc(var(--nav-h) + 1.5rem); }
+  .about-aside .aside-note { font-size: 0.86rem; color: var(--text-faint); line-height: 1.5; }
+  @media (max-width: 800px) { .about-aside { position: static; } .about-aside .figure { max-width: 360px; } }
+
+  .contact-card {
+    display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 1.2rem;
+    border: 1px solid var(--border); border-radius: var(--radius); padding: clamp(1.4rem, 4vw, 2.2rem);
+    background:
+      radial-gradient(420px 200px at 100% 0%, var(--accent-soft), transparent 70%),
+      var(--bg-elev);
+  }
+</style>

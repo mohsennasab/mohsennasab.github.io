@@ -1,0 +1,239 @@
+---
+import Base from '../layouts/Base.astro';
+import PageHeader from '../components/PageHeader.astro';
+import SectionHead from '../components/SectionHead.astro';
+import headerBg from '../assets/photos/photo-01.jpg';
+
+const SCHOLAR_URL = 'https://scholar.google.com/citations?user=WzJw2KIAAAAJ&hl=en';
+const scholarSearch = (title: string) => `https://scholar.google.com/scholar?q=${encodeURIComponent(title)}`;
+
+// Bold "Tahmasebi Nasab" wherever it appears in an author list.
+const me = (authors: string) =>
+  authors.replace(/((?:M\.?\s)?Tahmasebi\sNasab|M\sT\sNasab|MT\sNasab)/g, '<strong>$1</strong>');
+
+type Pub = { year: string; title: string; authors: string; venue: string; doi?: string };
+
+const journals: Pub[] = [
+  { year: '2024', title: 'Daily soil temperature simulation at different depths in the Red River Basin: a long short-term memory approach', authors: 'Tahmasebi Nasab, M., Pattanayak, S., Williams, T. W., Sharifan, A., Raheem, Y., & Fournier, C.', venue: 'Modeling Earth Systems and Environment' },
+  { year: '2023', title: 'Impacts of temperature data sets on macroscale snowmelt simulations in the Missouri River Basin', authors: 'Tahmasebi Nasab, M., & Chu, X.', venue: 'Journal of Cold Regions Engineering, 37(2), 04023003' },
+  { year: '2023', title: 'Uncovering the depletion patterns of inland water bodies via remote sensing, data mining, and statistical analysis', authors: 'Zolghadr-Asli, B., Naghdyzadegan Jahromi, M., Wan, X., Enayati, M., Tahmasebi Nasab, M., et al.', venue: 'Water, 15(8), 1508' },
+  { year: '2022', title: 'Impacts of seasonally frozen ground on streamflow recession in the Red River of the North Basin', authors: 'Tahmasebi Nasab, M., Berg, S. S., Comba, L., Sellner, B., & Epperson, C.', venue: 'River Research and Applications, 38(7), 1277-1284', doi: '10.1002/rra.4025' },
+  { year: '2021', title: 'Do sub-daily temperature fluctuations around the freezing temperature alter macro-scale snowmelt simulations?', authors: 'Tahmasebi Nasab, M., & Chu, X.', venue: 'Journal of Hydrology, 596, 125683' },
+  { year: '2020', title: 'Macro-HyProS: a new macro-scale hydrologic processes simulator for depression-dominated cold climate regions', authors: 'Tahmasebi Nasab, M., & Chu, X.', venue: 'Journal of Hydrology, 580, 124366' },
+  { year: '2019', title: 'Macro-scale grid-based and subbasin-based hydrologic modeling: joint simulation and cross-calibration', authors: 'Chu, X., Lin, Z., Tahmasebi Nasab, M., Zeng, L., Grimm, K., Bazrkar, M. H., et al.', venue: 'Journal of Hydroinformatics, 21(1), 77-91' },
+  { year: '2018', title: 'SWAT modeling of non-point source pollution in depression-dominated basins under varying hydroclimatic conditions', authors: 'Tahmasebi Nasab, M., Grimm, K., Bazrkar, M., Zeng, L., Shabani, A., Zhang, X., & Chu, X.', venue: 'International Journal of Environmental Research and Public Health, 15(11), 2492' },
+  { year: '2018', title: 'TWI computations and topographic analysis of depression-dominated surfaces', authors: 'Grimm, K., Tahmasebi Nasab, M., & Chu, X.', venue: 'Water, 10(5), 663' },
+  { year: '2017', title: 'A new depression-dominated delineation (D-cubed) method for improved watershed modeling', authors: 'Tahmasebi Nasab, M., Zhang, J., & Chu, X.', venue: 'Hydrological Processes, 31(19), 3364-3378' },
+  { year: '2017', title: 'SWAT modeling for depression-dominated areas: how do depressions manipulate hydrologic modeling?', authors: 'Tahmasebi Nasab, M., Singh, V., & Chu, X.', venue: 'Water, 9(1), 58' },
+  { year: '2016', title: 'How does DEM resolution affect microtopographic characteristics, hydrologic connectivity, and modeling of hydrologic processes?', authors: 'Habtezion, N., Tahmasebi Nasab, M., & Chu, X.', venue: 'Hydrological Processes, 30(25), 4870-4892' },
+  { year: '2015', title: 'Simulation of water surface profile in vertically stratified rockfill dams', authors: 'Asiaban, P., Tokaldany, E. A., & Tahmasebi Nasab, M.', venue: 'International Journal of Environmental Research' },
+];
+
+const chapters: Pub[] = [
+  { year: '2022', title: 'Decision tree (DT): a valuable tool for water resources engineering', authors: 'Enayati, M., Bozorg-Haddad, O., Pourgholam-Amiji, M., Zolghadr-Asli, B., & Tahmasebi Nasab, M.', venue: 'In: Computational Intelligence for Water and Environmental Sciences (pp. 201-223). Springer Nature' },
+  { year: '2021', title: 'Conflict resolution: the gist of the matter in water resources planning and management', authors: 'Enayati, M., Bozorg-Haddad, O., & Tahmasebi Nasab, M.', venue: 'In: Essential Tools for Water Resources Analysis, Planning, and Management (pp. 263-273). Springer' },
+];
+
+const conferences: Pub[] = [
+  { year: '2019', title: 'Macro-scale hydrologic modeling for depression-dominated cold climate regions', authors: 'Tahmasebi Nasab, M., & Chu, X.', venue: 'AGU Fall Meeting' },
+  { year: '2018', title: 'Topo-statistical analyses of ponding area versus ponding storage of depression-dominated regions for macro-scale hydrologic modeling', authors: 'Tahmasebi Nasab, M., & Chu, X.', venue: 'World Environmental and Water Resources Congress (ASCE)' },
+  { year: '2017', title: 'Scale analysis for depression-dominated areas: how does threshold resolution represent a surface?', authors: 'Tahmasebi Nasab, M., Grimm, K., Wang, N., & Chu, X.', venue: 'World Environmental and Water Resources Congress (ASCE)' },
+  { year: '2016', title: 'Modeling of subsurface drainage under varying microtopographic, soil and rainfall conditions', authors: 'Tahmasebi Nasab, M., Jia, X., & Chu, X.', venue: '10th International Drainage Symposium (ASABE)' },
+  { year: '2015', title: 'DEM-based watershed delineation: comparison of different methods and applications', authors: 'Chu, X., Zhang, J., & Tahmasebi Nasab, M.', venue: 'AGU Fall Meeting' },
+];
+
+const dissertation: Pub = {
+  year: '2019',
+  title: 'A new macro-scale hydrologic processes simulator for depression-dominated cold climate regions',
+  authors: 'Tahmasebi Nasab, M.',
+  venue: 'PhD dissertation, North Dakota State University',
+};
+
+function PubRow(p: Pub) {
+  return p;
+}
+---
+
+<Base title="Publications" description="Peer-reviewed journal articles, book chapters, and conference presentations by Dr. Mohsen Tahmasebi Nasab.">
+  <PageHeader
+    eyebrow="// research"
+    title="Publications"
+    lede="My published work, mostly on cold-climate and depression-dominated hydrology: macro-scale modeling, snowmelt, frozen-ground recession, DEM resolution, watershed delineation, and a few side trips into soil temperature and remote sensing. I have also presented at more than 20 national and international conferences."
+    bgImage={headerBg}
+    bgPos="center 60%"
+  >
+    <div class="metrics">
+      <a class="btn btn--sm btn--primary" href={SCHOLAR_URL} target="_blank" rel="noopener">Google Scholar profile</a>
+      <span class="chip">~315 citations</span>
+      <span class="chip">h-index 10</span>
+      <span class="chip">i10-index 10</span>
+      <span class="faint" style="font-size:.78rem">metrics via Google Scholar</span>
+    </div>
+  </PageHeader>
+
+  <!-- Highlight: Macro-HyProS -->
+  <section class="section section--tight">
+    <div class="wrap">
+      <article class="mh-card">
+        <div class="mh-body">
+          <span class="eyebrow">// the model I built from scratch</span>
+          <h2>Macro-HyProS</h2>
+          <p class="muted">
+            A Macro-scale Hydrologic Processes Simulator for cold-climate, depression-dominated regions, written
+            from the ground up in FORTRAN and Python during my PhD (NSF and USGS funded). It is a grid-based,
+            daily model with a "LEGO-fashion" layout that handles sub-grid land-use variation, five stacked vertical
+            bands (atmosphere, vegetation, snow, surface, sub-surface), and improved methods for snow, frozen ground,
+            and surface depressions. Tested on the Red River of the North Basin, it reached Nash-Sutcliffe
+            efficiencies of 0.56 in calibration and 0.72 in validation, and showed that the basin spends about 145
+            days a year with frozen or partially frozen ground.
+          </p>
+          <div class="chips" style="margin-bottom:1rem">
+            <span class="chip">FORTRAN + Python</span><span class="chip">grid-based</span><span class="chip">5 vertical bands</span>
+            <span class="chip">snow and frozen ground</span><span class="chip">depression-dominated terrain</span>
+          </div>
+          <div class="chips">
+            <a class="btn btn--sm btn--primary" href="https://doi.org/10.1016/j.jhydrol.2019.124366" target="_blank" rel="noopener">Read the paper · Journal of Hydrology</a>
+            <a class="btn btn--sm" href="/projects">More on the projects page</a>
+          </div>
+        </div>
+        <figure class="mh-figure">
+          <svg class="mh-svg" viewBox="0 0 480 376" role="img" aria-label="The LEGO-fashion structure of Macro-HyProS: bricks on blocks on a plate" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <pattern id="mhStudsGrey" width="15" height="15" patternUnits="userSpaceOnUse"><circle cx="7.5" cy="7.5" r="3" fill="rgba(255,255,255,.13)" /></pattern>
+              <pattern id="mhStuds" width="14" height="14" patternUnits="userSpaceOnUse"><circle cx="7" cy="7" r="3" fill="rgba(255,255,255,.22)" /></pattern>
+            </defs>
+            <!-- exploded connectors -->
+            <g class="conn" stroke-width="1.4" stroke-dasharray="3 4" fill="none">
+              <path d="M198 102 V158" /><path d="M250 102 V158" />
+              <path d="M120 206 V270" /><path d="M312 206 V270" />
+            </g>
+            <!-- Plate -->
+            <rect x="30" y="296" width="360" height="20" rx="5" fill="#3f5360" />
+            <rect x="30" y="270" width="360" height="30" rx="6" fill="#5b7385" />
+            <rect x="36" y="274" width="348" height="22" rx="3" fill="url(#mhStudsGrey)" />
+            <!-- Blocks: red / green / blue -->
+            <g>
+              <rect x="42"  y="204" width="112" height="14" rx="4" fill="#b06a6a" />
+              <rect x="42"  y="166" width="112" height="40" rx="6" fill="#d98a8a" />
+              <rect x="48"  y="170" width="100" height="20" rx="3" fill="url(#mhStuds)" />
+              <rect x="158" y="204" width="112" height="14" rx="4" fill="#5e9c6b" />
+              <rect x="158" y="166" width="112" height="40" rx="6" fill="#84c08e" />
+              <rect x="164" y="170" width="100" height="20" rx="3" fill="url(#mhStuds)" />
+              <rect x="274" y="204" width="112" height="14" rx="4" fill="#5b8fc0" />
+              <rect x="274" y="166" width="112" height="40" rx="6" fill="#88bdf2" />
+              <rect x="280" y="170" width="100" height="20" rx="3" fill="url(#mhStuds)" />
+            </g>
+            <!-- Bricks on the green block -->
+            <g>
+              <rect x="178" y="100" width="54" height="12" rx="3.5" fill="#73b07e" />
+              <rect x="178" y="72" width="54" height="32" rx="5" fill="#9bd0a3" />
+              <rect x="183" y="76" width="44" height="16" rx="3" fill="url(#mhStuds)" />
+              <rect x="230" y="100" width="54" height="12" rx="3.5" fill="#73b07e" />
+              <rect x="230" y="72" width="54" height="32" rx="5" fill="#9bd0a3" />
+              <rect x="235" y="76" width="44" height="16" rx="3" fill="url(#mhStuds)" />
+            </g>
+            <!-- leader lines + labels -->
+            <g class="lead" stroke-width="1.4" fill="none"><path d="M284 86 H410" /><path d="M386 186 H410" /><path d="M390 286 H410" /></g>
+            <g class="dot"><circle cx="284" cy="86" r="3.6" /><circle cx="386" cy="186" r="3.6" /><circle cx="390" cy="286" r="3.6" /></g>
+            <g class="lbl"><text x="416" y="90">BRICKS</text><text x="416" y="190">BLOCKS</text><text x="416" y="290">PLATE</text></g>
+          </svg>
+          <figcaption>Macro-HyProS represents each grid as a "plate" carrying stacked land-use "blocks" and "bricks" (after Fig. 1 of the Journal of Hydrology paper).</figcaption>
+        </figure>
+      </article>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap">
+      <SectionHead eyebrow={`// journal articles · ${journals.length}`} title="Peer-reviewed journal articles" as={3} />
+      <ol class="entry-list">
+        {journals.map((p0) => { const p = PubRow(p0); return (
+          <li class="entry">
+            <div class="entry-year">{p.year}</div>
+            <div class="entry-body">
+              <h3><a href={p.doi ? `https://doi.org/${p.doi}` : scholarSearch(p.title)} target="_blank" rel="noopener">{p.title}</a></h3>
+              <div class="entry-meta"><span set:html={me(p.authors)} /> · <em>{p.venue}</em></div>
+              <div class="chips">
+                {p.doi && <a class="btn btn--sm" href={`https://doi.org/${p.doi}`} target="_blank" rel="noopener">DOI</a>}
+                <a class="btn btn--sm" href={scholarSearch(p.title)} target="_blank" rel="noopener">Scholar</a>
+              </div>
+            </div>
+          </li>
+        ); })}
+      </ol>
+
+      <hr />
+
+      <SectionHead eyebrow={`// conference presentations · ${conferences.length}`} title="Conference presentations and proceedings" as={3} />
+      <ol class="entry-list">
+        {conferences.map((p0) => { const p = PubRow(p0); return (
+          <li class="entry">
+            <div class="entry-year">{p.year}</div>
+            <div class="entry-body">
+              <h3><a href={scholarSearch(p.title)} target="_blank" rel="noopener">{p.title}</a></h3>
+              <div class="entry-meta"><span set:html={me(p.authors)} /> · <em>{p.venue}</em></div>
+            </div>
+          </li>
+        ); })}
+      </ol>
+
+      <hr />
+
+      <SectionHead eyebrow={`// book chapters · ${chapters.length}`} title="Book chapters" as={3} />
+      <ol class="entry-list">
+        {chapters.map((p0) => { const p = PubRow(p0); return (
+          <li class="entry">
+            <div class="entry-year">{p.year}</div>
+            <div class="entry-body">
+              <h3><a href={scholarSearch(p.title)} target="_blank" rel="noopener">{p.title}</a></h3>
+              <div class="entry-meta"><span set:html={me(p.authors)} /> · <em>{p.venue}</em></div>
+            </div>
+          </li>
+        ); })}
+      </ol>
+
+      <hr />
+
+      <SectionHead eyebrow="// also" title="Dissertation" as={3} />
+      <ol class="entry-list">
+        <li class="entry">
+          <div class="entry-year">{dissertation.year}</div>
+          <div class="entry-body">
+            <h3><a href={scholarSearch(dissertation.title)} target="_blank" rel="noopener">{dissertation.title}</a></h3>
+            <div class="entry-meta"><span set:html={me(dissertation.authors)} /> · <em>{dissertation.venue}</em></div>
+          </div>
+        </li>
+      </ol>
+
+      <p class="faint" style="margin-top:2rem;font-size:.86rem">
+        Where a DOI exists, the title links to it; otherwise it links to a Google Scholar search. The full list with
+        citation counts is on the <a href={SCHOLAR_URL} target="_blank" rel="noopener">Scholar profile</a>. The
+        modeling work behind several of these is described on the <a href="/projects">projects</a> page.
+      </p>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .metrics { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem; margin-top: 1.2rem; }
+  .entry .entry-body h3 a { text-decoration: none; }
+  .entry .entry-body :global(strong) { color: var(--text); font-weight: 700; }
+  .entry .entry-body .chips { margin-top: 0.2rem; }
+
+  /* Macro-HyProS highlight */
+  .mh-card {
+    display: grid; grid-template-columns: 1.25fr 1fr; gap: clamp(1.6rem, 4vw, 3rem); align-items: center;
+    border: 1px solid var(--border); border-radius: var(--radius); padding: clamp(1.5rem, 4vw, 2.4rem);
+    background: radial-gradient(520px 280px at 100% 0%, var(--accent-soft), transparent 70%), var(--bg-elev);
+  }
+  @media (max-width: 860px) { .mh-card { grid-template-columns: 1fr; } .mh-figure { order: -1; } }
+  .mh-body h2 { font-size: clamp(1.6rem, 1.2rem + 1.4vw, 2.2rem); margin-bottom: 0.6rem; }
+  .mh-body > p { margin-bottom: 1rem; }
+  .mh-figure { margin: 0; }
+  .mh-svg { width: 100%; height: auto; display: block; }
+  .mh-svg .conn { stroke: var(--border); }
+  .mh-svg .lead { stroke: var(--accent-line); }
+  .mh-svg .dot { fill: var(--accent); }
+  .mh-svg .lbl text { font: 650 13px/1 var(--font-sans); letter-spacing: 0.14em; fill: var(--text-faint); }
+  .mh-figure figcaption { margin-top: 0.7rem; font-size: 0.8rem; color: var(--text-faint); line-height: 1.5; }
+</style>

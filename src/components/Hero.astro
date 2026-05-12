@@ -1,0 +1,93 @@
+---
+import { Image } from 'astro:assets';
+import Socials from './Socials.astro';
+import headshot from '../assets/headshot.jpg';
+import heroBg from '../assets/photos/photo-33.jpg';
+---
+
+<section class="hero">
+  <Image class="hero-bg" src={heroBg} alt="" aria-hidden="true" loading="eager" widths={[800, 1200, 1800]} sizes="100vw" />
+  <div class="hero-bg-fade" aria-hidden="true"></div>
+  <div class="wrap inner">
+    <div class="text">
+      <h1>Mohsen<br /><span class="grad">Tahmasebi Nasab</span></h1>
+      <p class="role">Water Resources Engineer</p>
+      <p class="bio">
+        I work on modeling how water moves through landscapes, with a soft spot for cold-climate
+        hydrology, where snow, frozen ground, and surface storage make the textbook answers stop
+        working. At AECOM I lead the H&amp;H Technical Excellence Practice. Before that I was a
+        professor teaching water resources and hydrology, and I still teach, just on YouTube and
+        GitHub these days.
+      </p>
+      <div class="cta">
+        <a class="btn btn--primary" href="/publications">View publications</a>
+        <a class="btn" href="/projects">Consulting &amp; projects</a>
+        <a class="btn btn--ghost" href="/tools">Tools &amp; apps
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+        </a>
+      </div>
+      <div class="hero-socials"><Socials variant="pills" /></div>
+    </div>
+
+    <div class="portrait">
+      <div class="ring">
+        <Image src={headshot} alt="Mohsen Tahmasebi Nasab" widths={[320, 480, 640]} sizes="(max-width: 880px) 220px, 320px" class="avatar" loading="eager" />
+      </div>
+      <div class="badge-card" aria-hidden="true">
+        <span class="b-eyebrow">Currently</span>
+        <span class="b-line">H&amp;H Technical Excellence Practice Leader</span>
+        <span class="b-org">AECOM · Water</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .hero { position: relative; overflow: hidden; padding-top: clamp(3.4rem, 8vw, 6rem); padding-bottom: clamp(3rem, 7vw, 5rem); }
+  .hero-bg { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center 55%; z-index: 0; opacity: 0.34; filter: saturate(0.9); }
+  :global([data-theme='light']) .hero-bg { opacity: 0.45; }
+  .hero-bg-fade { position: absolute; inset: 0; z-index: 0;
+    background:
+      linear-gradient(180deg, color-mix(in oklab, var(--bg) 22%, transparent), var(--bg) 94%),
+      linear-gradient(95deg, color-mix(in oklab, var(--bg) 38%, transparent), transparent 58%),
+      radial-gradient(800px 380px at 86% -10%, var(--accent-soft), transparent 70%);
+  }
+  .inner { position: relative; z-index: 1; display: grid; grid-template-columns: 1.35fr 0.9fr; align-items: center; gap: clamp(2rem, 5vw, 4rem); }
+  @media (max-width: 880px) { .inner { grid-template-columns: 1fr; } .portrait { order: -1; justify-self: start; } }
+
+  h1 { margin-bottom: 0.4rem; }
+  .grad {
+    background: linear-gradient(100deg, var(--accent), var(--accent-2) 55%, var(--text) 135%);
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+  }
+  .role { font-family: var(--font-head); font-weight: 650; font-size: clamp(1.05rem, 0.95rem + 0.5vw, 1.3rem); color: var(--text-dim); margin-bottom: 1.2rem; }
+  .bio { color: var(--text-dim); font-size: clamp(1rem, 0.96rem + 0.3vw, 1.12rem); max-width: 58ch; margin-bottom: 1.6rem; }
+
+  .cta { display: flex; flex-wrap: wrap; gap: 0.7rem; margin-bottom: 1.6rem; }
+  .hero-socials { margin-top: 0.2rem; }
+
+  /* portrait side */
+  .portrait { position: relative; display: flex; flex-direction: column; gap: 1rem; max-width: 340px; }
+  .ring {
+    width: 100%; aspect-ratio: 1; border-radius: 50%; padding: 8px;
+    background: conic-gradient(from 210deg, var(--accent), var(--accent-2), color-mix(in oklab, var(--bg-elev) 60%, transparent) 58%, var(--accent));
+    box-shadow: 0 24px 60px var(--glow);
+  }
+  .ring :global(img.avatar) {
+    width: 100%; height: 100%; border-radius: 50%;
+    object-fit: cover; object-position: 50% 32%;
+    border: 1px solid var(--border);
+    display: block;
+  }
+  .badge-card {
+    align-self: flex-end; max-width: 250px;
+    background: var(--bg-elev); border: 1px solid var(--border); border-radius: var(--radius);
+    padding: 0.85rem 1rem; box-shadow: var(--shadow);
+    display: flex; flex-direction: column; gap: 0.18rem;
+    margin-top: -2.4rem; margin-right: -0.4rem;
+  }
+  .badge-card .b-eyebrow { font: 600 0.62rem/1 var(--font-sans); letter-spacing: 0.16em; text-transform: uppercase; color: var(--accent); }
+  .badge-card .b-line { font-family: var(--font-head); font-weight: 650; font-size: 0.88rem; line-height: 1.35; }
+  .badge-card .b-org { font-size: 0.78rem; color: var(--text-dim); }
+  @media (max-width: 880px) { .badge-card { display: none; } }
+</style>

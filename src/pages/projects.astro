@@ -1,0 +1,233 @@
+---
+import Base from '../layouts/Base.astro';
+import PageHeader from '../components/PageHeader.astro';
+import SectionHead from '../components/SectionHead.astro';
+import headerBg from '../assets/photos/photo-15.jpg';
+
+type Proj = { title: string; client: string; years: string; body: string; tools?: string[]; link?: { label: string; href: string } };
+
+const federal: Proj[] = [
+  {
+    title: 'Glacial lake outburst flood study, Alaska',
+    client: 'Federal client', years: '2025 to 2026',
+    body: 'A technical study of recurring glacial lake outburst flooding from a side basin of a retreating glacier that threatens a valley community. A multi-agency design charrette weighed mitigation options (lake taps, control dams, levees, bypass channels, relocation, and hybrids) against environmental, cultural, and community impacts toward a preferred conceptual design. I co-led the H&H component, where a 2D surface-water model and 1D SWMM models were used to evaluate and inform the alternatives. I gave the technical presentations on the H&H approach and results during a three-day design charrette with the federal agency and local and state stakeholders, and served as the H&H lead for a two-day risk workshop on baseline, exceedance, and failure risks for the preferred alternative.',
+    tools: ['2D surface-water modeling', 'SWMM', 'risk assessment'],
+  },
+  {
+    title: 'Modernizing national flood-risk data',
+    client: 'Federal client', years: '2025 to present',
+    body: 'A program moving flood-risk assessment beyond single-event floodplain maps toward a probabilistic, risk-based framework that carries uncertainty, multiple flood probabilities, and consequence-based metrics. I was the meteorology lead for validation-basin modeling and built the frameworks and workflows to bring Stochastic Storm Transposition into probabilistic hydrologic modeling. A lot of the job was turning complex methods and outputs into something decision-makers can act on, aligned with the program standard operating procedure across regional and national scales.',
+    tools: ['Stochastic Storm Transposition', 'probabilistic hydrology', 'HEC-HMS'],
+  },
+  {
+    title: 'Community flooding research for a land-management agency',
+    client: 'Federal client', years: '2024 to 2025',
+    body: 'I wrote the winning proposal and served as technical lead for the hydrologic-research task: compiling and analyzing hydrologic data to address frequent flooding in several communities, overseeing local data collection, developing flooding solutions with a partner consultant, and helping the project team and local representatives draft near-term and long-term action steps.',
+    tools: ['proposal writing', 'hydrologic analysis', 'stakeholder engagement'],
+  },
+  {
+    title: 'Floodplain map-revision technical reviews',
+    client: 'Federal client', years: '2023 to 2024',
+    body: 'As a technical reviewer for a federal floodplain-mapping program, I reviewed hydrologic and hydraulic modeling submitted for Conditional Letters of Map Revision and Letters of Map Revision, checking floodplain delineations, floodway encroachments, and base flood elevations, and giving detailed feedback and recommendations.',
+    tools: ['HEC-RAS', 'floodplain mapping', 'QA review'],
+  },
+];
+
+const state: Proj[] = [
+  {
+    title: 'River reintroduction and flood-risk reduction in a coastal swamp',
+    client: 'State client', years: '2025',
+    body: 'A large restoration and flood-risk-reduction project that diverts up to 2,000 cfs of freshwater from a major river into a degrading swamp, with a 5.5-mile conveyance channel, multiple culvert and bridge crossings, and integration with an existing levee system. I was one of the principal hydraulic modelers. The design had to make sure the diversion and flood protection would not worsen local drainage or flood risk to neighbors, so we used advanced 2D hydraulic modeling to evaluate existing and proposed drainage, optimize channel and culvert designs, and assess how sea-level rise and storms change water-surface elevations across the area.',
+    tools: ['2D hydraulic modeling', 'channel and culvert design', 'sea-level rise'],
+  },
+  {
+    title: 'Statewide watershed flood modeling',
+    client: 'State client', years: '2024 to 2026',
+    body: 'A coordinated, interagency effort to reduce flood risk and build resilience across a state. I worked as a hydrologic and hydraulic modeler and reviewer, running detailed flood simulations for areas across the state with HEC-HMS and HEC-RAS 2D, analyzing the outputs across flood scenarios, and compiling the results into reports and visualizations for flood-risk-management stakeholders.',
+    tools: ['HEC-HMS', 'HEC-RAS 2D', 'reporting'],
+  },
+  {
+    title: 'Design-support technical reviews for a statewide flood program',
+    client: 'State client', years: '2024 to 2026',
+    body: 'As a technical reviewer for the program design-support track, I checked that consultant technical reports actually met community needs, such as channel improvements and detention-pond studies, and gave detailed feedback on both the modeling approach and the writing. I have reviewed more than 20 reports built with tools like SRH-2D, HEC-RAS (1D and 2D), and HEC-HMS.',
+    tools: ['SRH-2D', 'HEC-RAS', 'HEC-HMS', 'QA review'],
+  },
+  {
+    title: 'Slope-classification automation for a transportation department',
+    client: 'State client', years: '2025',
+    body: 'I led development of SlopeStake Analyzer, a Python tool that processes, filters, and analyzes slope-stake data from highway cross-section surveys statewide. It finds qualifying slope segments against the state criteria, cutting work that used to take days. It runs through more than 400 slope-stake files from hundreds of plan sets and over 72,000 slope-length pairs in seconds.',
+    tools: ['Python', 'data processing', 'automation'],
+  },
+  {
+    title: 'Bridge and culvert replacement hydraulics for a transportation department',
+    client: 'State client', years: '2023 to 2024',
+    body: 'I ran the hydrologic and hydraulic analyses for several culvert-replacement projects: delineating drainage basins, computing flows with the state design method, and summarizing the findings in hydraulic reports. I built HEC-RAS models from detailed surveys and LiDAR, representing existing and proposed structures so the new ones could pass the design flows and lower flood risk.',
+    tools: ['HEC-RAS', 'LiDAR', 'hydraulic reports'],
+  },
+  {
+    title: 'Linking 2D hydraulic and urban-drainage models for a metro area',
+    client: 'Regional client', years: '2024',
+    body: 'I streamlined the transfer of flow and stage data from HEC-RAS into InfoWorks ICM, a step that takes a long time by hand. I wrote a Python script that does it in seconds and wrapped it in a desktop app so non-programmers on the team could use it.',
+    tools: ['HEC-RAS', 'InfoWorks ICM', 'Python', 'desktop app'],
+  },
+];
+
+const innovation: Proj[] = [
+  {
+    title: 'Large language models in H&H modeling',
+    client: 'AECOM initiative', years: '2023 to present',
+    body: 'I lead an effort to use large language models for the pre- and post-processing around H&H modeling, moving it from spreadsheets toward code, by generating Python scripts, apps, and tutorials from plain-language input from people who do not write code. That work has produced HydroImpact (post-processing dam-breach results from hydraulic models), the NOAA Atlas 14 Processor Toolbox (automated download and processing of gridded precipitation for HEC-RAS 2D models), and the SCS Curve Number Generator App (simplifying curve-number determination for a study area).',
+    tools: ['LLMs', 'Python', 'HEC-RAS'],
+    link: { label: 'See the tools', href: '/tools' },
+  },
+  {
+    title: 'HEC-RAS input automation (ZeusHydrology)',
+    client: 'AECOM initiative', years: '2024 to 2025',
+    body: 'As Digital Innovation Lead, I led ZeusHydrology Python Tools, an effort to streamline the hydrology side of HEC-RAS modeling: building, deploying, and tuning automation that cuts manual effort and improves accuracy, as part of a larger project to streamline the inputs into a 2D HEC-RAS model.',
+    tools: ['Python', 'HEC-RAS', 'automation'],
+  },
+];
+
+const research: Proj[] = [
+  {
+    title: 'Spring floods in a northern river basin',
+    client: 'NSF and USGS funded · at NDSU', years: '2015 to 2020',
+    body: 'Macro-scale hydrologic modeling to improve early-spring streamflow simulations affected by frozen ground and snowmelt, working across scales with models like HEC-HMS and SWAT. The end product was Macro-HyProS, a new hydrologic model built in FORTRAN and Python, calibrated and validated for the basin.',
+    tools: ['Macro-HyProS', 'FORTRAN', 'Python', 'HEC-HMS', 'SWAT'],
+  },
+  {
+    title: 'Snowmelt simulation in a large river basin',
+    client: 'NSF and USGS funded · at NDSU', years: '2018 to 2020',
+    body: 'Used downscaled satellite surface-temperature data to calibrate and validate a snowmelt model for snow accumulation and ablation, compared against NOAA SNOW-17 for accuracy and reliability.',
+    tools: ['snowmelt modeling', 'satellite data'],
+  },
+  {
+    title: 'Hydro-topographic analysis of a pothole-wetland region',
+    client: 'NSF and USGS funded · at NDSU', years: '2016',
+    body: 'Developed D-cubed (depression-dominated delineation), an algorithm that computes wetland volume and ponding area from DEMs, then ran ArcGIS analysis on several watersheds with clear gains over traditional methods like D8.',
+    tools: ['D-cubed', 'ArcGIS', 'DEM analysis'],
+  },
+  {
+    title: 'Hydrologic field data collection',
+    client: 'NSF and USGS funded · at NDSU', years: '2015 to 2019',
+    body: 'Sited and set up rainfall and snowfall gauging stations and collected rainfall, snowfall, soil moisture, and wetland-depth data in a research study area, then used Python to analyze and publish the datasets.',
+    tools: ['field instrumentation', 'Python', 'data publishing'],
+  },
+];
+
+const stack = ['HEC-RAS (1D and 2D)', 'HEC-HMS', 'SWMM', 'SRH-2D', 'InfoWorks ICM', 'SWAT', 'ArcGIS Pro', 'Python', 'LiDAR / DEM analysis', 'large language models'];
+
+function rows(p: Proj[]) { return p; }
+---
+
+<Base title="Projects" description="Selected consulting and project work by Dr. Mohsen Tahmasebi Nasab as a water resources engineer at AECOM: hydrologic and hydraulic modeling, flood-risk reduction, technical reviews, and automation.">
+  <PageHeader
+    eyebrow="// what i work on"
+    title="Projects"
+    lede="A look at the consulting and project work I do as a water resources engineer at AECOM, where I lead the H&H Technical Excellence Practice. The mix is hydrologic and hydraulic modeling, flood-risk reduction, technical reviews, and automation, for federal and state clients. Client names are left off here on purpose."
+    bgImage={headerBg}
+    bgPos="center 50%"
+  />
+
+  <section class="section">
+    <div class="wrap">
+      <div class="cols-2 cols-2--bias proj-grid">
+        <div class="proj-intro">
+          <p class="lead" style="margin-bottom:1rem">
+            Day to day, I am building and reviewing models, presenting results, and writing the code that takes the
+            grunt work out of all of it.
+          </p>
+          <p class="muted">
+            That ranges from 2D hydraulic and watershed models for large flood-risk and restoration projects, to
+            meteorology and probabilistic hydrology for a national flood-data program, to technical reviews of other
+            firms' modeling, to small Python tools and desktop apps that automate the steps everyone hates doing by
+            hand. Before AECOM I spent four years as a civil engineering professor and several years before that as a
+            research assistant doing NSF and USGS funded hydrology work, which is where the modeling and the code both
+            started.
+          </p>
+        </div>
+        <aside class="proj-aside">
+          <div class="aside-box">
+            <div class="eyebrow">// what I work with</div>
+            <div class="chips">{stack.map((s) => <span class="chip">{s}</span>)}</div>
+          </div>
+        </aside>
+      </div>
+
+      <hr />
+
+      <SectionHead eyebrow="// federal clients" title="Federal clients" lede="Glacial-flood studies, national flood-data modernization, community flooding research, and floodplain map-revision reviews." />
+      <div class="grid grid--2">
+        {rows(federal).map((p) => (
+          <article class="card proj-card">
+            <span class="idx">{p.client} · {p.years}</span>
+            <h3>{p.title}</h3>
+            <p>{p.body}</p>
+            {p.tools && <div class="chips" style="margin-top:.8rem">{p.tools.map((t) => <span class="chip">{t}</span>)}</div>}
+            {p.link && <div class="card-foot"><a class="card-arrow" href={p.link.href}>{p.link.label}
+              <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a></div>}
+          </article>
+        ))}
+      </div>
+
+      <hr />
+
+      <SectionHead eyebrow="// state and regional clients" title="State and regional clients" lede="Coastal restoration, statewide watershed modeling and reviews, transportation hydraulics, and model-coupling automation." />
+      <div class="grid grid--2">
+        {rows(state).map((p) => (
+          <article class="card proj-card">
+            <span class="idx">{p.client} · {p.years}</span>
+            <h3>{p.title}</h3>
+            <p>{p.body}</p>
+            {p.tools && <div class="chips" style="margin-top:.8rem">{p.tools.map((t) => <span class="chip">{t}</span>)}</div>}
+          </article>
+        ))}
+      </div>
+
+      <hr />
+
+      <SectionHead eyebrow="// at aecom" title="Innovation and automation" lede="Internal efforts to bring code and language models into everyday H&H work." />
+      <div class="grid grid--2">
+        {rows(innovation).map((p) => (
+          <article class="card proj-card">
+            <span class="idx">{p.client} · {p.years}</span>
+            <h3>{p.title}</h3>
+            <p>{p.body}</p>
+            {p.tools && <div class="chips" style="margin-top:.8rem">{p.tools.map((t) => <span class="chip">{t}</span>)}</div>}
+            {p.link && <div class="card-foot"><a class="card-arrow" href={p.link.href}>{p.link.label}
+              <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a></div>}
+          </article>
+        ))}
+      </div>
+
+      <hr />
+
+      <SectionHead eyebrow="// earlier" title="Earlier research projects" lede="NSF and USGS funded work at North Dakota State University, where Macro-HyProS and D-cubed came from. See the publications page for the papers." />
+      <div class="grid grid--2">
+        {rows(research).map((p) => (
+          <article class="card proj-card">
+            <span class="idx">{p.client} · {p.years}</span>
+            <h3>{p.title}</h3>
+            <p>{p.body}</p>
+            {p.tools && <div class="chips" style="margin-top:.8rem">{p.tools.map((t) => <span class="chip">{t}</span>)}</div>}
+          </article>
+        ))}
+      </div>
+
+      <p class="faint" style="margin-top:2rem;font-size:.86rem">
+        For the peer-reviewed side of this, see <a href="/publications">publications</a>. For the open-source tools that
+        came out of it, see <a href="/tools">tools and apps</a>.
+      </p>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .proj-grid { align-items: start; }
+  .proj-aside { display: flex; flex-direction: column; gap: 1.2rem; position: sticky; top: calc(var(--nav-h) + 1.5rem); }
+  @media (max-width: 800px) { .proj-aside { position: static; } }
+  .aside-box { background: var(--bg-elev); border: 1px solid var(--border-soft); border-radius: var(--radius); padding: 1.15rem 1.25rem; }
+
+  .proj-card .idx { text-transform: none; letter-spacing: 0.01em; font-weight: 650; color: var(--accent); }
+  .proj-card > p { font-size: 0.93rem; line-height: 1.6; }
+</style>

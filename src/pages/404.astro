@@ -1,0 +1,23 @@
+---
+import Base from '../layouts/Base.astro';
+import { NAV } from '../consts';
+---
+
+<Base title="Page not found" description="That page doesn't exist.">
+  <section class="section">
+    <div class="wrap notfound">
+      <span class="eyebrow">// 404</span>
+      <h1>This page evaporated.</h1>
+      <p class="lede">The link is broken or the page moved. Try one of these instead:</p>
+      <div class="chips" style="margin-top:1.2rem">
+        {NAV.map((n) => <a class="btn btn--sm" href={n.href}>{n.label}</a>)}
+      </div>
+      <p style="margin-top:1.6rem"><a class="btn btn--primary" href="/">← Back home</a></p>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .notfound { max-width: 60ch; padding-block: clamp(2rem, 6vw, 4rem); }
+  .notfound h1 { font-size: clamp(2.2rem, 1.4rem + 3vw, 3.4rem); }
+</style>

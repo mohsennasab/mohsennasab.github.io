@@ -1,0 +1,215 @@
+---
+import { Image } from 'astro:assets';
+import Base from '../layouts/Base.astro';
+import PageHeader from '../components/PageHeader.astro';
+import SectionHead from '../components/SectionHead.astro';
+import { YT } from '../consts';
+import teachingPhoto from '../assets/teaching.jpg';
+import headerBg from '../assets/photos/photo-25.jpg';
+
+const principles = [
+  { t: 'Diversify the learning experience', d: 'Lectures, hands-on labs, real datasets, and the software students will actually use after graduation. Different ways in, for different students.' },
+  { t: 'Learn inside and outside the classroom', d: 'A construction site, a field trip, an industry mentor, a side project. Engineering sticks better when it leaves the room.' },
+  { t: 'Commit through preparation', d: 'Showing up prepared is how I show students their time matters. I have always learned best from mentors I knew well, personally and professionally, and I try to be that for my students.' },
+];
+
+// Verbatim student comments from course evaluations (carried over from hydromohsen.com/teaching).
+const quotes = [
+  { q: 'One thing that was appreciated were the words Dr. Nasab chose when responding to questions, affirming students. Difficult to explain, but he had a higher level of care and interpersonal skills than most people or professors. Overall, impressive course. Dr. Nasab works extremely hard and his efforts did not go unseen.' },
+  { q: 'This class was my favorite class this semester by far!! Everything that Dr. Nasab taught was very valuable, and he makes his classes so much fun because you can see how much he cares about the subject. I would not ask for anything different!' },
+  { q: 'Dr. Nasab is an excellent teacher and one that I consider to be the very best out of the Civil Professors. His superior organizational skills and devotion to learning makes classes easy to follow. Dr. Nasab is not afraid to challenge his students to learn, and students who put the effort in to engage with the material excel in the class. Dr. Nasab is adaptable and tenacious in teaching, and I count myself lucky to have him as a professor.' },
+  { q: 'This has surprisingly been the best engineering class I have taken at St. Thomas. Not because the material is easy, it is not, but the way the class has been structured and relates to my daily environment is incredible. Being able to use all the software that are used in the workforce in the classroom gave me an edge in the internship I was taking at the same time. Collaboration with a watershed management organization gave us an idea of what our role is in the natural environment, and providing a solution to a real-life problem made the class even more realistic.' },
+  { q: 'Dr. Nasab does a great job with going through material and an example in class as well as having a homework problem similar to what we are doing in class. I really like having one homework per night to feel like I can keep learning and continue to understand what is going on in class.' },
+  { q: 'I can tell he cares a lot about his teaching philosophy and how to go about material, and it pays off. I always enjoy having him as my professor.' },
+];
+
+type Course = { code: string; title: string; desc?: string };
+const stthomas: Course[] = [
+  { code: 'ENGR467', title: 'Water Resources Engineering', desc: 'Hydrology and hydraulics for civil engineers: pipe and channel flow, distribution and pumping systems, reservoirs, and storm sewers. Students analyze real hydrologic data and compute water-surface profiles.' },
+  { code: 'ENGR465', title: 'Application of GIS in Water Resources Engineering', desc: 'GIS for water work: digital mapping, coordinate systems, raster analysis, watershed delineation, and floodplain mapping.' },
+  { code: 'ENGR468', title: 'Environmental Engineering', desc: 'Chemistry, biology, and physics fundamentals, then water quality, pollution, treatment systems, and sustainability.' },
+  { code: 'ENGR368', title: 'Fluid Mechanics for Civil Engineering', desc: 'Hydrostatics, conservation laws, potential and viscous flow, boundary layers, internal and external flow, and open channels, with an integrated lab.' },
+  { code: 'ENGR100', title: 'Introduction to Engineering Design', desc: 'A semester-long, client-centered design challenge built around teamwork, empathy, and critical thinking.' },
+  { code: 'ENGR480 / 481', title: 'Senior Design Clinic', desc: 'A two-semester capstone where multidisciplinary teams solve real problems with industry, non-profit, and community sponsors.' },
+];
+const bucknell: Course[] = [
+  { code: 'CEEG320', title: 'Water Resources Engineering' },
+  { code: 'CEEG492', title: 'Civil Engineering Planning and Design' },
+  { code: 'ENGR222', title: 'Civil Engineering Fluid Mechanics' },
+  { code: 'ENGR101', title: 'Engineering Graphics' },
+];
+const ndsu: Course[] = [
+  { code: 'CE476', title: 'Watershed Modeling' },
+  { code: 'CE309', title: 'Fluid Mechanics' },
+  { code: 'CE309L', title: 'Fluid Mechanics Laboratory' },
+];
+
+const ytIcon = '<svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18"><path d="M23.5 7.2a3 3 0 0 0-2.1-2.1C19.5 4.6 12 4.6 12 4.6s-7.5 0-9.4.5A3 3 0 0 0 .5 7.2 31.2 31.2 0 0 0 0 12a31.2 31.2 0 0 0 .5 4.8 3 3 0 0 0 2.1 2.1c1.9.5 9.4.5 9.4.5s7.5 0 9.4-.5a3 3 0 0 0 2.1-2.1A31.2 31.2 0 0 0 24 12a31.2 31.2 0 0 0-.5-4.8zM9.6 15.6V8.4l6.3 3.6z"/></svg>';
+
+const lectures = [
+  { t: 'Water Resources Engineering', d: 'Recorded lectures from my water resources engineering course: hydrology, hydraulics, pipe and channel flow, and the design pieces.', href: YT.playlists.waterResources },
+  { t: 'Fluid Mechanics', d: 'Recorded lectures from my fluid mechanics course: hydrostatics, the conservation laws, viscous and potential flow, and open channels.', href: YT.playlists.fluidMechanics },
+  { t: 'ArcGIS Pro in Water Resources Engineering', d: 'A walk-through series on using ArcGIS Pro for water work: mapping, raster analysis, watershed delineation, and floodplain mapping.', href: YT.playlists.arcgisWRE },
+];
+
+function CourseList(courses: Course[]) { return courses; }
+---
+
+<Base title="Teaching" description="Teaching philosophy, courses, recorded lectures on YouTube, and student feedback. Dr. Mohsen Tahmasebi Nasab taught civil and water resources engineering at the University of St. Thomas, Bucknell University, and North Dakota State University.">
+  <PageHeader
+    eyebrow="// teach"
+    title="Teaching"
+    lede="I spent several years as a civil engineering professor before joining AECOM, teaching water resources, hydrology, fluid mechanics, GIS, and senior design. I still teach, just on YouTube and GitHub now (the Python course lives on the Tutorials page). This is the classroom side of it."
+    bgImage={headerBg}
+    bgPos="center 55%"
+  />
+
+  <section class="section section--tight">
+    <div class="wrap">
+      <figure class="teach-banner">
+        <Image src={teachingPhoto} alt="Mohsen Tahmasebi Nasab teaching the SCS curve number method at a whiteboard" widths={[700, 1100, 1280]} sizes="(max-width: 1100px) 100vw, 1080px" />
+        <figcaption>Working through the SCS curve number method, from one of the lecture videos.</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap">
+      <SectionHead eyebrow="// how i teach" title="Teaching philosophy" lede="Three things I keep coming back to." />
+      <div class="grid grid--3">
+        {principles.map((p, i) => (
+          <article class="card">
+            <span class="idx">{String(i + 1).padStart(2, '0')}</span>
+            <h3>{p.t}</h3>
+            <p>{p.d}</p>
+          </article>
+        ))}
+      </div>
+
+      <hr />
+
+      <SectionHead eyebrow="// lectures" title="Lectures on YouTube" lede="The recorded versions of a few of my courses. They live on my channel along with tutorials and tool walk-throughs." />
+      <div class="grid grid--3">
+        {lectures.map((l) => (
+          <article class="card">
+            <h3>{l.t}</h3>
+            <p>{l.d}</p>
+            <div class="card-foot">
+              <a class="card-arrow yt" href={l.href} target="_blank" rel="noopener"><span set:html={ytIcon} /> Watch the playlist
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M9 7h8v8"/></svg>
+              </a>
+            </div>
+          </article>
+        ))}
+      </div>
+      <p class="muted" style="margin-top:1.1rem"><a class="yt" href={YT.channel} target="_blank" rel="noopener"><span set:html={ytIcon} /> See the whole channel: youtube.com/@HydroMohsen</a></p>
+
+      <hr />
+
+      <SectionHead eyebrow="// from students" title="What students said" lede="A few comments from course evaluations, in their words." />
+      <div class="grid grid--2 quote-grid">
+        {quotes.map((q) => (
+          <figure class="quote">
+            <blockquote>{q.q}</blockquote>
+            <figcaption>Course evaluation</figcaption>
+          </figure>
+        ))}
+      </div>
+
+      <hr />
+
+      <SectionHead eyebrow="// courses" title="Courses taught" />
+
+      <div class="course-block">
+        <h3>University of St. Thomas <span class="when">School of Engineering · 2020 to 2023</span></h3>
+        <ul class="course-list">
+          {CourseList(stthomas).map((c) => (
+            <li>
+              <span class="course-code">{c.code}</span>
+              <span class="course-main"><strong>{c.title}</strong>{c.desc && <span class="course-desc">{c.desc}</span>}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      <div class="course-block">
+        <h3>Bucknell University <span class="when">2019 to 2020</span></h3>
+        <ul class="course-list">
+          {CourseList(bucknell).map((c) => (
+            <li><span class="course-code">{c.code}</span><span class="course-main"><strong>{c.title}</strong></span></li>
+          ))}
+        </ul>
+      </div>
+
+      <div class="course-block">
+        <h3>North Dakota State University <span class="when">2015 to 2019</span></h3>
+        <ul class="course-list">
+          {CourseList(ndsu).map((c) => (
+            <li><span class="course-code">{c.code}</span><span class="course-main"><strong>{c.title}</strong></span></li>
+          ))}
+        </ul>
+      </div>
+
+      <hr />
+
+      <SectionHead eyebrow="// senior design" title="Senior design, in their own words" lede="One of my favorite parts of teaching was the senior design clinic. Here is a video the students made about their capstone project." />
+      <div class="video-embed">
+        <iframe
+          src="https://www.youtube-nocookie.com/embed/ti6J3CyEjhQ"
+          title="Senior design project, by my students"
+          loading="lazy"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+          referrerpolicy="strict-origin-when-cross-origin"
+          allowfullscreen
+        ></iframe>
+      </div>
+
+      <hr />
+
+      <SectionHead eyebrow="// beyond the classroom" title="Lab building and mentoring" as={3} />
+      <p class="muted prose">
+        At St. Thomas I served as the faculty advisor for a $500k-plus water resources engineering laboratory,
+        from the early planning through the build, and advised several undergraduate researchers in civil
+        engineering and computer science on hydrologic-modeling and data projects. If you are a student looking
+        for a project in this space, or a colleague looking for a guest lecture or workshop, send me an
+        <a href="mailto:mohsen.tahmasebi.n@gmail.com"> email</a>.
+      </p>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .teach-banner { margin: 0; border-radius: var(--radius); overflow: hidden; border: 1px solid var(--border-soft); background: var(--bg-elev); }
+  .teach-banner :global(img) { width: 100%; height: auto; display: block; }
+  .teach-banner figcaption { padding: 0.6rem 0.9rem; font-size: 0.82rem; color: var(--text-faint); border-top: 1px solid var(--border-soft); }
+
+  .yt { display: inline-flex; align-items: center; gap: 0.45rem; }
+  .yt :global(svg) { flex: none; }
+  .card-arrow.yt :global(svg):first-child { width: 16px; height: 16px; color: var(--accent); }
+
+  .quote {
+    margin: 0; padding: 1.25rem 1.35rem; border-radius: var(--radius);
+    background: var(--bg-elev); border: 1px solid var(--border-soft);
+    border-left: 3px solid var(--accent-line);
+  }
+  .quote blockquote { margin: 0 0 0.6rem; font-size: 1rem; line-height: 1.55; color: var(--text-dim); }
+  .quote blockquote::before { content: "\201C"; color: var(--accent); }
+  .quote blockquote::after  { content: "\201D"; color: var(--accent); }
+  .quote figcaption { font-size: 0.78rem; color: var(--text-faint); }
+
+  .course-block { margin-bottom: 2.2rem; }
+  .course-block:last-of-type { margin-bottom: 0; }
+  .course-block > h3 { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0.5rem 0.75rem; margin-bottom: 0.9rem; padding-bottom: 0.6rem; border-bottom: 1px solid var(--border-soft); }
+  .course-block .when { font: 600 0.7rem/1.4 var(--font-sans); letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-faint); }
+  .course-list { list-style: none; padding: 0; margin: 0; }
+  .course-list > li { display: grid; grid-template-columns: 110px 1fr; gap: 1rem; padding: 0.7rem 0; border-top: 1px solid var(--border-soft); align-items: start; }
+  .course-list > li:first-child { border-top: 0; }
+  .course-code { font: 650 0.8rem/1.6 var(--font-sans); letter-spacing: 0.02em; color: var(--accent); }
+  .course-main { display: flex; flex-direction: column; gap: 0.2rem; }
+  .course-main strong { font-weight: 650; }
+  .course-desc { color: var(--text-dim); font-size: 0.92rem; }
+  @media (max-width: 560px) { .course-list > li { grid-template-columns: 1fr; gap: 0.2rem; } }
+
+  .video-embed { position: relative; aspect-ratio: 16 / 9; border-radius: var(--radius); overflow: hidden; border: 1px solid var(--border-soft); background: #000; max-width: 860px; }
+  .video-embed iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+</style>

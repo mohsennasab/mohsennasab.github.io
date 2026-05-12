@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+# Sitemap: https://hydromohsen.com/sitemap-index.xml   (enabled in the content phase)

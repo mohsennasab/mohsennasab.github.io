@@ -1,0 +1,32 @@
+---
+interface Props {
+  title: string;
+  href?: string;
+  /** Small mono label shown above the title (e.g. a section index "01"). */
+  index?: string;
+  /** Optional tag chips. */
+  tags?: string[];
+}
+const { title, href, index, tags } = Astro.props;
+---
+
+<article class="card">
+  {index && <span class="idx">{index}</span>}
+  <h3>{href ? <a class="card-link" href={href}>{title}</a> : title}</h3>
+  <p><slot /></p>
+  {tags && tags.length > 0 && (
+    <div class="chips" style="margin-top:.6rem">
+      {tags.map((t) => <span class="chip">{t}</span>)}
+    </div>
+  )}
+  {href && (
+    <span class="card-foot"><span class="card-arrow">Open
+      <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M9 7h8v8"/></svg>
+    </span></span>
+  )}
+</article>
+
+<style>
+  .card h3 a { color: var(--text); }
+  .card h3 a:hover { color: var(--accent); text-decoration: none; }
+</style>
