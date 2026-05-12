@@ -33,7 +33,19 @@
       "Bash(ls src/pages/tutorials/)",
       "WebFetch(domain:www.youtube.com)",
       "Bash(git config *)",
-      "Bash(gh --version)"
+      "Bash(gh --version)",
+      "Bash(nslookup hydromohsen.com)",
+      "Bash(nslookup www.hydromohsen.com)",
+      "Bash(nslookup www.hydromohsen.com 8.8.8.8)",
+      "Bash(nslookup -type=CNAME www.hydromohsen.com 8.8.8.8)",
+      "Bash(curl -sS -I --max-time 20 https://hydromohsen.com)",
+      "Bash(curl -sS --max-time 20 https://hydromohsen.com)",
+      "Bash(curl -sS -I --max-time 20 https://www.hydromohsen.com)",
+      "Bash(curl -sS -I --max-time 20 https://mohsennasab.github.io)",
+      "Bash(curl -sS --max-time 20 https://mohsennasab.github.io)",
+      "PowerShell(ipconfig /flushdns)",
+      "PowerShell(Resolve-DnsName www.hydromohsen.com -ErrorAction SilentlyContinue)",
+      "PowerShell(Resolve-DnsName www.hydromohsen.com -Server 1.1.1.1 -ErrorAction SilentlyContinue)"
     ]
   }
 }
