@@ -25,3 +25,13 @@ Thumbs.db
 /Mohsen/
 /Photos/
 _convert_images.py
+_add_photos.py
+
+# local notes / docs; kept on disk but not published in the public repo
+/README.md
+/EDITING.md
+/DEPLOY.md
+
+# editor / tooling config
+/.claude/
+/.vscode/
