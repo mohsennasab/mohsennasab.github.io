@@ -2,7 +2,7 @@
 import Base from '../layouts/Base.astro';
 import PageHeader from '../components/PageHeader.astro';
 import SectionHead from '../components/SectionHead.astro';
-import headerBg from '../assets/photos/photo-15.jpg';
+import headerBg from '../assets/photos/photo-28.jpg';
 
 type Proj = { title: string; client: string; years: string; body: string; tools?: string[]; link?: { label: string; href: string } };
 
@@ -49,8 +49,8 @@ const state: Proj[] = [
   {
     title: 'Design-support technical reviews for a statewide flood program',
     client: 'State client', years: '2024 to 2026',
-    body: 'As a technical reviewer for the program design-support track, I checked that consultant technical reports actually met community needs, such as channel improvements and detention-pond studies, and gave detailed feedback on both the modeling approach and the writing. I have reviewed more than 20 reports built with tools like SRH-2D, HEC-RAS (1D and 2D), and HEC-HMS.',
-    tools: ['SRH-2D', 'HEC-RAS', 'HEC-HMS', 'QA review'],
+    body: 'As a technical reviewer for the program design-support track, I checked that consultant technical reports actually met community needs, such as channel improvements and detention-pond studies, and gave detailed feedback on both the modeling approach and the writing. I have reviewed more than 20 reports built with tools like HEC-RAS (1D and 2D), and HEC-HMS.',
+    tools: ['HEC-RAS', 'HEC-HMS', 'QA review'],
   },
   {
     title: 'Slope-classification automation for a transportation department',
@@ -115,7 +115,7 @@ const research: Proj[] = [
   },
 ];
 
-const stack = ['HEC-RAS (1D and 2D)', 'HEC-HMS', 'SWMM', 'SRH-2D', 'InfoWorks ICM', 'SWAT', 'ArcGIS Pro', 'Python', 'LiDAR / DEM analysis', 'large language models'];
+const stack = ['HEC-RAS (1D and 2D)', 'HEC-HMS', 'SWMM', 'InfoWorks ICM', 'SWAT', 'ArcGIS Pro', 'Python', 'LiDAR / DEM analysis', 'large language models'];
 
 function rows(p: Proj[]) { return p; }
 ---

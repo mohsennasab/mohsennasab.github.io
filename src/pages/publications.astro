@@ -1,8 +1,10 @@
 ---
+import { Image } from 'astro:assets';
 import Base from '../layouts/Base.astro';
 import PageHeader from '../components/PageHeader.astro';
 import SectionHead from '../components/SectionHead.astro';
-import headerBg from '../assets/photos/photo-01.jpg';
+import headerBg from '../assets/photos/photo-05.jpg';
+import macroHyprosFig from '../assets/photos/Macro-HyProS.jpg';
 
 const SCHOLAR_URL = 'https://scholar.google.com/citations?user=WzJw2KIAAAAJ&hl=en';
 const scholarSearch = (title: string) => `https://scholar.google.com/scholar?q=${encodeURIComponent(title)}`;
@@ -97,47 +99,13 @@ function PubRow(p: Pub) {
           </div>
         </div>
         <figure class="mh-figure">
-          <svg class="mh-svg" viewBox="0 0 480 376" role="img" aria-label="The LEGO-fashion structure of Macro-HyProS: bricks on blocks on a plate" xmlns="http://www.w3.org/2000/svg">
-            <defs>
-              <pattern id="mhStudsGrey" width="15" height="15" patternUnits="userSpaceOnUse"><circle cx="7.5" cy="7.5" r="3" fill="rgba(255,255,255,.13)" /></pattern>
-              <pattern id="mhStuds" width="14" height="14" patternUnits="userSpaceOnUse"><circle cx="7" cy="7" r="3" fill="rgba(255,255,255,.22)" /></pattern>
-            </defs>
-            <!-- exploded connectors -->
-            <g class="conn" stroke-width="1.4" stroke-dasharray="3 4" fill="none">
-              <path d="M198 102 V158" /><path d="M250 102 V158" />
-              <path d="M120 206 V270" /><path d="M312 206 V270" />
-            </g>
-            <!-- Plate -->
-            <rect x="30" y="296" width="360" height="20" rx="5" fill="#3f5360" />
-            <rect x="30" y="270" width="360" height="30" rx="6" fill="#5b7385" />
-            <rect x="36" y="274" width="348" height="22" rx="3" fill="url(#mhStudsGrey)" />
-            <!-- Blocks: red / green / blue -->
-            <g>
-              <rect x="42"  y="204" width="112" height="14" rx="4" fill="#b06a6a" />
-              <rect x="42"  y="166" width="112" height="40" rx="6" fill="#d98a8a" />
-              <rect x="48"  y="170" width="100" height="20" rx="3" fill="url(#mhStuds)" />
-              <rect x="158" y="204" width="112" height="14" rx="4" fill="#5e9c6b" />
-              <rect x="158" y="166" width="112" height="40" rx="6" fill="#84c08e" />
-              <rect x="164" y="170" width="100" height="20" rx="3" fill="url(#mhStuds)" />
-              <rect x="274" y="204" width="112" height="14" rx="4" fill="#5b8fc0" />
-              <rect x="274" y="166" width="112" height="40" rx="6" fill="#88bdf2" />
-              <rect x="280" y="170" width="100" height="20" rx="3" fill="url(#mhStuds)" />
-            </g>
-            <!-- Bricks on the green block -->
-            <g>
-              <rect x="178" y="100" width="54" height="12" rx="3.5" fill="#73b07e" />
-              <rect x="178" y="72" width="54" height="32" rx="5" fill="#9bd0a3" />
-              <rect x="183" y="76" width="44" height="16" rx="3" fill="url(#mhStuds)" />
-              <rect x="230" y="100" width="54" height="12" rx="3.5" fill="#73b07e" />
-              <rect x="230" y="72" width="54" height="32" rx="5" fill="#9bd0a3" />
-              <rect x="235" y="76" width="44" height="16" rx="3" fill="url(#mhStuds)" />
-            </g>
-            <!-- leader lines + labels -->
-            <g class="lead" stroke-width="1.4" fill="none"><path d="M284 86 H410" /><path d="M386 186 H410" /><path d="M390 286 H410" /></g>
-            <g class="dot"><circle cx="284" cy="86" r="3.6" /><circle cx="386" cy="186" r="3.6" /><circle cx="390" cy="286" r="3.6" /></g>
-            <g class="lbl"><text x="416" y="90">BRICKS</text><text x="416" y="190">BLOCKS</text><text x="416" y="290">PLATE</text></g>
-          </svg>
-          <figcaption>Macro-HyProS represents each grid as a "plate" carrying stacked land-use "blocks" and "bricks" (after Fig. 1 of the Journal of Hydrology paper).</figcaption>
+          <Image
+            src={macroHyprosFig}
+            alt="The LEGO-fashion structure of Macro-HyProS: land-use bricks on red, green, and blue blocks on a plate, exploded above the grid layers and the terrain surface"
+            widths={[360, 540, 720]}
+            sizes="(max-width: 860px) 100vw, 380px"
+          />
+          <figcaption>Macro-HyProS represents each grid as a "plate" carrying stacked land-use "blocks" and "bricks" (Fig. 1 of the Journal of Hydrology paper).</figcaption>
         </figure>
       </article>
     </div>
@@ -230,10 +198,10 @@ function PubRow(p: Pub) {
   .mh-body h2 { font-size: clamp(1.6rem, 1.2rem + 1.4vw, 2.2rem); margin-bottom: 0.6rem; }
   .mh-body > p { margin-bottom: 1rem; }
   .mh-figure { margin: 0; }
-  .mh-svg { width: 100%; height: auto; display: block; }
-  .mh-svg .conn { stroke: var(--border); }
-  .mh-svg .lead { stroke: var(--accent-line); }
-  .mh-svg .dot { fill: var(--accent); }
-  .mh-svg .lbl text { font: 650 13px/1 var(--font-sans); letter-spacing: 0.14em; fill: var(--text-faint); }
+  .mh-figure :global(img) {
+    width: 100%; height: auto; display: block;
+    border-radius: var(--radius-sm); border: 1px solid var(--border-soft);
+    background: #f4f6fa; padding: clamp(0.6rem, 2vw, 1.1rem);
+  }
   .mh-figure figcaption { margin-top: 0.7rem; font-size: 0.8rem; color: var(--text-faint); line-height: 1.5; }
 </style>

@@ -45,7 +45,13 @@
       "Bash(curl -sS --max-time 20 https://mohsennasab.github.io)",
       "PowerShell(ipconfig /flushdns)",
       "PowerShell(Resolve-DnsName www.hydromohsen.com -ErrorAction SilentlyContinue)",
-      "PowerShell(Resolve-DnsName www.hydromohsen.com -Server 1.1.1.1 -ErrorAction SilentlyContinue)"
+      "PowerShell(Resolve-DnsName www.hydromohsen.com -Server 1.1.1.1 -ErrorAction SilentlyContinue)",
+      "Bash(nslookup www.hydromohsen.com 1.1.1.1)",
+      "Bash(timeout 20 openssl s_client -connect 185.199.108.153:443 -servername www.hydromohsen.com)",
+      "Bash(openssl x509 *)",
+      "Bash(timeout 20 openssl s_client -connect 185.199.108.153:443 -servername hydromohsen.com)",
+      "Bash(curl -sS --max-time 20 \"https://api.github.com/repos/mohsennasab/mohsennasab.github.io/pages\")",
+      "Bash(curl -sS -I --max-time 20 --resolve www.hydromohsen.com:443:185.199.108.153 https://www.hydromohsen.com)"
     ]
   }
 }
