@@ -303,18 +303,104 @@ const ghIcon = '<svg viewBox="0 0 24 24" width="15" height="15" fill="currentCol
       <SectionHead
         eyebrow="// method 03"
         title="SCS Curve Number Generator (web app)"
-        lede="If you do not want to install anything, the same workflow is available as a Python web app I built. Upload a watershed boundary, pick the data sources, and get a CN map back in seconds."
+        lede="A code-first alternative if you would rather work in Python than click through ArcGIS Pro. Provide your soil and land-use vector files (and optionally a watershed boundary), and the app builds the CN map and the statistics that go with it. Runs locally in the browser."
       />
-      <div class="webapp-card">
-        <div>
-          <h3 style="margin-bottom:.4rem">CN_Generator</h3>
-          <p class="muted">A Gradio app that takes a watershed boundary, fetches the supporting soil and land use data, and produces a CN map and the zonal summaries that go with it. Free and open source.</p>
-          <div class="chips" style="margin:1rem 0">
-            <span class="chip">Python</span><span class="chip">Gradio</span><span class="chip">runs in the browser</span><span class="chip">open source</span>
+
+      <article class="webapp">
+        <!-- Header row: name + short blurb + CTA -->
+        <header class="webapp-head">
+          <div class="webapp-intro">
+            <h3>CN_Generator</h3>
+            <p class="muted">
+              Open-source Python web app built around the standard NRCS Curve Number methodology and the USACE HEC-HMS
+              guidance for spatial CN assignment. Drop in your soil and land-use layers, choose a lookup table, and the
+              app handles CRS alignment, dual-group resolution, the spatial overlay, raster export, and zonal
+              statistics. The whole thing runs locally; nothing is uploaded to a remote service.
+            </p>
+            <div class="chips" style="margin-top:.9rem">
+              <span class="chip">Python 3.11+</span><span class="chip">Gradio</span><span class="chip">runs in the browser</span><span class="chip">free, open source</span>
+            </div>
           </div>
-          <a class="btn btn--primary" href={CN_GENERATOR_REPO} target="_blank" rel="noopener"><span set:html={ghIcon} /> View on GitHub</a>
+          <a class="btn btn--primary webapp-btn" href={CN_GENERATOR_REPO} target="_blank" rel="noopener"><span set:html={ghIcon} /> View on GitHub</a>
+        </header>
+
+        <!-- What it does -->
+        <div class="webapp-block">
+          <h4 class="webapp-sub"><span class="webapp-sub-mark">01</span> What it does</h4>
+          <ul class="webapp-feats">
+            <li><strong>Aligns coordinate systems automatically</strong> across the soil and land-use layers, so you do not have to reproject anything by hand.</li>
+            <li><strong>Resolves dual hydrologic groups</strong> (A/D, B/D, C/D) into the more restrictive group, the standard convention.</li>
+            <li><strong>Spatially intersects soil and land use</strong> and assigns a Curve Number to every polygon from a built-in NLCD lookup table (or your own CSV).</li>
+            <li><strong>Computes zonal statistics per watershed</strong> when a boundary is provided: area-weighted CN, mean, min, max, and counts.</li>
+            <li><strong>Builds an interactive Folium map</strong> with tooltips and a runoff-potential legend so you can sanity-check the result in the browser.</li>
+            <li><strong>Exports clean files</strong>: a GeoPackage of CN polygons, a GeoTIFF raster ready for HEC-HMS or HEC-RAS, an HTML report, and an optional Excel summary.</li>
+          </ul>
         </div>
-      </div>
+
+        <!-- Inputs and outputs -->
+        <div class="webapp-block webapp-io">
+          <div>
+            <h4 class="webapp-sub"><span class="webapp-sub-mark">02</span> What it expects</h4>
+            <ul class="io-list">
+              <li><strong>Soil vector</strong> with a hydrologic soil group field</li>
+              <li><strong>Land-use vector</strong> with a numeric class code field</li>
+              <li><strong>Watershed boundary</strong> <span class="faint">(optional, for zonal statistics)</span></li>
+              <li><strong>Formats</strong>: zip-compressed Shapefile, GeoPackage, or GeoJSON</li>
+              <li><strong>Custom CSV lookup</strong> <span class="faint">(optional, otherwise uses the built-in NLCD table)</span></li>
+            </ul>
+          </div>
+          <div>
+            <h4 class="webapp-sub"><span class="webapp-sub-mark">03</span> What it returns</h4>
+            <ul class="io-list">
+              <li><strong>GeoPackage</strong> of CN polygons</li>
+              <li><strong>GeoTIFF raster</strong>, the CN map ready for any downstream model</li>
+              <li><strong>HTML report</strong> with overall statistics</li>
+              <li><strong>Interactive Folium map</strong> with legend and tooltips</li>
+              <li><strong>Excel summary</strong> of watershed-level stats <span class="faint">(optional)</span></li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Built with -->
+        <div class="webapp-block">
+          <h4 class="webapp-sub"><span class="webapp-sub-mark">04</span> Built with</h4>
+          <p class="muted" style="margin-bottom:1rem">
+            Python 3.11+ and a small set of well-tested geospatial libraries. The pinned versions live in
+            <code>requirements.txt</code>; the table below highlights the ones doing the real work.
+          </p>
+          <div class="lib-grid">
+            <div class="lib"><span class="lib-name">Gradio</span><span class="lib-role">browser UI, the form handling, and the local dev server</span></div>
+            <div class="lib"><span class="lib-name">GeoPandas</span><span class="lib-role">spatial vector dataframes, joins, and overlays</span></div>
+            <div class="lib"><span class="lib-name">Shapely + pyogrio + Fiona</span><span class="lib-role">geometry operations and vector file I/O</span></div>
+            <div class="lib"><span class="lib-name">Rasterio + rioxarray</span><span class="lib-role">writing the GeoTIFF output raster</span></div>
+            <div class="lib"><span class="lib-name">rasterstats</span><span class="lib-role">zonal statistics per watershed</span></div>
+            <div class="lib"><span class="lib-name">Folium + leafmap</span><span class="lib-role">the interactive Leaflet map in the browser</span></div>
+            <div class="lib"><span class="lib-name">pandas + NumPy</span><span class="lib-role">tables, arrays, the lookup table merge</span></div>
+            <div class="lib"><span class="lib-name">dask + dask-geopandas</span><span class="lib-role">parallel processing for larger study areas</span></div>
+            <div class="lib"><span class="lib-name">WhiteboxTools</span><span class="lib-role">auxiliary geospatial operations</span></div>
+          </div>
+        </div>
+
+        <!-- Run it locally -->
+        <div class="webapp-block">
+          <h4 class="webapp-sub"><span class="webapp-sub-mark">05</span> Run it locally</h4>
+          <pre class="webapp-code"><code>git clone https://github.com/mohsennasab/CN_Generator.git
+cd CN_Generator
+python -m venv .venv
+.venv\Scripts\activate           # on Windows
+# source .venv/bin/activate      # on macOS or Linux
+pip install -r requirements.txt
+python app.py</code></pre>
+          <p class="faint" style="font-size:.85rem;margin-top:.7rem">
+            Gradio opens in your default browser at <code>http://127.0.0.1:7860</code>. Drop in the soil, land-use, and
+            (optionally) watershed files, set the lookup table, and the CN map is generated in seconds.
+          </p>
+          <div class="archydro-cta">
+            <a class="btn btn--primary" href={CN_GENERATOR_REPO} target="_blank" rel="noopener"><span set:html={ghIcon} /> Open the repository on GitHub</a>
+            <span class="faint" style="font-size:.85rem">Stars and contributions welcome.</span>
+          </div>
+        </div>
+      </article>
     </div>
   </section>
 
@@ -479,9 +565,78 @@ const ghIcon = '<svg viewBox="0 0 24 24" width="15" height="15" fill="currentCol
   .example figcaption { margin-top: 0.6rem; font-size: 0.82rem; color: var(--text-faint); line-height: 1.5; }
 
   /* Web app card */
-  .webapp-card { max-width: 760px; padding: clamp(1.3rem, 3.5vw, 2rem); border: 1px solid var(--border); border-radius: var(--radius);
-    background: radial-gradient(420px 220px at 100% 0%, var(--accent-soft), transparent 70%), var(--bg-elev); }
-  .webapp-card h3 { font-size: 1.3rem; }
+  .webapp {
+    max-width: 920px; padding: clamp(1.4rem, 3.8vw, 2.2rem);
+    border: 1px solid var(--border); border-radius: var(--radius);
+    background: radial-gradient(560px 320px at 100% 0%, var(--accent-soft), transparent 70%), var(--bg-elev);
+  }
+  .webapp-head { display: grid; grid-template-columns: 1fr auto; gap: 1.4rem; align-items: start; margin-bottom: 1.6rem; padding-bottom: 1.4rem; border-bottom: 1px solid var(--border-soft); }
+  @media (max-width: 700px) { .webapp-head { grid-template-columns: 1fr; } }
+  .webapp-intro h3 { font-size: clamp(1.35rem, 1.05rem + 1.2vw, 1.7rem); margin-bottom: 0.4rem; }
+  .webapp-intro .muted { color: var(--text-dim); margin: 0; }
+  .webapp-btn { align-self: start; flex: none; }
+
+  .webapp-block { margin-top: 1.8rem; }
+  .webapp-block:first-of-type { margin-top: 0; }
+
+  .webapp-sub {
+    display: inline-flex; align-items: center; gap: 0.55rem;
+    font-size: 1.02rem; font-weight: 650;
+    margin-bottom: 0.8rem;
+  }
+  .webapp-sub-mark {
+    font: 700 0.66rem/1 var(--font-sans); letter-spacing: 0.16em;
+    padding: 0.32rem 0.5rem; border-radius: 6px;
+    color: var(--accent-ink);
+    background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  }
+
+  .webapp-feats { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.7rem 1.2rem; }
+  @media (max-width: 720px) { .webapp-feats { grid-template-columns: 1fr; } }
+  .webapp-feats > li {
+    position: relative; padding-left: 1.4rem;
+    color: var(--text-dim); font-size: 0.95rem; line-height: 1.5;
+  }
+  .webapp-feats > li::before {
+    content: ""; position: absolute; left: 0; top: 0.55em;
+    width: 8px; height: 8px; border-radius: 2px;
+    background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  }
+  .webapp-feats strong { color: var(--text); font-weight: 650; }
+
+  .webapp-io { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(1.4rem, 4vw, 2.4rem); }
+  @media (max-width: 720px) { .webapp-io { grid-template-columns: 1fr; } }
+  .io-list { list-style: none; padding: 0; margin: 0; }
+  .io-list > li {
+    padding: 0.5rem 0; border-top: 1px solid var(--border-soft);
+    color: var(--text-dim); font-size: 0.93rem;
+  }
+  .io-list > li:first-child { border-top: 0; padding-top: 0; }
+  .io-list strong { color: var(--text); font-weight: 650; }
+
+  .lib-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.7rem; }
+  @media (max-width: 720px) { .lib-grid { grid-template-columns: 1fr; } }
+  .lib {
+    display: flex; flex-direction: column; gap: 0.2rem;
+    padding: 0.7rem 0.9rem;
+    border: 1px solid var(--border-soft); border-radius: var(--radius-sm);
+    background: var(--bg-elev-2);
+    transition: border-color .15s var(--ease);
+  }
+  .lib:hover { border-color: var(--accent-line); }
+  .lib-name { font: 650 0.86rem/1.2 var(--font-mono); color: var(--text); letter-spacing: 0.01em; }
+  .lib-role { font-size: 0.82rem; color: var(--text-dim); line-height: 1.45; }
+
+  .webapp-code {
+    margin: 0; padding: 1rem 1.15rem;
+    border: 1px solid var(--border-soft); border-radius: var(--radius-sm);
+    background: var(--bg-elev-2);
+    font: 500 0.84rem/1.6 var(--font-mono);
+    color: var(--text);
+    overflow-x: auto;
+    white-space: pre;
+  }
+  .webapp-code code { background: transparent; border: 0; padding: 0; font-size: inherit; color: inherit; }
 
   /* Resources (single + multi-video) */
   .resource-list { display: flex; flex-direction: column; gap: clamp(1.6rem, 4vw, 2.6rem); }
