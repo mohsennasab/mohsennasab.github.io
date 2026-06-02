@@ -1,0 +1,400 @@
+---
+import { Image } from 'astro:assets';
+import Base from '../layouts/Base.astro';
+import SectionHead from '../components/SectionHead.astro';
+import watershedBanner from '../assets/Watershed.png';
+import headerBg from '../assets/photos/photo-54.jpg';
+
+const ARCHYDRO_URL = 'https://www.esri.com/en-us/industries/water-resources/arc-hydro/downloads';
+const MAIN_VIDEO = '06q7_90tk54';
+
+// Helpers
+const toSec = (t: string) => {
+  const parts = t.split(':').map((n) => Number(n));
+  if (parts.length === 2) return parts[0] * 60 + parts[1];
+  if (parts.length === 3) return parts[0] * 3600 + parts[1] * 60 + parts[2];
+  return 0;
+};
+const pad = (n: number) => (n < 10 ? `0${n}` : String(n));
+const normalize = (t: string) => {
+  const parts = t.split(':').map((n) => Number(n));
+  return parts.map(pad).join(':');
+};
+
+// The five canonical steps of watershed delineation
+const steps = [
+  {
+    title: 'Get a digital elevation model (DEM)',
+    body: 'A DEM is a grid of land-surface elevations. It is the foundation of any watershed analysis because it tells you the shape of the terrain and, from that, where water can flow.',
+  },
+  {
+    title: 'Compute flow direction',
+    body: 'From the DEM, work out which way water moves from every cell to its lowest neighbor. The result is a grid where each cell points to the next cell water would flow into.',
+  },
+  {
+    title: 'Compute flow accumulation',
+    body: 'Add up, for every cell, how many upstream cells drain into it. High accumulation values trace out the stream network; low values are the ridges and hillslopes.',
+  },
+  {
+    title: 'Trace the watershed boundary from an outlet',
+    body: 'Pick an outlet point (a stream gage, a bridge, a culvert) and walk the flow grid back uphill. The catchment is every cell whose water eventually passes through that outlet.',
+  },
+  {
+    title: 'Refine for lakes, reservoirs, and structures',
+    body: 'The first pass assumes natural flow. Refine the boundary where lakes, reservoirs, levees, road embankments, or other structures change how water actually moves.',
+  },
+];
+
+// Chapter timestamps for the main ArcHydro video
+const chapters = [
+  { time: '1:31', title: 'Download ArcHydro for ArcGIS Pro' },
+  { time: '2:52', title: 'Fill Sinks' },
+  { time: '5:16', title: 'Flow Direction' },
+  { time: '6:36', title: 'Flow Accumulation' },
+  { time: '7:54', title: 'Stream Definition' },
+  { time: '10:03', title: 'Stream Segmentation' },
+  { time: '11:00', title: 'Catchment Grid Delineation' },
+  { time: '12:17', title: 'Catchment Polygon Processing' },
+  { time: '13:12', title: 'Drainage Line Processing' },
+  { time: '15:07', title: 'Adjoint Catchment Processing' },
+  { time: '16:02', title: 'Create Outlet Point' },
+  { time: '19:05', title: 'Point Delineator' },
+];
+
+// Related videos
+const related = [
+  { id: '4Am8yHPSmhw', title: 'Watershed delineation with the ArcGIS Pro built-in tools' },
+  { id: '8_D49nGmO-Y', title: 'Download and process soil data for your watershed' },
+  { id: 'QI8xbipsY2A', title: 'Download and process land use and land cover data for your watershed' },
+];
+
+const dlIcon = '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>';
+const playIcon = '<svg viewBox="0 0 24 24" width="13" height="13" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>';
+---
+
+<Base
+  title="Where Water Meets Earth: a visual journey of watershed delineation"
+  description="A short visual tour of how watershed delineation works, plus a step-by-step ArcGIS Pro and ArcHydro walk-through, by Dr. Mohsen Tahmasebi Nasab."
+>
+  <!-- Header with faded photo-54 background -->
+  <section class="page-header has-bg">
+    <Image
+      class="ph-bg"
+      src={headerBg}
+      alt=""
+      aria-hidden="true"
+      loading="eager"
+      widths={[800, 1200, 1800]}
+      sizes="100vw"
+      style="object-position:center 40%"
+    />
+    <div class="ph-bg-fade" aria-hidden="true"></div>
+    <div class="wrap ph-inner">
+      <a class="back-link" href="/tutorials">← Tutorials</a>
+      <span class="eyebrow" style="margin-top:.6rem">// visual journey</span>
+      <h1>Where Water Meets Earth</h1>
+      <p class="hero-sub">A visual journey of watershed delineation</p>
+      <p class="lede">
+        A short tour of how watershed delineation actually works, end to end, followed by a
+        chaptered video walk-through in ArcGIS Pro using ArcHydro. By the end you should be able to
+        sit down with a DEM, an outlet point, and the right tools, and produce a defensible
+        watershed boundary.
+      </p>
+    </div>
+  </section>
+
+  <!-- Featured banner + intro -->
+  <section class="section section--tight">
+    <div class="wrap">
+      <article class="featured">
+        <figure class="fc-banner">
+          <Image
+            src={watershedBanner}
+            alt="A satellite view of a watershed with the drainage network in blue and the basin boundary outlined"
+            widths={[700, 1100, 1500]}
+            sizes="(max-width: 960px) 100vw, 920px"
+            loading="eager"
+          />
+        </figure>
+        <div class="featured-body">
+          <span class="eyebrow">// what is watershed delineation?</span>
+          <p class="lead">
+            Watershed delineation is the process of identifying and mapping the boundary of a
+            watershed: the patch of land where every drop of surface water drains to one common
+            outlet such as a stream gage, a bridge, a lake, or the ocean. The boundary is set by
+            topography. Water moves downhill, so once you know the shape of the land you can work
+            out where the catchment line lies.
+          </p>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <!-- The five steps -->
+  <section class="section">
+    <div class="wrap">
+      <SectionHead
+        eyebrow="// the process"
+        title="How watershed delineation works"
+        lede="Five steps. The first four are the math; the fifth is the cleanup."
+      />
+      <ol class="steps">
+        {steps.map((s, i) => (
+          <li class="step">
+            <span class="step-n">{String(i + 1).padStart(2, '0')}</span>
+            <div class="step-body">
+              <h3>{s.title}</h3>
+              <p>{s.body}</p>
+            </div>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </section>
+
+  <!-- Why it matters -->
+  <section class="section">
+    <div class="wrap prose">
+      <SectionHead eyebrow="// why it matters" title="Why we delineate" as={3} />
+      <p class="muted">
+        Watershed delineation underpins a lot of environmental management and planning work: flood
+        risk assessment, water quality monitoring, erosion control, infrastructure design, and
+        land-use planning. If you can name the catchment for a given point, you can reason about
+        what drains there, how fast, and what changes upstream will do to it. GIS software and
+        hydrologic models make the process routine; the concepts behind it are pure physical
+        hydrology.
+      </p>
+    </div>
+  </section>
+
+  <!-- ArcHydro walk-through -->
+  <section class="section">
+    <div class="wrap">
+      <SectionHead
+        eyebrow="// archydro walk-through"
+        title="Watershed delineation with ArcHydro in ArcGIS Pro"
+        lede="ArcHydro is a free Esri toolset for water resources analysis in ArcGIS. It bundles the operations you need for watershed delineation into one workflow."
+      />
+      <p class="muted prose" style="margin-bottom:1.6rem">
+        The video below walks through every step from the raw DEM to a clean watershed boundary,
+        with timestamps for each tool. The chapter index under the video links straight to the
+        corresponding moment, so you can jump to whichever step you need.
+      </p>
+
+      <div class="video-stage">
+        <div class="video-embed">
+          <iframe
+            id="watershed-video"
+            data-watershed-video
+            data-base-src={`https://www.youtube-nocookie.com/embed/${MAIN_VIDEO}`}
+            src={`https://www.youtube-nocookie.com/embed/${MAIN_VIDEO}`}
+            title="Watershed delineation with ArcHydro in ArcGIS Pro"
+            loading="lazy"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            referrerpolicy="strict-origin-when-cross-origin"
+            allowfullscreen
+          ></iframe>
+        </div>
+
+        <ol class="chapters" aria-label="Chapter timestamps">
+          {chapters.map((c) => (
+            <li>
+              <a
+                class="chapter"
+                href={`https://youtu.be/${MAIN_VIDEO}?t=${toSec(c.time)}s`}
+                data-seek={String(toSec(c.time))}
+                target="_blank"
+                rel="noopener"
+              >
+                <span class="chapter-play" aria-hidden="true" set:html={playIcon} />
+                <span class="chapter-time">{normalize(c.time)}</span>
+                <span class="chapter-label">{c.title}</span>
+              </a>
+            </li>
+          ))}
+        </ol>
+      </div>
+
+      <div class="archydro-cta">
+        <a class="btn btn--primary" href={ARCHYDRO_URL} target="_blank" rel="noopener">
+          <span set:html={dlIcon} /> Download ArcHydro from Esri
+        </a>
+        <span class="faint" style="font-size:.85rem">Free; requires ArcGIS Pro.</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Related videos in a 3-col matrix per the multi-video rule -->
+  <section class="section">
+    <div class="wrap">
+      <SectionHead
+        eyebrow="// related videos"
+        title="Useful companions"
+        lede="A few short videos that pair well with this workflow. The Curve Numbers and design rainfall sit alongside the catchment on the Getting Started with HEC-HMS page."
+      />
+      <div class={`vid-grid vid-grid--${related.length}`} aria-label="Related videos">
+        {related.map((v) => (
+          <figure class="vid-cell">
+            <div class="video-embed">
+              <iframe
+                src={`https://www.youtube-nocookie.com/embed/${v.id}`}
+                title={v.title}
+                loading="lazy"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                referrerpolicy="strict-origin-when-cross-origin"
+                allowfullscreen
+              ></iframe>
+            </div>
+            <figcaption>{v.title}</figcaption>
+          </figure>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer pointer -->
+  <section class="section section--tight">
+    <div class="wrap">
+      <p class="faint prose" style="font-size:.9rem">
+        Questions on a specific step, or a topic to cover next? <a href="mailto:mohsen.tahmasebi.n@gmail.com">Email me</a>.
+        More tutorials are on the <a href="/tutorials">tutorials page</a>, and recorded course
+        lectures are on the <a href="/teaching">teaching page</a>.
+      </p>
+      <p style="margin-top:1.2rem"><a class="btn" href="/tutorials">← Back to all tutorials</a></p>
+    </div>
+  </section>
+
+  <!-- Chapter seek: click a chapter to load the iframe at that timestamp -->
+  <script is:inline>
+    (function () {
+      if (window.__chapterSeekInit) return;
+      window.__chapterSeekInit = true;
+      document.addEventListener('click', function (e) {
+        var t = e.target instanceof Element ? e.target : null;
+        var link = t && t.closest('[data-seek]');
+        if (!link) return;
+        var iframe = document.querySelector('[data-watershed-video]');
+        if (!iframe) return;
+        e.preventDefault();
+        var seek = link.getAttribute('data-seek') || '0';
+        var base = iframe.getAttribute('data-base-src') || iframe.src.split('?')[0];
+        iframe.src = base + '?start=' + seek + '&autoplay=1';
+        iframe.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      });
+    })();
+  </script>
+</Base>
+
+<style>
+  /* Header with faded photo background */
+  .page-header { padding-top: clamp(2.6rem, 6vw, 4rem); padding-bottom: clamp(1.2rem, 3.5vw, 2rem); }
+  .page-header.has-bg {
+    position: relative; overflow: hidden;
+    padding-top: clamp(4.5rem, 11vw, 7.5rem);
+    padding-bottom: clamp(3.2rem, 7.5vw, 5rem);
+  }
+  .ph-bg {
+    position: absolute; inset: 0; width: 100%; height: 100%;
+    object-fit: cover; z-index: 0; opacity: 0.50; filter: saturate(0.95);
+  }
+  :global([data-theme='light']) .ph-bg { opacity: 0.6; }
+  .ph-bg-fade {
+    position: absolute; inset: 0; z-index: 0;
+    background:
+      linear-gradient(180deg, color-mix(in oklab, var(--bg) 32%, transparent), var(--bg) 96%),
+      linear-gradient(95deg, color-mix(in oklab, var(--bg) 48%, transparent), transparent 60%),
+      radial-gradient(720px 320px at 86% -8%, var(--accent-soft), transparent 70%);
+  }
+  .ph-inner { position: relative; z-index: 1; }
+  .page-header h1 { font-size: clamp(2.3rem, 1.5rem + 3vw, 3.7rem); margin-bottom: 0.35rem; }
+  .hero-sub { font-family: var(--font-head); font-weight: 550; font-size: clamp(1.1rem, 0.95rem + 0.55vw, 1.45rem); color: var(--text-dim); margin-bottom: 1rem; letter-spacing: -0.005em; }
+  .page-header .lede { font-size: 1.1rem; color: var(--text-dim); max-width: 66ch; }
+  .back-link { display: inline-block; font: 600 0.82rem/1 var(--font-sans); color: var(--text-faint); }
+  .back-link:hover { color: var(--accent); text-decoration: none; }
+
+  /* Featured banner block (same shape as Python Fundamentals / HEC-HMS featured) */
+  .featured {
+    display: flex; flex-direction: column; gap: clamp(1.2rem, 3vw, 1.8rem);
+    max-width: 920px; margin-inline: auto;
+    border: 1px solid var(--border); border-radius: var(--radius);
+    padding: clamp(1.2rem, 3.2vw, 1.8rem);
+    background: radial-gradient(480px 240px at 100% 0%, var(--accent-soft), transparent 70%), var(--bg-elev);
+  }
+  .fc-banner { margin: 0; border-radius: var(--radius-sm); overflow: hidden; border: 1px solid var(--border-soft); background: #14202c; }
+  .fc-banner :global(img) { width: 100%; height: auto; display: block; }
+  .featured-body { padding-inline: clamp(0.2rem, 1vw, 0.6rem); }
+  .featured-body .lead { color: var(--text-dim); margin-top: 0.5rem; }
+
+  /* Steps */
+  .steps { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 1rem; }
+  .step {
+    display: grid; grid-template-columns: 60px 1fr; gap: 1.1rem; align-items: start;
+    padding: 1.15rem 1.25rem;
+    border: 1px solid var(--border-soft); border-radius: var(--radius);
+    background: var(--bg-elev);
+    transition: border-color .2s var(--ease);
+  }
+  .step:hover { border-color: var(--accent-line); }
+  .step-n {
+    font: 700 1.05rem/1 var(--font-sans); letter-spacing: 0.06em;
+    color: var(--accent-ink);
+    background: linear-gradient(135deg, var(--accent), var(--accent-2));
+    border-radius: 9px;
+    padding: 0.7rem 0.55rem; text-align: center; align-self: start;
+    box-shadow: 0 6px 18px var(--glow);
+  }
+  .step-body h3 { font-size: 1.08rem; margin-bottom: 0.3rem; }
+  .step-body p { color: var(--text-dim); margin: 0; }
+  @media (max-width: 540px) { .step { grid-template-columns: 1fr; } .step-n { justify-self: start; padding: 0.5rem 0.7rem; font-size: 0.85rem; } }
+
+  /* ArcHydro video + chapters */
+  .video-stage { display: grid; grid-template-columns: 1.4fr 1fr; gap: clamp(1rem, 2.5vw, 1.6rem); align-items: start; max-width: 1080px; }
+  @media (max-width: 880px) { .video-stage { grid-template-columns: 1fr; } }
+
+  .video-embed { position: relative; aspect-ratio: 16 / 9; border-radius: var(--radius-sm); overflow: hidden; border: 1px solid var(--border-soft); background: #000; max-width: 100%; }
+  .video-embed iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+
+  .chapters {
+    list-style: none; padding: 0.5rem 0; margin: 0;
+    max-height: 420px; overflow-y: auto;
+    border: 1px solid var(--border-soft); border-radius: var(--radius);
+    background: var(--bg-elev);
+  }
+  .chapters > li { margin: 0; }
+  .chapter {
+    display: grid; grid-template-columns: 22px 56px 1fr; gap: 0.55rem; align-items: center;
+    padding: 0.55rem 0.85rem;
+    color: var(--text-dim); text-decoration: none;
+    border-top: 1px solid var(--border-soft);
+    transition: background .15s, color .15s;
+  }
+  .chapters > li:first-child .chapter { border-top: 0; }
+  .chapter:hover { background: var(--accent-soft); color: var(--text); text-decoration: none; }
+  .chapter-play {
+    display: grid; place-items: center; width: 22px; height: 22px;
+    border-radius: 50%; background: var(--bg-elev-2); color: var(--accent);
+    border: 1px solid var(--border-soft);
+    transition: background .15s, color .15s;
+  }
+  .chapter:hover .chapter-play { background: var(--accent); color: var(--accent-ink); border-color: transparent; }
+  .chapter-time { font: 700 0.75rem/1 var(--font-mono); color: var(--accent); letter-spacing: 0.01em; }
+  .chapter-label { font: 550 0.9rem/1.35 var(--font-sans); }
+
+  .archydro-cta { display: flex; flex-wrap: wrap; align-items: center; gap: 0.9rem 1.2rem; margin-top: 1.4rem; }
+  .archydro-cta .btn :global(svg) { color: currentColor; }
+
+  /* Multi-video grid (per the site rule for 2+ videos in a section) */
+  .vid-grid { display: grid; gap: clamp(0.8rem, 2vw, 1.2rem); max-width: 1080px; }
+  .vid-grid--2, .vid-grid--4 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .vid-grid--3, .vid-grid--5, .vid-grid--6, .vid-grid--7, .vid-grid--8, .vid-grid--9 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  @media (max-width: 920px) {
+    .vid-grid--3, .vid-grid--5, .vid-grid--6, .vid-grid--7, .vid-grid--8, .vid-grid--9 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  }
+  @media (max-width: 580px) { .vid-grid { grid-template-columns: 1fr; } }
+  .vid-cell { margin: 0; display: flex; flex-direction: column; gap: 0.55rem; }
+  .vid-cell .video-embed { max-width: none; }
+  .vid-cell figcaption {
+    font: 600 0.78rem/1.35 var(--font-sans);
+    color: var(--text-dim);
+  }
+</style>

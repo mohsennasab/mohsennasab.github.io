@@ -7,6 +7,7 @@ import bgPhoto from '../../assets/photos/photo-05.jpg';
 import teaching2 from '../../assets/teaching2.jpg';
 import courseBanner from '../../assets/banner.png';
 import hmsBanner from '../../assets/HMS.png';
+import watershedBanner from '../../assets/Watershed.png';
 
 const ytIcon = '<svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16"><path d="M23.5 7.2a3 3 0 0 0-2.1-2.1C19.5 4.6 12 4.6 12 4.6s-7.5 0-9.4.5A3 3 0 0 0 .5 7.2 31.2 31.2 0 0 0 0 12a31.2 31.2 0 0 0 .5 4.8 3 3 0 0 0 2.1 2.1c1.9.5 9.4.5 9.4.5s7.5 0 9.4-.5a3 3 0 0 0 2.1-2.1A31.2 31.2 0 0 0 24 12a31.2 31.2 0 0 0-.5-4.8zM9.6 15.6V8.4l6.3 3.6z"/></svg>';
 const arrowSvg = '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M9 7h8v8"/></svg>';
@@ -133,6 +134,28 @@ const resources = [
             <span class="chip">HEC-HMS</span><span class="chip">watershed modeling</span><span class="chip">13 videos</span><span class="chip">tutorial data included</span>
           </div>
           <a class="btn btn--primary" href="/getting-started-with-hec-hms">Open the tutorial
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          </a>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <!-- Featured: Where Water Meets Earth -->
+  <section class="section">
+    <div class="wrap">
+      <article class="feature-course">
+        <figure class="fc-image">
+          <Image src={watershedBanner} alt="A satellite view of a watershed with the drainage network in blue and the basin boundary outlined" widths={[700, 1100, 1500]} sizes="(max-width: 920px) 100vw, 880px" />
+        </figure>
+        <div class="fc-body">
+          <span class="eyebrow">// visual tour</span>
+          <h2><a href="/where-water-meets-earth-a-visual-journey-of-watershed-delineation">Where Water Meets Earth: a visual journey of watershed delineation</a></h2>
+          <p class="lead">A short tour of how watershed delineation works end to end, followed by a chaptered video walk-through in ArcGIS Pro with ArcHydro. By the end you should be able to sit down with a DEM, an outlet, and the right tools and produce a defensible watershed boundary.</p>
+          <div class="chips" style="margin-bottom:1.1rem">
+            <span class="chip">ArcGIS Pro</span><span class="chip">ArcHydro</span><span class="chip">12 chapter timestamps</span><span class="chip">3 related videos</span>
+          </div>
+          <a class="btn btn--primary" href="/where-water-meets-earth-a-visual-journey-of-watershed-delineation">Open the tutorial
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
           </a>
         </div>
