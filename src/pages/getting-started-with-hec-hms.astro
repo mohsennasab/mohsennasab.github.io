@@ -176,21 +176,51 @@ const dlIcon = '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stro
               <h3>{r.title}</h3>
             </div>
             <p class="muted">{r.body}</p>
-            <div class={r.videos.length > 1 ? 'resource-videos resource-videos--multi' : 'resource-videos'}>
-              {r.videos.map((v, j) => (
-                <figure class="video-embed">
+            {r.videos.length > 1 ? (
+              <div class="vid-tabs" data-vid-tabs aria-label={r.title}>
+                <div class="vid-tab-bar" role="tablist">
+                  {r.videos.map((_, j) => (
+                    <button
+                      class:list={["vid-tab", j === 0 && 'active']}
+                      type="button"
+                      data-vid-tab={String(j)}
+                      role="tab"
+                      aria-selected={j === 0 ? 'true' : 'false'}
+                    >Part {j + 1}</button>
+                  ))}
+                  <span class="vid-counter" aria-hidden="true">of {r.videos.length}</span>
+                </div>
+                <div class="vid-panels">
+                  {r.videos.map((v, j) => (
+                    <div class:list={["vid-panel", j === 0 && 'active']} data-vid-panel={String(j)} role="tabpanel">
+                      <div class="video-embed">
+                        <iframe
+                          src={`https://www.youtube-nocookie.com/embed/${v}`}
+                          title={`${r.title}, part ${j + 1}`}
+                          loading="lazy"
+                          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                          referrerpolicy="strict-origin-when-cross-origin"
+                          allowfullscreen
+                        ></iframe>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ) : (
+              <div class="resource-videos">
+                <div class="video-embed">
                   <iframe
-                    src={`https://www.youtube-nocookie.com/embed/${v}`}
-                    title={`${r.title}${r.videos.length > 1 ? `, part ${j + 1}` : ''}`}
+                    src={`https://www.youtube-nocookie.com/embed/${r.videos[0]}`}
+                    title={r.title}
                     loading="lazy"
                     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                     referrerpolicy="strict-origin-when-cross-origin"
                     allowfullscreen
                   ></iframe>
-                  {r.videos.length > 1 && <figcaption>Part {j + 1} of {r.videos.length}</figcaption>}
-                </figure>
-              ))}
-            </div>
+                </div>
+              </div>
+            )}
           </article>
         ))}
       </div>
@@ -209,6 +239,53 @@ const dlIcon = '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stro
       <p style="margin-top:1.2rem"><a class="btn" href="/tutorials">← Back to all tutorials</a></p>
     </div>
   </section>
+
+  <!-- Tabbed video-panel switcher; document-delegated so it survives view transitions -->
+  <script is:inline>
+    (function () {
+      if (window.__vidTabsInit) return;
+      window.__vidTabsInit = true;
+
+      function select(tabs, idx) {
+        var btns = tabs.querySelectorAll('[data-vid-tab]');
+        var panels = tabs.querySelectorAll('[data-vid-panel]');
+        btns.forEach(function (b) {
+          var active = b.getAttribute('data-vid-tab') === idx;
+          b.classList.toggle('active', active);
+          b.setAttribute('aria-selected', active ? 'true' : 'false');
+        });
+        panels.forEach(function (p) {
+          p.classList.toggle('active', p.getAttribute('data-vid-panel') === idx);
+        });
+      }
+
+      document.addEventListener('click', function (e) {
+        var t = e.target instanceof Element ? e.target : null;
+        var btn = t && t.closest('[data-vid-tab]');
+        if (!btn) return;
+        var tabs = btn.closest('[data-vid-tabs]');
+        if (!tabs) return;
+        select(tabs, btn.getAttribute('data-vid-tab'));
+      });
+
+      // arrow-key navigation between tabs (focus must be on a tab button)
+      document.addEventListener('keydown', function (e) {
+        if (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') return;
+        var t = e.target instanceof Element ? e.target : null;
+        var btn = t && t.closest('[data-vid-tab]');
+        if (!btn) return;
+        var tabs = btn.closest('[data-vid-tabs]');
+        if (!tabs) return;
+        var btns = Array.prototype.slice.call(tabs.querySelectorAll('[data-vid-tab]'));
+        var i = btns.indexOf(btn);
+        var n = btns.length;
+        var next = btns[(i + (e.key === 'ArrowLeft' ? -1 : 1) + n) % n];
+        next.focus();
+        select(tabs, next.getAttribute('data-vid-tab'));
+        e.preventDefault();
+      });
+    })();
+  </script>
 </Base>
 
 <style>
@@ -265,16 +342,42 @@ const dlIcon = '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stro
   .resource-head h3 { font-size: 1.1rem; margin: 0; }
   .resource > p.muted { margin-bottom: 1rem; max-width: 80ch; }
 
-  .resource-videos { display: flex; flex-direction: column; gap: 1rem; max-width: 860px; }
-  .resource-videos--multi figure { position: relative; }
-  .resource-videos figure { margin: 0; }
-  .resource-videos figcaption { font: 600 0.74rem/1.4 var(--font-sans); letter-spacing: 0.04em; color: var(--text-faint); margin-top: 0.5rem; }
+  .resource-videos { max-width: 860px; }
+
+  /* Tabbed video panel for sections with 2+ videos */
+  .vid-tabs { max-width: 860px; }
+  .vid-tab-bar {
+    display: flex; flex-wrap: wrap; align-items: center; gap: 0.4rem;
+    margin-bottom: 0.75rem;
+    padding-bottom: 0.55rem;
+    border-bottom: 1px solid var(--border-soft);
+  }
+  .vid-tab {
+    font: 600 0.84rem/1 var(--font-sans);
+    padding: 0.5rem 0.85rem;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: var(--bg-elev);
+    color: var(--text-dim);
+    cursor: pointer;
+    transition: color .15s, border-color .15s, background .15s, box-shadow .15s;
+  }
+  .vid-tab:hover { color: var(--text); border-color: var(--accent-line); }
+  .vid-tab:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .vid-tab.active {
+    color: var(--accent-ink);
+    background: linear-gradient(135deg, var(--accent), var(--accent-2));
+    border-color: transparent;
+    box-shadow: 0 6px 18px var(--glow);
+  }
+  .vid-counter { font: 500 0.78rem/1 var(--font-sans); color: var(--text-faint); margin-left: auto; padding-right: 0.2rem; }
+  .vid-panels { position: relative; }
+  .vid-panel { display: none; }
+  .vid-panel.active { display: block; }
 
   /* Video embed (reused) */
   .video-embed { position: relative; aspect-ratio: 16 / 9; border-radius: var(--radius-sm); overflow: hidden; border: 1px solid var(--border-soft); background: #000; max-width: 860px; }
   .video-embed iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
-  figure.video-embed { aspect-ratio: auto; border: 0; background: transparent; border-radius: 0; overflow: visible; }
-  figure.video-embed > iframe { position: static; width: 100%; aspect-ratio: 16 / 9; height: auto; border-radius: var(--radius-sm); border: 1px solid var(--border-soft); background: #000; }
 
   .visually-hidden { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
 </style>
