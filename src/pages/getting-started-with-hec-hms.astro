@@ -1,0 +1,280 @@
+---
+import { Image } from 'astro:assets';
+import Base from '../layouts/Base.astro';
+import SectionHead from '../components/SectionHead.astro';
+import hmsBanner from '../assets/HMS.png';
+
+const DATA_HMS101 = 'https://drive.google.com/file/d/197hjh9SocB5Owy63xnBzfL37_dsMsD73/view?usp=sharing';
+const DATA_OPT = 'https://drive.google.com/drive/folders/1EtyjVLi3a3dIj-mGqqQ-NXBdBFTJZlXc?usp=drive_link';
+
+// Two main lessons: full video, description, and a downloadable data set
+const mainLessons = [
+  {
+    title: 'HEC-HMS 101: a step-by-step tour of watershed modeling',
+    body: 'A full walk-through of building an HEC-HMS model end to end. We cover data requirements, watershed delineation, model setup, hydrologic methods, control specifications, the model run, and how to read the results. Useful as a first introduction and as a refresher.',
+    video: 'V4y0m1OFzgc',
+    data: DATA_HMS101,
+  },
+  {
+    title: 'Model development and optimization with an observed hydrograph',
+    body: 'How to set up an HEC-HMS model and then optimize it against an observed streamflow hydrograph.',
+    bullets: [
+      'Build the hydrologic model: precipitation, evaporation, infiltration, runoff generation, routing, channel flow, sub-basins, and hydrologic response units.',
+      'Choose which model variables to adjust in order to meet the optimization objective.',
+      'Pick an appropriate optimization method or algorithm.',
+      'Run the optimizer iteratively: it varies the decision variables within the constraints, runs the simulation, evaluates the objective, and adjusts on each pass.',
+    ],
+    video: 'LnVCsD4DFDU',
+    data: DATA_OPT,
+  },
+];
+
+// Other useful resources
+type Resource = { title: string; body: string; videos: string[] };
+const resources: Resource[] = [
+  {
+    title: 'Download and process soil data for your watershed',
+    body: 'How to download and pre-process SSURGO soil-texture data for hydrologic and watershed modeling. Soil characteristics drive infiltration and runoff, so getting them right early pays off later.',
+    videos: ['8_D49nGmO-Y'],
+  },
+  {
+    title: 'Download and process land use and land cover data for your watershed',
+    body: 'A step-by-step walk-through of getting and preparing NLCD land use and land cover data for hydrologic and watershed analysis.',
+    videos: ['QI8xbipsY2A'],
+  },
+  {
+    title: 'Create a Curve Number raster with ArcHydro in ArcGIS Pro',
+    body: 'How to use ArcGIS Pro and ArcHydro together to build a Curve Number raster for your study area.',
+    videos: ['nqV6Dvh-l5I'],
+  },
+  {
+    title: 'Curve Numbers from land use and soil data with the ArcGIS Pro built-in tools',
+    body: 'The Curve Number method estimates stormwater runoff from land use, soil type, and antecedent moisture conditions. It is widely used in stormwater management, flood control, and watershed modeling. Values come from established tables; this video shows how to compute a CN map from those tables in ArcGIS Pro using the built-in tools.',
+    videos: ['IWxAw6L9UcA'],
+  },
+  {
+    title: 'NRCS Curve Number method: the theory',
+    body: 'The NRCS (formerly SCS) Curve Number method is an empirical approach for predicting rainfall excess and infiltration. The four videos below build the theory; watch in order.',
+    videos: ['8ZfzqZtin50', 'Y0qXWBAfPB4', 'DKdqcSyYtT4', 'lxouTkVV_7k'],
+  },
+  {
+    title: 'Download NOAA Atlas 14 rainfall-frequency estimates from PFDS',
+    body: 'How to download NOAA Atlas 14 rainfall-frequency estimates from the Precipitation Frequency Data Server (PFDS) for hydrologic and watershed modeling. Choosing the design storm is one of the first steps in a hydrologic study.',
+    videos: ['SsQ8xcsWoME'],
+  },
+  {
+    title: 'Unit Hydrograph theory and application',
+    body: 'A two-part series. Part 1 covers the theory and assumptions behind Unit Hydrographs. Part 2 shows how to build and use one in a modeling project.',
+    videos: ['aDaOFf0IrTE', '4f6Hs666dUY'],
+  },
+];
+
+const ytIcon = '<svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16"><path d="M23.5 7.2a3 3 0 0 0-2.1-2.1C19.5 4.6 12 4.6 12 4.6s-7.5 0-9.4.5A3 3 0 0 0 .5 7.2 31.2 31.2 0 0 0 0 12a31.2 31.2 0 0 0 .5 4.8 3 3 0 0 0 2.1 2.1c1.9.5 9.4.5 9.4.5s7.5 0 9.4-.5a3 3 0 0 0 2.1-2.1A31.2 31.2 0 0 0 24 12a31.2 31.2 0 0 0-.5-4.8zM9.6 15.6V8.4l6.3 3.6z"/></svg>';
+const dlIcon = '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>';
+---
+
+<Base
+  title="Getting Started with HEC-HMS"
+  description="A free, hands-on HEC-HMS tutorial by Dr. Mohsen Tahmasebi Nasab: watershed modeling end to end, model optimization with observed hydrographs, and the supporting workflows for soil, land cover, Curve Numbers, NOAA Atlas 14 rainfall, and Unit Hydrographs."
+>
+  <!-- Header -->
+  <section class="page-header">
+    <div class="wrap">
+      <a class="back-link" href="/tutorials">← Tutorials</a>
+      <span class="eyebrow" style="margin-top:.6rem">// course</span>
+      <h1>Getting Started with HEC-HMS</h1>
+      <p class="lede">
+        A free, hands-on tutorial for setting up and running HEC-HMS, the Hydrologic Engineering Center's Hydrologic
+        Modeling System. The first two videos take you through a full model from start to finish and then through
+        optimizing it against an observed hydrograph. The rest fills in the supporting workflows: soil data, land cover,
+        Curve Numbers, NOAA Atlas 14 rainfall, and Unit Hydrographs.
+      </p>
+    </div>
+  </section>
+
+  <!-- Featured banner + intro -->
+  <section class="section section--tight">
+    <div class="wrap">
+      <article class="featured">
+        <figure class="fc-banner">
+          <Image
+            src={hmsBanner}
+            alt="HEC-HMS screenshot: a watershed model on the left, a results hydrograph on the right"
+            widths={[700, 1100, 1500]}
+            sizes="(max-width: 960px) 100vw, 920px"
+            loading="eager"
+          />
+        </figure>
+        <div class="featured-body">
+          <span class="eyebrow">// what is HEC-HMS?</span>
+          <p class="lead">
+            HEC-HMS, short for Hydrologic Modeling System, is the U.S. Army Corps of Engineers' Hydrologic Engineering
+            Center software for watershed modeling. It simulates how water moves through rivers and streams in
+            response to rainfall and other inputs, and it underpins a lot of flood-forecasting, water-supply, and
+            floodplain-management work. Everything below is free to use; the data sets needed for the two main
+            lessons are linked alongside each video.
+          </p>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <!-- Main lessons -->
+  <section class="section">
+    <div class="wrap">
+      <SectionHead eyebrow="// main lessons" title="The two long-form lessons" lede="Each video covers a complete workflow. Together they take you from a blank HEC-HMS project to a calibrated model." />
+      <div class="lesson-stack">
+        {mainLessons.map((l, i) => (
+          <article class="lesson">
+            <div class="lesson-head">
+              <span class="lesson-n">{String(i + 1).padStart(2, '0')}</span>
+              <h3>{l.title}</h3>
+            </div>
+            <p class="muted">{l.body}</p>
+            {l.bullets && (
+              <ul class="lesson-bullets">
+                {l.bullets.map((b) => <li>{b}</li>)}
+              </ul>
+            )}
+            <div class="video-embed">
+              <iframe
+                src={`https://www.youtube-nocookie.com/embed/${l.video}`}
+                title={l.title}
+                loading="lazy"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                referrerpolicy="strict-origin-when-cross-origin"
+                allowfullscreen
+              ></iframe>
+            </div>
+            <div class="lesson-foot">
+              <a class="btn btn--primary" href={l.data} target="_blank" rel="noopener">
+                <span set:html={dlIcon} /> Download the tutorial data
+              </a>
+              <a class="yt-link" href={`https://youtu.be/${l.video}`} target="_blank" rel="noopener">
+                <span set:html={ytIcon} /> Watch on YouTube
+              </a>
+            </div>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Other resources -->
+  <section class="section">
+    <div class="wrap">
+      <SectionHead
+        eyebrow="// other useful resources"
+        title="Supporting workflows"
+        lede="The pieces that come up while you build an HEC-HMS model: getting the input data, computing Curve Numbers, picking the design storm, and the theory behind Unit Hydrographs."
+      />
+      <div class="resource-list">
+        {resources.map((r, i) => (
+          <article class="resource">
+            <div class="resource-head">
+              <span class="resource-n">{String(i + 1).padStart(2, '0')}</span>
+              <h3>{r.title}</h3>
+            </div>
+            <p class="muted">{r.body}</p>
+            <div class={r.videos.length > 1 ? 'resource-videos resource-videos--multi' : 'resource-videos'}>
+              {r.videos.map((v, j) => (
+                <figure class="video-embed">
+                  <iframe
+                    src={`https://www.youtube-nocookie.com/embed/${v}`}
+                    title={`${r.title}${r.videos.length > 1 ? `, part ${j + 1}` : ''}`}
+                    loading="lazy"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                    referrerpolicy="strict-origin-when-cross-origin"
+                    allowfullscreen
+                  ></iframe>
+                  {r.videos.length > 1 && <figcaption>Part {j + 1} of {r.videos.length}</figcaption>}
+                </figure>
+              ))}
+            </div>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer pointer -->
+  <section class="section section--tight">
+    <div class="wrap">
+      <p class="faint prose" style="font-size:.9rem">
+        Questions on a specific step, or a request for the next video on the channel?
+        <a href="mailto:mohsen.tahmasebi.n@gmail.com">Email me</a>. More tutorials and the
+        Python course are on the <a href="/tutorials">tutorials page</a>, and recorded course
+        lectures are on the <a href="/teaching">teaching page</a>.
+      </p>
+      <p style="margin-top:1.2rem"><a class="btn" href="/tutorials">← Back to all tutorials</a></p>
+    </div>
+  </section>
+</Base>
+
+<style>
+  /* Header */
+  .page-header { padding-top: clamp(2.6rem, 6vw, 4rem); padding-bottom: clamp(1.2rem, 3.5vw, 2rem); }
+  .page-header h1 { font-size: clamp(2rem, 1.3rem + 2.6vw, 3.2rem); margin-bottom: 0.7rem; }
+  .page-header .lede { font-size: 1.1rem; color: var(--text-dim); max-width: 70ch; }
+  .back-link { display: inline-block; font: 600 0.82rem/1 var(--font-sans); color: var(--text-faint); }
+  .back-link:hover { color: var(--accent); text-decoration: none; }
+
+  /* Featured banner */
+  .featured {
+    display: flex; flex-direction: column; gap: clamp(1.2rem, 3vw, 1.8rem);
+    max-width: 920px; margin-inline: auto;
+    border: 1px solid var(--border); border-radius: var(--radius); padding: clamp(1.2rem, 3.2vw, 1.8rem);
+    background: radial-gradient(480px 240px at 100% 0%, var(--accent-soft), transparent 70%), var(--bg-elev);
+  }
+  .fc-banner { margin: 0; border-radius: var(--radius-sm); overflow: hidden; border: 1px solid var(--border-soft); background: #f4f6fa; }
+  .fc-banner :global(img) { width: 100%; height: auto; display: block; }
+  .featured-body { padding-inline: clamp(0.2rem, 1vw, 0.6rem); }
+  .featured-body .lead { margin-top: 0.5rem; color: var(--text-dim); }
+
+  /* Main lessons */
+  .lesson-stack { display: flex; flex-direction: column; gap: clamp(2rem, 5vw, 3.2rem); }
+  .lesson {
+    border: 1px solid var(--border-soft); border-radius: var(--radius);
+    background: var(--bg-elev); padding: clamp(1.3rem, 3.5vw, 2rem);
+  }
+  .lesson-head { display: flex; align-items: baseline; gap: 0.9rem; margin-bottom: 0.8rem; }
+  .lesson-n {
+    font: 700 0.78rem/1 var(--font-sans); letter-spacing: 0.18em;
+    padding: 0.35rem 0.55rem; border-radius: 6px;
+    background: var(--accent-soft); color: var(--accent); flex: none;
+  }
+  .lesson-head h3 { font-size: clamp(1.15rem, 0.95rem + 0.7vw, 1.45rem); margin: 0; }
+  .lesson > p.muted { margin-bottom: 1rem; }
+  .lesson-bullets { margin: 0 0 1.2rem 0; padding-left: 1.15rem; color: var(--text-dim); }
+  .lesson-bullets li { margin: 0.4rem 0; }
+  .lesson-foot { display: flex; flex-wrap: wrap; gap: 0.7rem 1.2rem; align-items: center; margin-top: 1.1rem; }
+  .lesson-foot .btn :global(svg) { color: currentColor; }
+  .yt-link { display: inline-flex; align-items: center; gap: 0.45rem; font: 600 0.86rem/1 var(--font-sans); color: var(--text-dim); }
+  .yt-link :global(svg) { color: var(--accent); }
+  .yt-link:hover { color: var(--text); text-decoration: none; }
+
+  /* Other resources */
+  .resource-list { display: flex; flex-direction: column; gap: clamp(1.6rem, 4vw, 2.6rem); }
+  .resource {
+    border-top: 1px solid var(--border-soft);
+    padding-top: clamp(1.4rem, 3.5vw, 2rem);
+  }
+  .resource:first-child { border-top: 0; padding-top: 0; }
+  .resource-head { display: flex; align-items: baseline; gap: 0.8rem; margin-bottom: 0.6rem; flex-wrap: wrap; }
+  .resource-n { font: 600 0.7rem/1 var(--font-sans); letter-spacing: 0.16em; color: var(--text-faint); flex: none; }
+  .resource-head h3 { font-size: 1.1rem; margin: 0; }
+  .resource > p.muted { margin-bottom: 1rem; max-width: 80ch; }
+
+  .resource-videos { display: flex; flex-direction: column; gap: 1rem; max-width: 860px; }
+  .resource-videos--multi figure { position: relative; }
+  .resource-videos figure { margin: 0; }
+  .resource-videos figcaption { font: 600 0.74rem/1.4 var(--font-sans); letter-spacing: 0.04em; color: var(--text-faint); margin-top: 0.5rem; }
+
+  /* Video embed (reused) */
+  .video-embed { position: relative; aspect-ratio: 16 / 9; border-radius: var(--radius-sm); overflow: hidden; border: 1px solid var(--border-soft); background: #000; max-width: 860px; }
+  .video-embed iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+  figure.video-embed { aspect-ratio: auto; border: 0; background: transparent; border-radius: 0; overflow: visible; }
+  figure.video-embed > iframe { position: static; width: 100%; aspect-ratio: 16 / 9; height: auto; border-radius: var(--radius-sm); border: 1px solid var(--border-soft); background: #000; }
+
+  .visually-hidden { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
+</style>
