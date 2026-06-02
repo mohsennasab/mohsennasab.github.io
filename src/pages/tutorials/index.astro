@@ -8,6 +8,7 @@ import teaching2 from '../../assets/teaching2.jpg';
 import courseBanner from '../../assets/banner.png';
 import hmsBanner from '../../assets/HMS.png';
 import watershedBanner from '../../assets/Watershed.png';
+import cnHistoryBanner from '../../assets/CN_History.png';
 
 const ytIcon = '<svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16"><path d="M23.5 7.2a3 3 0 0 0-2.1-2.1C19.5 4.6 12 4.6 12 4.6s-7.5 0-9.4.5A3 3 0 0 0 .5 7.2 31.2 31.2 0 0 0 0 12a31.2 31.2 0 0 0 .5 4.8 3 3 0 0 0 2.1 2.1c1.9.5 9.4.5 9.4.5s7.5 0 9.4-.5a3 3 0 0 0 2.1-2.1A31.2 31.2 0 0 0 24 12a31.2 31.2 0 0 0-.5-4.8zM9.6 15.6V8.4l6.3 3.6z"/></svg>';
 const arrowSvg = '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M9 7h8v8"/></svg>';
@@ -156,6 +157,28 @@ const resources = [
             <span class="chip">ArcGIS Pro</span><span class="chip">ArcHydro</span><span class="chip">12 chapter timestamps</span><span class="chip">3 related videos</span>
           </div>
           <a class="btn btn--primary" href="/where-water-meets-earth-a-visual-journey-of-watershed-delineation">Open the tutorial
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          </a>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <!-- Featured: Create a Curve Number Raster -->
+  <section class="section">
+    <div class="wrap">
+      <article class="feature-course">
+        <figure class="fc-image">
+          <Image src={cnHistoryBanner} alt="Timeline of the SCS Curve Number method from 1954 to the 2020s" widths={[700, 1100, 1500]} sizes="(max-width: 920px) 100vw, 880px" />
+        </figure>
+        <div class="fc-body">
+          <span class="eyebrow">// methods</span>
+          <h2><a href="/create-curve-number-cn-raster-for-a-watershed">Create a Curve Number raster for a watershed</a></h2>
+          <p class="lead">A short history of the SCS Curve Number method and three practical ways to build a CN raster for a study area: with the ArcGIS Pro built-in tools, with ArcHydro tools, and with a free open-source web app I built. Includes the data and software you need, a step-by-step procedure, and a full video walk-through.</p>
+          <div class="chips" style="margin-bottom:1.1rem">
+            <span class="chip">SCS / NRCS CN</span><span class="chip">ArcGIS Pro</span><span class="chip">ArcHydro</span><span class="chip">3 methods</span>
+          </div>
+          <a class="btn btn--primary" href="/create-curve-number-cn-raster-for-a-watershed">Open the tutorial
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
           </a>
         </div>

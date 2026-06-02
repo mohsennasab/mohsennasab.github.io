@@ -1,0 +1,509 @@
+---
+import { Image } from 'astro:assets';
+import Base from '../layouts/Base.astro';
+import SectionHead from '../components/SectionHead.astro';
+import historyBanner from '../assets/CN_History.png';
+import cnLayers from '../assets/CN2.png';
+import cnRaster from '../assets/CN1.png';
+import headerBg from '../assets/photos/photo-15.jpg';
+
+const ARCHYDRO_URL = 'https://www.esri.com/en-us/industries/water-resources/arc-hydro/downloads#arc-hydro-for-arcgis-pro';
+const LULC_URL = 'https://www.mrlc.gov/viewer/';
+const SOIL_URL = 'https://www.arcgis.com/home/item.html?id=cdc49bd63ea54dd2977f3f2853e07fff';
+const PACKAGE_URL = 'https://drive.google.com/file/d/1Rol8WmBQ-pdKCsBgi4Kzwdzk_Am4-Kf0/view?usp=sharing';
+const CN_GENERATOR_REPO = 'https://github.com/mohsennasab/CN_Generator.git';
+
+const dataReqs = [
+  { t: 'A digital elevation model (DEM)', d: 'A high-resolution DEM of the study area, for deriving flow direction and accumulation and for delineating the watershed.' },
+  { t: 'Land use and land cover (LULC)', d: 'Land cover classes for the study area, used to assign hydrologic groups and the corresponding curve numbers.' },
+  { t: 'Soil data', d: 'Soil types and properties for the study area. Different soils infiltrate at different rates, which is what drives the CN assignment.' },
+  { t: 'GIS software', d: 'A GIS package such as ArcGIS Pro or QGIS to process and analyze the spatial data, run the calculations, and make the maps.' },
+];
+
+const steps = [
+  'Create a histogram of hydrologic soil groups (HSGs) and replace any missing HSG with the most frequent value.',
+  'Convert dual classes A/D, B/D, and C/D to D.',
+  'Convert the land use raster to a feature class (a shapefile).',
+  'Add four columns to the soil table: PctA, PctB, PctC, and PctD.',
+  'Use the Union tool to combine the soil and land use shapefiles into one connected layer.',
+  'Remove records with FID = -1.',
+  'Add a new column named LandUse and set it equal to Gridcode.',
+  'Create a CN Lookup Table that maps each combination of land use and HSG to a curve number.',
+  'Generate the CN raster using ArcHydro Tools.',
+  'Inspect the result, then review the distribution and check it against what you know about the area.',
+];
+
+type Resource = { title: string; body: string; videos: string[] };
+const resources: Resource[] = [
+  {
+    title: 'Download and process soil data for your watershed',
+    body: 'How to download and pre-process SSURGO soil-texture data for hydrologic and watershed modeling. Soil characteristics drive infiltration and runoff, so getting them right early pays off later.',
+    videos: ['8_D49nGmO-Y'],
+  },
+  {
+    title: 'Download and process land use and land cover data for your watershed',
+    body: 'A step-by-step walk-through of getting and preparing NLCD land use and land cover data for hydrologic and watershed analysis.',
+    videos: ['QI8xbipsY2A'],
+  },
+  {
+    title: 'NRCS Curve Number method: the theory',
+    body: 'The NRCS (formerly SCS) Curve Number method is an empirical approach for predicting rainfall excess and infiltration. The four videos below build the theory; watch in order.',
+    videos: ['8ZfzqZtin50', 'Y0qXWBAfPB4', 'DKdqcSyYtT4', 'lxouTkVV_7k'],
+  },
+  {
+    title: 'Download NOAA Atlas 14 rainfall-frequency estimates from PFDS',
+    body: 'How to download NOAA Atlas 14 rainfall-frequency estimates from the Precipitation Frequency Data Server (PFDS) for hydrologic and watershed modeling. Choosing the design storm is one of the first steps in a hydrologic study.',
+    videos: ['SsQ8xcsWoME'],
+  },
+  {
+    title: 'Unit Hydrograph theory and application',
+    body: 'A two-part series. Part 1 covers the theory and assumptions behind Unit Hydrographs. Part 2 shows how to build and use one in a modeling project.',
+    videos: ['aDaOFf0IrTE', '4f6Hs666dUY'],
+  },
+];
+
+const dlIcon = '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>';
+const extIcon = '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M9 7h8v8"/></svg>';
+const ghIcon = '<svg viewBox="0 0 24 24" width="15" height="15" fill="currentColor"><path d="M12 .5A11.5 11.5 0 0 0 .5 12 11.5 11.5 0 0 0 8.4 23c.6.1.8-.3.8-.6v-2c-3.2.7-3.9-1.4-3.9-1.4-.5-1.3-1.3-1.7-1.3-1.7-1.1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1 1.8 2.7 1.3 3.4 1 .1-.8.4-1.3.7-1.6-2.6-.3-5.3-1.3-5.3-5.7 0-1.3.5-2.3 1.2-3.1-.1-.3-.5-1.5.1-3.1 0 0 1-.3 3.3 1.2a11.4 11.4 0 0 1 6 0C17.3 4.6 18.3 5 18.3 5c.6 1.6.2 2.8.1 3.1.8.8 1.2 1.8 1.2 3.1 0 4.4-2.7 5.4-5.3 5.7.4.3.8 1 .8 2.1v3.1c0 .3.2.7.8.6A11.5 11.5 0 0 0 23.5 12 11.5 11.5 0 0 0 12 .5z"/></svg>';
+---
+
+<Base
+  title="Create a Curve Number raster for a watershed"
+  description="A short history of the SCS Curve Number method and three ways to build a CN raster for a watershed: with ArcGIS Pro built-in tools, with ArcHydro tools, and with a free web app. By Dr. Mohsen Tahmasebi Nasab."
+>
+  <!-- Header with faded photo background -->
+  <section class="page-header has-bg">
+    <Image class="ph-bg" src={headerBg} alt="" aria-hidden="true"
+           loading="eager" widths={[800, 1200, 1800]} sizes="100vw"
+           style="object-position:center 45%" />
+    <div class="ph-bg-fade" aria-hidden="true"></div>
+    <div class="wrap ph-inner">
+      <a class="back-link" href="/tutorials">← Tutorials</a>
+      <span class="eyebrow" style="margin-top:.6rem">// methods</span>
+      <h1>Create a Curve Number raster for a watershed</h1>
+      <p class="hero-sub">A short history and three ways to do it</p>
+      <p class="lede">
+        The history of the SCS Curve Number method has always fascinated me. Over the years, water
+        resources engineers have used both manual and automated approaches to compute CN values. This
+        page is a short tour of where the method came from and three practical ways to build a CN
+        raster for a study area: with the ArcGIS Pro built-in tools, with ArcHydro, and with a free
+        web app I built. Pick the one that fits the data and the time you have.
+      </p>
+    </div>
+  </section>
+
+  <!-- Featured: CN history banner + intro -->
+  <section class="section section--tight">
+    <div class="wrap">
+      <article class="featured">
+        <figure class="fc-banner">
+          <Image src={historyBanner}
+                 alt="A timeline of the SCS Curve Number method: 1954 CN method published, 1968 TR-55 and TR-20 released, 1980s early GIS integration, 1990s to 2000s GIS and DEM advances, 2010s remote sensing and global databases, 2010s to 2020s critiques and improvements"
+                 widths={[700, 1100, 1500]} sizes="(max-width: 960px) 100vw, 920px" loading="eager" />
+        </figure>
+        <div class="featured-body">
+          <span class="eyebrow">// a short history</span>
+          <p class="lead">
+            The SCS Curve Number method was published in 1954 alongside the original CN tables and
+            technical documents. TR-55 and TR-20 (1968) brought it into standard practice. GIS
+            integration started in the 1980s and accelerated through the 1990s and 2000s as DEMs
+            and the supporting tools matured. Remote sensing and global land-cover databases
+            (MODIS, HYSOGs250m, GCN250, finer-resolution NLCD) shifted CN work to the regional and
+            continental scale in the 2010s. The current decade is mostly about refinements: slope
+            corrections, variable abstraction, and links to fully distributed models such as SWAT.
+          </p>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <!-- Fundamentals -->
+  <section class="section">
+    <div class="wrap">
+      <SectionHead
+        eyebrow="// fundamentals"
+        title="What a curve number actually is"
+        lede="The basics, for context, before the three methods below."
+      />
+      <div class="prose">
+        <p class="muted">
+          In the SCS CN method, the curve number is a single dimensionless parameter, between 30
+          and 100, used to estimate direct runoff from a rainfall event in a given watershed. It
+          rolls land cover, hydrologic soil group, hydrologic condition, and antecedent moisture
+          into one number. Higher CN means less water infiltrates, so more becomes runoff.
+        </p>
+        <p class="muted">
+          Each combination of land cover and soil hydrologic group maps to a specific CN through
+          empirical tables. With CN known for every cell of the watershed, runoff volume from a
+          given storm follows directly. The method is widely used in stormwater design, flood
+          studies, and watershed modeling because the inputs are easy to come by and the math is
+          well understood. It is intentionally simple, which means the limits matter: it does not
+          replace fully distributed runoff models in complex hydrologic settings, and it is best
+          used within its intended scope.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Three approaches intro -->
+  <section class="section">
+    <div class="wrap">
+      <SectionHead
+        eyebrow="// three approaches"
+        title="Three ways to build the CN raster"
+        lede="Same destination, different tradeoffs. Pick by data, time, and the tools you already have."
+      />
+      <ol class="approach-list">
+        <li class="approach">
+          <span class="approach-n">01</span>
+          <div>
+            <h3>ArcGIS Pro built-in tools</h3>
+            <p>If you already work in ArcGIS Pro, this gets you to a CN map without installing anything extra.</p>
+          </div>
+        </li>
+        <li class="approach">
+          <span class="approach-n">02</span>
+          <div>
+            <h3>ArcHydro tools in ArcGIS Pro</h3>
+            <p>The fullest workflow: delineate the watershed, derive flow direction and accumulation, and produce the CN raster, all in one extension.</p>
+          </div>
+        </li>
+        <li class="approach">
+          <span class="approach-n">03</span>
+          <div>
+            <h3>SCS Curve Number Generator (web app)</h3>
+            <p>A Python web app I built that returns CN values for any watershed in seconds, no desktop GIS required.</p>
+          </div>
+        </li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- Section 1 -->
+  <section class="section">
+    <div class="wrap">
+      <SectionHead
+        eyebrow="// method 01"
+        title="ArcGIS Pro built-in tools"
+        lede="A walk-through that uses only the tools that ship with ArcGIS Pro. CN values come from the standard land use / hydrologic soil group tables, applied through the built-in raster and zonal operations."
+      />
+      <p class="muted prose" style="margin-bottom:1.4rem">
+        For the source data, see the soil and land use videos in the resources section below.
+      </p>
+      <div class="video-embed">
+        <iframe
+          src="https://www.youtube-nocookie.com/embed/IWxAw6L9UcA"
+          title="Curve Numbers from land use and soil data with the ArcGIS Pro built-in tools"
+          loading="lazy"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+          referrerpolicy="strict-origin-when-cross-origin"
+          allowfullscreen
+        ></iframe>
+      </div>
+    </div>
+  </section>
+
+  <!-- Section 2: ArcHydro -->
+  <section class="section">
+    <div class="wrap">
+      <SectionHead
+        eyebrow="// method 02"
+        title="ArcHydro tools in ArcGIS Pro"
+        lede="ArcHydro is Esri's free hydrology toolset for ArcGIS. It packages watershed delineation and the CN workflow into one extension. The conceptual sketch below shows how soil, land use, and the basemap come together into the final CN raster."
+      />
+
+      <figure class="cn-layers">
+        <Image src={cnLayers}
+               alt="Three layers (satellite imagery, land use polygons, and soil polygons) combine into a single Curve Number raster"
+               widths={[700, 1100, 1500]} sizes="(max-width: 960px) 100vw, 920px" />
+        <figcaption>Soil + land use + topography combine, cell by cell, into one CN raster.</figcaption>
+      </figure>
+
+      <!-- Data requirements -->
+      <h3 class="sub-h">Data and software you'll need</h3>
+      <div class="grid grid--2 req-grid">
+        {dataReqs.map((r) => (
+          <article class="req">
+            <h4>{r.t}</h4>
+            <p>{r.d}</p>
+          </article>
+        ))}
+      </div>
+
+      <!-- Downloads -->
+      <h3 class="sub-h">Where to get the data and the tools (United States)</h3>
+      <div class="grid grid--2 dl-grid">
+        <a class="dl-card" href={ARCHYDRO_URL} target="_blank" rel="noopener">
+          <span class="dl-eye">// software</span>
+          <h4>ArcHydro for ArcGIS Pro</h4>
+          <p>Esri's free hydrology extension. Required for the workflow.</p>
+          <span class="dl-cta"><span set:html={dlIcon} /> Download from Esri <span set:html={extIcon} /></span>
+        </a>
+        <a class="dl-card" href={LULC_URL} target="_blank" rel="noopener">
+          <span class="dl-eye">// data</span>
+          <h4>Land use and land cover</h4>
+          <p>USGS National Land Cover Database (NLCD) viewer.</p>
+          <span class="dl-cta"><span set:html={dlIcon} /> Open the MRLC viewer <span set:html={extIcon} /></span>
+        </a>
+        <a class="dl-card" href={SOIL_URL} target="_blank" rel="noopener">
+          <span class="dl-eye">// data</span>
+          <h4>Soil data</h4>
+          <p>USDA NRCS soils as a ready-to-use ArcGIS item.</p>
+          <span class="dl-cta"><span set:html={dlIcon} /> Open the soils item <span set:html={extIcon} /></span>
+        </a>
+        <a class="dl-card" href={PACKAGE_URL} target="_blank" rel="noopener">
+          <span class="dl-eye">// follow along</span>
+          <h4>ArcGIS Pro Package</h4>
+          <p>The exact project I use in the video, so you can replicate every step.</p>
+          <span class="dl-cta"><span set:html={dlIcon} /> Download the package <span set:html={extIcon} /></span>
+        </a>
+      </div>
+
+      <!-- Numbered steps -->
+      <h3 class="sub-h">The procedure, step by step</h3>
+      <ol class="steps">
+        {steps.map((s, i) => (
+          <li class="step">
+            <span class="step-n">{String(i + 1).padStart(2, '0')}</span>
+            <div class="step-body"><p>{s}</p></div>
+          </li>
+        ))}
+      </ol>
+
+      <!-- The walkthrough video -->
+      <h3 class="sub-h" style="margin-top:2.2rem">Watch the full walk-through</h3>
+      <div class="video-embed">
+        <iframe
+          src="https://www.youtube-nocookie.com/embed/nqV6Dvh-l5I"
+          title="Create a Curve Number raster with ArcHydro in ArcGIS Pro"
+          loading="lazy"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+          referrerpolicy="strict-origin-when-cross-origin"
+          allowfullscreen
+        ></iframe>
+      </div>
+      <div class="archydro-cta">
+        <a class="btn btn--primary" href={PACKAGE_URL} target="_blank" rel="noopener"><span set:html={dlIcon} /> Download the ArcGIS Pro Package</a>
+        <span class="faint" style="font-size:.85rem">So you can follow along with the same data.</span>
+      </div>
+
+      <!-- Example output -->
+      <figure class="example">
+        <Image src={cnRaster}
+               alt="An example Curve Number raster with high CN values shown in red, low values in blue or green"
+               widths={[360, 540, 720]} sizes="(max-width: 800px) 100vw, 380px" />
+        <figcaption>An example CN raster output for a small watershed. Red cells are impervious or near-impervious; greens and blues are vegetated or open water.</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <!-- Section 3: Web app -->
+  <section class="section">
+    <div class="wrap">
+      <SectionHead
+        eyebrow="// method 03"
+        title="SCS Curve Number Generator (web app)"
+        lede="If you do not want to install anything, the same workflow is available as a Python web app I built. Upload a watershed boundary, pick the data sources, and get a CN map back in seconds."
+      />
+      <div class="webapp-card">
+        <div>
+          <h3 style="margin-bottom:.4rem">CN_Generator</h3>
+          <p class="muted">A Gradio app that takes a watershed boundary, fetches the supporting soil and land use data, and produces a CN map and the zonal summaries that go with it. Free and open source.</p>
+          <div class="chips" style="margin:1rem 0">
+            <span class="chip">Python</span><span class="chip">Gradio</span><span class="chip">runs in the browser</span><span class="chip">open source</span>
+          </div>
+          <a class="btn btn--primary" href={CN_GENERATOR_REPO} target="_blank" rel="noopener"><span set:html={ghIcon} /> View on GitHub</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Other useful resources -->
+  <section class="section">
+    <div class="wrap">
+      <SectionHead
+        eyebrow="// other useful resources"
+        title="Supporting workflows"
+        lede="Source data, the theory behind the curve number, and the related pieces of a hydrologic study (rainfall, unit hydrographs)."
+      />
+      <div class="resource-list">
+        {resources.map((r, i) => (
+          <article class="resource">
+            <div class="resource-head">
+              <span class="resource-n">{String(i + 1).padStart(2, '0')}</span>
+              <h3>{r.title}</h3>
+            </div>
+            <p class="muted">{r.body}</p>
+            {r.videos.length > 1 ? (
+              <div class={`vid-grid vid-grid--${r.videos.length}`} aria-label={r.title}>
+                {r.videos.map((v, j) => (
+                  <figure class="vid-cell">
+                    <div class="video-embed">
+                      <iframe
+                        src={`https://www.youtube-nocookie.com/embed/${v}`}
+                        title={`${r.title}, part ${j + 1}`}
+                        loading="lazy"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                        referrerpolicy="strict-origin-when-cross-origin"
+                        allowfullscreen
+                      ></iframe>
+                    </div>
+                    <figcaption>Part {j + 1} of {r.videos.length}</figcaption>
+                  </figure>
+                ))}
+              </div>
+            ) : (
+              <div class="resource-videos">
+                <div class="video-embed">
+                  <iframe
+                    src={`https://www.youtube-nocookie.com/embed/${r.videos[0]}`}
+                    title={r.title}
+                    loading="lazy"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                    referrerpolicy="strict-origin-when-cross-origin"
+                    allowfullscreen
+                  ></iframe>
+                </div>
+              </div>
+            )}
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer pointer -->
+  <section class="section section--tight">
+    <div class="wrap">
+      <p class="faint prose" style="font-size:.9rem">
+        Questions on a specific step, or a topic for the next video? <a href="mailto:mohsen.tahmasebi.n@gmail.com">Email me</a>.
+        Related: <a href="/getting-started-with-hec-hms">Getting Started with HEC-HMS</a> and
+        <a href="/where-water-meets-earth-a-visual-journey-of-watershed-delineation">Where Water Meets Earth</a>.
+      </p>
+      <p style="margin-top:1.2rem"><a class="btn" href="/tutorials">← Back to all tutorials</a></p>
+    </div>
+  </section>
+</Base>
+
+<style>
+  /* Faded photo header */
+  .page-header { padding-top: clamp(2.6rem, 6vw, 4rem); padding-bottom: clamp(1.2rem, 3.5vw, 2rem); }
+  .page-header.has-bg {
+    position: relative; overflow: hidden;
+    padding-top: clamp(4.5rem, 11vw, 7.5rem);
+    padding-bottom: clamp(3.2rem, 7.5vw, 5rem);
+  }
+  .ph-bg { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: 0; opacity: 0.50; filter: saturate(0.95); }
+  :global([data-theme='light']) .ph-bg { opacity: 0.6; }
+  .ph-bg-fade { position: absolute; inset: 0; z-index: 0;
+    background:
+      linear-gradient(180deg, color-mix(in oklab, var(--bg) 32%, transparent), var(--bg) 96%),
+      linear-gradient(95deg, color-mix(in oklab, var(--bg) 48%, transparent), transparent 60%),
+      radial-gradient(720px 320px at 86% -8%, var(--accent-soft), transparent 70%);
+  }
+  .ph-inner { position: relative; z-index: 1; }
+  .page-header h1 { font-size: clamp(2.1rem, 1.4rem + 2.8vw, 3.3rem); margin-bottom: 0.35rem; }
+  .hero-sub { font-family: var(--font-head); font-weight: 550; font-size: clamp(1.1rem, 0.95rem + 0.55vw, 1.45rem); color: var(--text-dim); margin-bottom: 1rem; letter-spacing: -0.005em; }
+  .page-header .lede { font-size: 1.1rem; color: var(--text-dim); max-width: 66ch; }
+  .back-link { display: inline-block; font: 600 0.82rem/1 var(--font-sans); color: var(--text-faint); }
+  .back-link:hover { color: var(--accent); text-decoration: none; }
+
+  /* Featured banner */
+  .featured { display: flex; flex-direction: column; gap: clamp(1.2rem, 3vw, 1.8rem); max-width: 920px; margin-inline: auto;
+    border: 1px solid var(--border); border-radius: var(--radius); padding: clamp(1.2rem, 3.2vw, 1.8rem);
+    background: radial-gradient(480px 240px at 100% 0%, var(--accent-soft), transparent 70%), var(--bg-elev); }
+  .fc-banner { margin: 0; border-radius: var(--radius-sm); overflow: hidden; border: 1px solid var(--border-soft); background: #14202c; }
+  .fc-banner :global(img) { width: 100%; height: auto; display: block; }
+  .featured-body { padding-inline: clamp(.2rem, 1vw, .6rem); }
+  .featured-body .lead { color: var(--text-dim); margin-top: 0.5rem; }
+
+  .sub-h { font-size: 1.05rem; margin: 1.6rem 0 0.9rem; }
+
+  /* Three-approach summary list */
+  .approach-list { list-style: none; padding: 0; margin: 0; display: grid; gap: 0.9rem; }
+  .approach { display: grid; grid-template-columns: 60px 1fr; gap: 1rem; align-items: start;
+    padding: 1.1rem 1.2rem; border: 1px solid var(--border-soft); border-radius: var(--radius);
+    background: var(--bg-elev); transition: border-color .2s var(--ease); }
+  .approach:hover { border-color: var(--accent-line); }
+  .approach-n { font: 700 1rem/1 var(--font-sans); letter-spacing: 0.06em;
+    color: var(--accent-ink); background: linear-gradient(135deg, var(--accent), var(--accent-2));
+    border-radius: 9px; padding: 0.6rem 0.55rem; text-align: center; align-self: start;
+    box-shadow: 0 6px 18px var(--glow); }
+  .approach h3 { font-size: 1.05rem; margin-bottom: 0.25rem; }
+  .approach p { color: var(--text-dim); margin: 0; }
+  @media (max-width: 540px) { .approach { grid-template-columns: 1fr; } .approach-n { justify-self: start; padding: 0.5rem 0.7rem; font-size: 0.85rem; } }
+
+  /* CN layers conceptual image */
+  .cn-layers { margin: 0 0 1.6rem; border-radius: var(--radius); overflow: hidden; border: 1px solid var(--border-soft); background: #f4f6fa; max-width: 920px; }
+  .cn-layers :global(img) { width: 100%; height: auto; display: block; }
+  .cn-layers figcaption { padding: 0.6rem 0.95rem; font-size: 0.82rem; color: var(--text-faint); border-top: 1px solid var(--border-soft); background: var(--bg-elev); }
+
+  /* Data requirement cards */
+  .req-grid { gap: 0.9rem; }
+  .req { padding: 1.1rem 1.2rem; border: 1px solid var(--border-soft); border-radius: var(--radius); background: var(--bg-elev); }
+  .req h4 { font-size: 0.98rem; margin-bottom: 0.35rem; }
+  .req p { color: var(--text-dim); margin: 0; font-size: 0.93rem; }
+
+  /* Download cards */
+  .dl-grid { gap: 0.9rem; }
+  .dl-card { display: flex; flex-direction: column; gap: 0.35rem;
+    padding: 1.1rem 1.2rem; border: 1px solid var(--border-soft); border-radius: var(--radius);
+    background: var(--bg-elev); color: var(--text); text-decoration: none;
+    transition: border-color .2s var(--ease), transform .2s var(--ease), box-shadow .2s var(--ease); }
+  .dl-card:hover { border-color: var(--accent-line); transform: translateY(-2px); box-shadow: var(--shadow); text-decoration: none; }
+  .dl-eye { font: 600 0.66rem/1 var(--font-sans); letter-spacing: 0.16em; text-transform: uppercase; color: var(--accent); }
+  .dl-card h4 { font-size: 1.02rem; margin: 0.15rem 0 0.25rem; }
+  .dl-card p { color: var(--text-dim); margin: 0; font-size: 0.92rem; }
+  .dl-cta { display: inline-flex; align-items: center; gap: 0.4rem; margin-top: 0.7rem; font: 600 0.86rem/1 var(--font-sans); color: var(--accent); }
+
+  /* Numbered steps */
+  .steps { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 0.7rem; }
+  .step { display: grid; grid-template-columns: 56px 1fr; gap: 1rem; align-items: start;
+    padding: 0.9rem 1.1rem; border: 1px solid var(--border-soft); border-radius: var(--radius);
+    background: var(--bg-elev); transition: border-color .2s var(--ease); }
+  .step:hover { border-color: var(--accent-line); }
+  .step-n { font: 700 0.9rem/1 var(--font-sans); letter-spacing: 0.06em;
+    color: var(--accent-ink); background: linear-gradient(135deg, var(--accent), var(--accent-2));
+    border-radius: 9px; padding: 0.55rem 0.4rem; text-align: center; align-self: start;
+    box-shadow: 0 4px 14px var(--glow); }
+  .step-body p { color: var(--text-dim); margin: 0; }
+  @media (max-width: 540px) { .step { grid-template-columns: 1fr; } .step-n { justify-self: start; padding: 0.4rem 0.6rem; font-size: 0.82rem; } }
+
+  /* ArcGIS Pro Package CTA below the walkthrough video */
+  .archydro-cta { display: flex; flex-wrap: wrap; align-items: center; gap: 0.9rem 1.2rem; margin-top: 1.3rem; }
+  .archydro-cta .btn :global(svg) { color: currentColor; }
+
+  /* Example output figure */
+  .example { margin: 2.2rem 0 0; max-width: 380px; }
+  .example :global(img) { width: 100%; height: auto; display: block; border-radius: var(--radius-sm); border: 1px solid var(--border-soft); }
+  .example figcaption { margin-top: 0.6rem; font-size: 0.82rem; color: var(--text-faint); line-height: 1.5; }
+
+  /* Web app card */
+  .webapp-card { max-width: 760px; padding: clamp(1.3rem, 3.5vw, 2rem); border: 1px solid var(--border); border-radius: var(--radius);
+    background: radial-gradient(420px 220px at 100% 0%, var(--accent-soft), transparent 70%), var(--bg-elev); }
+  .webapp-card h3 { font-size: 1.3rem; }
+
+  /* Resources (single + multi-video) */
+  .resource-list { display: flex; flex-direction: column; gap: clamp(1.6rem, 4vw, 2.6rem); }
+  .resource { border-top: 1px solid var(--border-soft); padding-top: clamp(1.4rem, 3.5vw, 2rem); }
+  .resource:first-child { border-top: 0; padding-top: 0; }
+  .resource-head { display: flex; align-items: baseline; gap: 0.8rem; margin-bottom: 0.6rem; flex-wrap: wrap; }
+  .resource-n { font: 600 0.7rem/1 var(--font-sans); letter-spacing: 0.16em; color: var(--text-faint); flex: none; }
+  .resource-head h3 { font-size: 1.1rem; margin: 0; }
+  .resource > p.muted { margin-bottom: 1rem; max-width: 80ch; }
+  .resource-videos { max-width: 860px; }
+
+  /* Multi-video grid (rule: 2+ videos go in a matrix) */
+  .vid-grid { display: grid; gap: clamp(0.8rem, 2vw, 1.2rem); max-width: 1080px; }
+  .vid-grid--2, .vid-grid--4 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .vid-grid--3, .vid-grid--5, .vid-grid--6, .vid-grid--7, .vid-grid--8, .vid-grid--9 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  @media (max-width: 920px) { .vid-grid--3, .vid-grid--5, .vid-grid--6, .vid-grid--7, .vid-grid--8, .vid-grid--9 { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (max-width: 580px) { .vid-grid { grid-template-columns: 1fr; } }
+  .vid-cell { margin: 0; display: flex; flex-direction: column; gap: 0.55rem; }
+  .vid-cell .video-embed { max-width: none; }
+  .vid-cell figcaption { font: 600 0.72rem/1.3 var(--font-sans); letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-faint); }
+
+  /* Video embed (reused) */
+  .video-embed { position: relative; aspect-ratio: 16 / 9; border-radius: var(--radius-sm); overflow: hidden; border: 1px solid var(--border-soft); background: #000; max-width: 860px; }
+  .video-embed iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+</style>
