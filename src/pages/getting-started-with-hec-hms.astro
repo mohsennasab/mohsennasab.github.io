@@ -3,6 +3,7 @@ import { Image } from 'astro:assets';
 import Base from '../layouts/Base.astro';
 import SectionHead from '../components/SectionHead.astro';
 import hmsBanner from '../assets/HMS.png';
+import headerBg from '../assets/photos/photo-69.jpg';
 
 const DATA_HMS101 = 'https://drive.google.com/file/d/197hjh9SocB5Owy63xnBzfL37_dsMsD73/view?usp=sharing';
 const DATA_OPT = 'https://drive.google.com/drive/folders/1EtyjVLi3a3dIj-mGqqQ-NXBdBFTJZlXc?usp=drive_link';
@@ -77,9 +78,20 @@ const dlIcon = '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stro
   title="Getting Started with HEC-HMS"
   description="A free, hands-on HEC-HMS tutorial by Dr. Mohsen Tahmasebi Nasab: watershed modeling end to end, model optimization with observed hydrographs, and the supporting workflows for soil, land cover, Curve Numbers, NOAA Atlas 14 rainfall, and Unit Hydrographs."
 >
-  <!-- Header -->
-  <section class="page-header">
-    <div class="wrap">
+  <!-- Header with faded photo-69 background -->
+  <section class="page-header has-bg">
+    <Image
+      class="ph-bg"
+      src={headerBg}
+      alt=""
+      aria-hidden="true"
+      loading="eager"
+      widths={[800, 1200, 1800]}
+      sizes="100vw"
+      style="object-position:center 55%"
+    />
+    <div class="ph-bg-fade" aria-hidden="true"></div>
+    <div class="wrap ph-inner">
       <a class="back-link" href="/tutorials">← Tutorials</a>
       <span class="eyebrow" style="margin-top:.6rem">// course</span>
       <h1>Getting Started with HEC-HMS</h1>
@@ -229,8 +241,26 @@ const dlIcon = '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stro
 </Base>
 
 <style>
-  /* Header */
+  /* Header with faded photo background */
   .page-header { padding-top: clamp(2.6rem, 6vw, 4rem); padding-bottom: clamp(1.2rem, 3.5vw, 2rem); }
+  .page-header.has-bg {
+    position: relative; overflow: hidden;
+    padding-top: clamp(4.5rem, 11vw, 7.5rem);
+    padding-bottom: clamp(3.2rem, 7.5vw, 5rem);
+  }
+  .ph-bg {
+    position: absolute; inset: 0; width: 100%; height: 100%;
+    object-fit: cover; z-index: 0; opacity: 0.50; filter: saturate(0.95);
+  }
+  :global([data-theme='light']) .ph-bg { opacity: 0.6; }
+  .ph-bg-fade {
+    position: absolute; inset: 0; z-index: 0;
+    background:
+      linear-gradient(180deg, color-mix(in oklab, var(--bg) 32%, transparent), var(--bg) 96%),
+      linear-gradient(95deg, color-mix(in oklab, var(--bg) 48%, transparent), transparent 60%),
+      radial-gradient(720px 320px at 86% -8%, var(--accent-soft), transparent 70%);
+  }
+  .ph-inner { position: relative; z-index: 1; }
   .page-header h1 { font-size: clamp(2rem, 1.3rem + 2.6vw, 3.2rem); margin-bottom: 0.7rem; }
   .page-header .lede { font-size: 1.1rem; color: var(--text-dim); max-width: 70ch; }
   .back-link { display: inline-block; font: 600 0.82rem/1 var(--font-sans); color: var(--text-faint); }
