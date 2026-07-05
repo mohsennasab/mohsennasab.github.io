@@ -5,6 +5,7 @@ import SectionHead from '../components/SectionHead.astro';
 import historyBanner from '../assets/CN_History.png';
 import cnLayers from '../assets/CN2.png';
 import cnRaster from '../assets/CN1.png';
+import cnGeneratorLogo from '../assets/CN_Generator_logo.png';
 import headerBg from '../assets/photos/photo-15.jpg';
 
 const ARCHYDRO_URL = 'https://www.esri.com/en-us/industries/water-resources/arc-hydro/downloads#arc-hydro-for-arcgis-pro';
@@ -303,26 +304,53 @@ const ghIcon = '<svg viewBox="0 0 24 24" width="15" height="15" fill="currentCol
       <SectionHead
         eyebrow="// method 03"
         title="SCS Curve Number Generator (web app)"
-        lede="A code-first alternative if you would rather work in Python than click through ArcGIS Pro. Provide your soil and land-use vector files (and optionally a watershed boundary), and the app builds the CN map and the statistics that go with it. Runs locally in the browser."
+        lede="A dedicated CN Generator app I built and maintain: a Windows one-click executable if you just want results, and a Python source distribution if you want to look under the hood. Provide your soil and land-use vector files (and optionally a watershed boundary), and the app builds the CN map and the statistics that go with it. Everything runs on your machine, in your browser; nothing is uploaded to a remote server."
       />
 
       <article class="webapp">
-        <!-- Header row: name + short blurb + CTA -->
+        <!-- Hero row: logo + name + description + chips + CTA -->
         <header class="webapp-head">
-          <div class="webapp-intro">
-            <h3>CN_Generator</h3>
-            <p class="muted">
-              Open-source Python web app built around the standard NRCS Curve Number methodology and the USACE HEC-HMS
-              guidance for spatial CN assignment. Drop in your soil and land-use layers, choose a lookup table, and the
-              app handles CRS alignment, dual-group resolution, the spatial overlay, raster export, and zonal
-              statistics. The whole thing runs locally; nothing is uploaded to a remote service.
-            </p>
-            <div class="chips" style="margin-top:.9rem">
-              <span class="chip">Python 3.11+</span><span class="chip">Gradio</span><span class="chip">runs in the browser</span><span class="chip">free, open source</span>
+          <div class="webapp-brand">
+            <Image
+              src={cnGeneratorLogo}
+              alt="CN Generator logo, a stylized pixel-grid view of a river bending through green vegetation and tan terrain"
+              width={260}
+              height={260}
+              loading="lazy"
+              class="webapp-logo"
+            />
+            <div class="webapp-intro">
+              <h3>CN Generator</h3>
+              <p class="muted">
+                A local, open-source SCS Curve Number toolkit built around the NRCS methodology and USACE HEC-HMS
+                guidance for spatial CN assignment. Drop in your soil and land-use layers, choose a lookup table, and
+                the app handles CRS alignment, dual-group resolution, the spatial overlay, raster export, and zonal
+                statistics. Everything runs on your own machine, in your browser; nothing is uploaded.
+              </p>
+              <div class="chips" style="margin-top:.9rem">
+                <span class="chip">Windows app (.exe)</span><span class="chip">Python 3.10+</span><span class="chip">Gradio</span><span class="chip">runs locally</span><span class="chip">free for personal use</span>
+              </div>
             </div>
           </div>
           <a class="btn btn--primary webapp-btn" href={CN_GENERATOR_REPO} target="_blank" rel="noopener"><span set:html={ghIcon} /> View on GitHub</a>
         </header>
+
+        <!-- Two ways to run it (callout above the numbered blocks) -->
+        <div class="webapp-block webapp-callout">
+          <h4 class="webapp-callout-title">Two ways to run it</h4>
+          <div class="webapp-ways">
+            <div>
+              <strong>Windows zip package.</strong> Download <code>CN_Generator_Windows_&lt;version&gt;.zip</code> from
+              the GitHub Releases page, extract, and double-click <code>CN_Generator.exe</code>. No Python install
+              required. This is the easiest path for anyone who just wants to use the tool.
+            </div>
+            <div>
+              <strong>Source code, from Python.</strong> Clone the repo, create a virtual environment, install
+              <code>requirements.txt</code>, and run <code>python app.py</code>. Use this if you want to read the
+              code, adapt it to your workflow, or build your own release.
+            </div>
+          </div>
+        </div>
 
         <!-- What it does -->
         <div class="webapp-block">
@@ -331,9 +359,10 @@ const ghIcon = '<svg viewBox="0 0 24 24" width="15" height="15" fill="currentCol
             <li><strong>Aligns coordinate systems automatically</strong> across the soil and land-use layers, so you do not have to reproject anything by hand.</li>
             <li><strong>Resolves dual hydrologic groups</strong> (A/D, B/D, C/D) into the more restrictive group, the standard convention.</li>
             <li><strong>Spatially intersects soil and land use</strong> and assigns a Curve Number to every polygon from a built-in NLCD lookup table (or your own CSV).</li>
+            <li><strong>Dissolves polygons by CN value</strong> and computes areas, then rasterizes the result to a GeoTIFF ready for HEC-HMS or HEC-RAS.</li>
             <li><strong>Computes zonal statistics per watershed</strong> when a boundary is provided: area-weighted CN, mean, min, max, and counts.</li>
             <li><strong>Builds an interactive Folium map</strong> with tooltips and a runoff-potential legend so you can sanity-check the result in the browser.</li>
-            <li><strong>Exports clean files</strong>: a GeoPackage of CN polygons, a GeoTIFF raster ready for HEC-HMS or HEC-RAS, an HTML report, and an optional Excel summary.</li>
+            <li><strong>Exports a clean set of files</strong>: a GeoPackage of CN polygons, a GeoTIFF raster, an HTML report, an interactive map, and an optional Excel summary.</li>
           </ul>
         </div>
 
@@ -342,10 +371,10 @@ const ghIcon = '<svg viewBox="0 0 24 24" width="15" height="15" fill="currentCol
           <div>
             <h4 class="webapp-sub"><span class="webapp-sub-mark">02</span> What it expects</h4>
             <ul class="io-list">
-              <li><strong>Soil vector</strong> with a hydrologic soil group field</li>
-              <li><strong>Land-use vector</strong> with a numeric class code field</li>
+              <li><strong>Soil vector</strong> with a hydrologic soil group field (A, B, C, D, or dual forms A/D, B/D, C/D)</li>
+              <li><strong>Land-use vector</strong> with a numeric class code field (NLCD class codes work out of the box)</li>
               <li><strong>Watershed boundary</strong> <span class="faint">(optional, for zonal statistics)</span></li>
-              <li><strong>Formats</strong>: zip-compressed Shapefile, GeoPackage, or GeoJSON</li>
+              <li><strong>Formats</strong>: zip-compressed Shapefile (with .shp, .shx, .dbf, .prj), GeoPackage, or GeoJSON</li>
               <li><strong>Custom CSV lookup</strong> <span class="faint">(optional, otherwise uses the built-in NLCD table)</span></li>
             </ul>
           </div>
@@ -361,15 +390,30 @@ const ghIcon = '<svg viewBox="0 0 24 24" width="15" height="15" fill="currentCol
           </div>
         </div>
 
-        <!-- Built with -->
+        <!-- Sample data -->
         <div class="webapp-block">
-          <h4 class="webapp-sub"><span class="webapp-sub-mark">04</span> Built with</h4>
+          <h4 class="webapp-sub"><span class="webapp-sub-mark">04</span> Sample data to try it on</h4>
+          <p class="muted" style="margin-bottom:.85rem">
+            A working HUC10 example ships with the app so you can try the full workflow without hunting for data. In
+            <code>data/HUC10 Example/</code> you will find:
+          </p>
+          <ul class="io-list">
+            <li><strong>SoilData_SandCreek.zip</strong> soil layer for Sand Creek</li>
+            <li><strong>NLCD2024_SandCreek.zip</strong> matching land-use layer</li>
+            <li><strong>SandCreek_HUC10.zip</strong> watershed boundary</li>
+            <li>a small spreadsheet with expected results so you can verify the output</li>
+          </ul>
+        </div>
+
+        <!-- Built with (libraries + module architecture) -->
+        <div class="webapp-block">
+          <h4 class="webapp-sub"><span class="webapp-sub-mark">05</span> Built with</h4>
           <p class="muted" style="margin-bottom:1rem">
-            Python 3.11+ and a small set of well-tested geospatial libraries. The pinned versions live in
-            <code>requirements.txt</code>; the table below highlights the ones doing the real work.
+            Python 3.10 or newer (3.11 recommended) and a small set of well-tested geospatial libraries. The pinned
+            versions live in <code>requirements.txt</code>; the table below highlights the ones doing the real work.
           </p>
           <div class="lib-grid">
-            <div class="lib"><span class="lib-name">Gradio</span><span class="lib-role">browser UI, the form handling, and the local dev server</span></div>
+            <div class="lib"><span class="lib-name">Gradio</span><span class="lib-role">browser UI, form handling, and the local dev server</span></div>
             <div class="lib"><span class="lib-name">GeoPandas</span><span class="lib-role">spatial vector dataframes, joins, and overlays</span></div>
             <div class="lib"><span class="lib-name">Shapely + pyogrio + Fiona</span><span class="lib-role">geometry operations and vector file I/O</span></div>
             <div class="lib"><span class="lib-name">Rasterio + rioxarray</span><span class="lib-role">writing the GeoTIFF output raster</span></div>
@@ -379,23 +423,79 @@ const ghIcon = '<svg viewBox="0 0 24 24" width="15" height="15" fill="currentCol
             <div class="lib"><span class="lib-name">dask + dask-geopandas</span><span class="lib-role">parallel processing for larger study areas</span></div>
             <div class="lib"><span class="lib-name">WhiteboxTools</span><span class="lib-role">auxiliary geospatial operations</span></div>
           </div>
+          <p class="muted" style="margin-top:1.1rem">
+            Under the hood the code lives in single-purpose modules in <code>src/</code>:
+            <code>curve_number_calculator.py</code> handles the lookup and dual-group logic,
+            <code>spatial_operations.py</code> does the CRS work and the overlay,
+            <code>cn_statistics.py</code> does the zonal math, and <code>visualization.py</code>
+            builds the Folium map and the HTML report. <code>app.py</code> is the Gradio front end
+            that wires them together.
+          </p>
         </div>
 
-        <!-- Run it locally -->
+        <!-- Install: Windows zip -->
         <div class="webapp-block">
-          <h4 class="webapp-sub"><span class="webapp-sub-mark">05</span> Run it locally</h4>
+          <h4 class="webapp-sub"><span class="webapp-sub-mark">06</span> Install and run: Windows zip</h4>
+          <p class="muted" style="margin-bottom:.9rem">
+            The path most people should take. You do not need Python installed.
+          </p>
+          <ol class="webapp-steps">
+            <li>Go to the <a href="https://github.com/mohsennasab/CN_Generator/releases" target="_blank" rel="noopener">Releases page</a> and download <code>CN_Generator_Windows_&lt;version&gt;.zip</code>.</li>
+            <li>Right-click the zip and choose <strong>Extract All</strong>.</li>
+            <li>Open the extracted folder and double-click <code>CN_Generator.exe</code>.</li>
+            <li>Keep the app window open while you use the tool; closing it stops the local server.</li>
+          </ol>
+          <p class="faint" style="font-size:.85rem;margin-top:.7rem">
+            If Windows SmartScreen shows a warning on first run, click <strong>More info</strong>, then
+            <strong>Run anyway</strong>. The package is unsigned (it is a small personal release), which is why the
+            warning appears.
+          </p>
+          <p class="faint" style="font-size:.85rem;margin-top:.35rem">
+            The zip also includes example data under <code>Sample Data\HUC10 Example</code>, a
+            <code>Create_Shortcuts.bat</code> helper if you want a Desktop shortcut, and a brief README for zip users.
+          </p>
+        </div>
+
+        <!-- Install: source -->
+        <div class="webapp-block">
+          <h4 class="webapp-sub"><span class="webapp-sub-mark">07</span> Install and run: source code</h4>
+          <p class="muted" style="margin-bottom:.9rem">
+            Use this path if you want to read the code, tweak it, or build your own release. Python 3.10 or newer;
+            3.11 is what I develop against.
+          </p>
           <pre class="webapp-code"><code>git clone https://github.com/mohsennasab/CN_Generator.git
 cd CN_Generator
 python -m venv .venv
 .venv\Scripts\activate           # on Windows
 # source .venv/bin/activate      # on macOS or Linux
-pip install -r requirements.txt
+python -m pip install --upgrade pip
+python -m pip install -r requirements.txt
 python app.py</code></pre>
           <p class="faint" style="font-size:.85rem;margin-top:.7rem">
-            Gradio opens in your default browser at <code>http://127.0.0.1:7860</code>. Drop in the soil, land-use, and
-            (optionally) watershed files, set the lookup table, and the CN map is generated in seconds.
+            On Windows there is also a <code>CN_Generator.bat</code> launcher that creates the venv, installs
+            everything, and starts the app in one step. Once running, Gradio opens at
+            <code>http://127.0.0.1:7860</code>.
           </p>
-          <div class="archydro-cta">
+        </div>
+
+        <!-- License and use -->
+        <div class="webapp-block webapp-license">
+          <h4 class="webapp-sub"><span class="webapp-sub-mark">08</span> License and use</h4>
+          <p>
+            <strong>CN Generator is free for personal, non-commercial use.</strong> Study it, run it on your own
+            projects, use it for coursework, learn from it, share it, all fine.
+          </p>
+          <p>
+            For <strong>commercial use</strong>, including paid consulting, internal business use, client
+            deliverables, training, workshops, course material, demonstrations tied to paid services, and videos or
+            media produced for commercial purposes, please get in touch through
+            <a href="/">hydromohsen.com</a> to arrange a license.
+          </p>
+          <p class="faint" style="font-size:.85rem">
+            The software is provided as-is, without warranty. Always verify results before using them in analysis,
+            design, or decision-making.
+          </p>
+          <div class="archydro-cta" style="margin-top:1.2rem">
             <a class="btn btn--primary" href={CN_GENERATOR_REPO} target="_blank" rel="noopener"><span set:html={ghIcon} /> Open the repository on GitHub</a>
             <span class="faint" style="font-size:.85rem">Stars and contributions welcome.</span>
           </div>
@@ -572,6 +672,14 @@ python app.py</code></pre>
   }
   .webapp-head { display: grid; grid-template-columns: 1fr auto; gap: 1.4rem; align-items: start; margin-bottom: 1.6rem; padding-bottom: 1.4rem; border-bottom: 1px solid var(--border-soft); }
   @media (max-width: 700px) { .webapp-head { grid-template-columns: 1fr; } }
+  .webapp-brand { display: grid; grid-template-columns: auto 1fr; gap: clamp(1rem, 2.4vw, 1.5rem); align-items: start; }
+  @media (max-width: 620px) { .webapp-brand { grid-template-columns: 1fr; justify-items: start; } }
+  .webapp-logo {
+    width: clamp(96px, 12vw, 140px); height: clamp(96px, 12vw, 140px);
+    border-radius: 14px; border: 1px solid var(--border);
+    object-fit: cover; display: block;
+    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.18);
+  }
   .webapp-intro h3 { font-size: clamp(1.35rem, 1.05rem + 1.2vw, 1.7rem); margin-bottom: 0.4rem; }
   .webapp-intro .muted { color: var(--text-dim); margin: 0; }
   .webapp-btn { align-self: start; flex: none; }
@@ -637,6 +745,32 @@ python app.py</code></pre>
     white-space: pre;
   }
   .webapp-code code { background: transparent; border: 0; padding: 0; font-size: inherit; color: inherit; }
+
+  /* "Two ways to run it" callout */
+  .webapp-callout {
+    padding: 1.05rem 1.25rem;
+    border: 1px dashed var(--accent-line);
+    border-radius: var(--radius-sm);
+    background: color-mix(in oklab, var(--accent-soft) 55%, transparent);
+  }
+  .webapp-callout-title {
+    font: 700 0.72rem/1 var(--font-sans); letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--text); margin: 0 0 0.85rem;
+  }
+  .webapp-ways { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(1rem, 3vw, 1.6rem); }
+  @media (max-width: 720px) { .webapp-ways { grid-template-columns: 1fr; } }
+  .webapp-ways > div { color: var(--text-dim); font-size: 0.94rem; line-height: 1.55; }
+  .webapp-ways strong { color: var(--text); font-weight: 650; }
+
+  /* Numbered install steps */
+  .webapp-steps { list-style: decimal; padding-left: 1.4rem; margin: 0; display: grid; gap: 0.45rem; }
+  .webapp-steps > li { color: var(--text-dim); font-size: 0.94rem; line-height: 1.55; }
+  .webapp-steps > li strong { color: var(--text); font-weight: 650; }
+
+  /* License block */
+  .webapp-license p { color: var(--text-dim); margin: 0 0 0.75rem; line-height: 1.55; }
+  .webapp-license p strong { color: var(--text); font-weight: 650; }
+  .webapp-license a { color: var(--accent); }
 
   /* Resources (single + multi-video) */
   .resource-list { display: flex; flex-direction: column; gap: clamp(1.6rem, 4vw, 2.6rem); }
