@@ -1,0 +1,537 @@
+---
+import { Image } from 'astro:assets';
+import Base from '../../layouts/Base.astro';
+import PageHeader from '../../components/PageHeader.astro';
+import headerBg from '../../assets/blog/rang/nasir-ol-molk-web.jpg';
+import nasirOlMolk from '../../assets/blog/rang/nasir-ol-molk-web.jpg';
+import generalMapExamples from '../../assets/blog/rang/general-map-examples.png';
+import kashanSource from '../../assets/blog/rang/kashan-source.jpg';
+import kashanRegions from '../../assets/blog/rang/kashan-02-regions.png';
+import kashanClusters from '../../assets/blog/rang/kashan-03-cluster-candidates.png';
+import kashanCurated from '../../assets/blog/rang/kashan-04-curated-palette.png';
+import kashanPreview from '../../assets/blog/rang/kashan-preview.png';
+import golestanPreview from '../../assets/blog/rang/golestan-preview.png';
+import termehPreview from '../../assets/blog/rang/termeh-preview.png';
+
+const RANG_REPO = 'https://github.com/mohsennasab/Rang';
+const NASIR_SOURCE = 'https://commons.wikimedia.org/wiki/File:Nasir_al-_mulk_mosque,_Shiraz.jpg';
+const MET_KASHAN = 'https://www.metmuseum.org/art/collection/search/451470';
+const CIE_STD = 'https://cie.co.at/publications/colorimetry-4th-edition';
+const KMEANS = 'https://www.ibm.com/think/topics/k-means-clustering';
+---
+
+<Base
+  title="The story behind Rang"
+  description="How Persian art, and a silk carpet from Kashan in particular, became a set of color palettes I now use in engineering maps. By Dr. Mohsen Tahmasebi Nasab."
+>
+  <PageHeader
+    eyebrow="// blog"
+    title="The story behind Rang"
+    lede="How Persian art, and a silk carpet from Kashan in particular, became a set of color palettes I now use in engineering maps."
+    bgImage={headerBg}
+    bgPos="center 40%"
+  >
+    <p class="post-meta">Aug 2, 2026 · about a 7 minute read</p>
+  </PageHeader>
+
+  <article class="section">
+    <div class="wrap post">
+      <div class="post-audio">
+        <div class="post-audio-head">
+          <span class="post-audio-label">Listen to this post</span>
+          <span class="post-audio-note">
+            Narration is AI-generated and mispronounces some of the names. For accurate
+            pronunciation of proper names, see the
+            <a href="https://github.com/mohsennasab/Rang#saying-the-names" target="_blank" rel="noopener">"Saying the names"</a>
+            section of the Rang repository.
+          </span>
+        </div>
+        <audio class="post-audio-player" controls preload="none" src="/audio/the-story-behind-rang.mp3">
+          Your browser does not support the audio element.
+          <a href="/audio/the-story-behind-rang.mp3">Download the MP3</a>.
+        </audio>
+      </div>
+
+      <p>
+        When I think of Persian art, I think of color before I think of anything else. I think of
+        turquoise tile against warm brick, red fields filled with flowers, and small details that
+        ask for a closer look. Color is not an afterthought in these works. It carries place and
+        memory.
+      </p>
+
+      <p>
+        The interior of Nasir ol Molk Mosque in Shiraz (where I was born) makes this impossible to
+        miss. Morning light passes through colored glass and lands on stone, tile, and carpet. The
+        room changes with the sun. Color becomes something you can almost feel, as if you were
+        touching it.
+      </p>
+
+      <figure class="post-fig">
+        <Image
+          src={nasirOlMolk}
+          alt="The colorful interior of Nasir ol Molk Mosque in Shiraz, with morning light through stained glass falling onto tile and carpet"
+          widths={[480, 800, 1200]}
+          sizes="(min-width: 800px) 720px, 100vw"
+        />
+        <figcaption>
+          Nasir ol Molk Mosque, Shiraz, Iran. Photograph by
+          <a href={NASIR_SOURCE} target="_blank" rel="noopener">MohammadReza Domiri Ganji</a>,
+          6 September 2013. Resized for this post.
+        </figcaption>
+      </figure>
+
+      <p>
+        That world of color feels very different from the maps I use every day, but the two belong
+        together in my mind.
+      </p>
+
+      <p>
+        My daily work involves reviewing large amounts of water, hydrologic, and hydraulic data. I
+        move between rainfall grids, terrain models, stream networks, flood depths, water surface
+        elevations, and results from hydrologic and hydraulic models. Some maps cover a watershed.
+        Others cover a state or most of a continent. Some are meant for a quick technical check.
+        Others need to explain a result clearly to someone who did not build the model.
+      </p>
+
+      <p>
+        In my engineering work, color has a task. It needs to help me see where rain is heaviest,
+        where the ground rises, which channel carries the main flow, and how water depth changes
+        across a floodplain. A weak color scale can hide structure or make ordinary variation look
+        more pronounced than it really is. A good one lets the shape of the data show itself
+        clearly.
+      </p>
+
+      <figure class="post-fig">
+        <Image
+          src={generalMapExamples}
+          alt="Examples of general plots and rainfall and terrain maps that need thoughtful color choices"
+          widths={[480, 800, 1200]}
+          sizes="(min-width: 800px) 720px, 100vw"
+        />
+      </figure>
+
+      <p>
+        The default color palettes often work, but to me, Persian carpets, tilework, manuscripts,
+        and textiles hold centuries of experience in placing colors next to one another. I wanted
+        to bring some of that historical visual intelligence into the maps I make.
+      </p>
+
+      <p>
+        After seeing Josh Carrell share his Grateful Dead album color schemes, I was inspired to
+        share my own work. That idea became
+        <a href={RANG_REPO} target="_blank" rel="noopener">Rang</a>. Rang means "color" in Persian.
+        It is a growing collection of palettes drawn from Persian art and culture and prepared for
+        data visualization.
+      </p>
+
+      <h2>How do you pull a palette from a photograph?</h2>
+
+      <p>
+        Picking colors from a photograph sounds easier than it really is. Open a photograph and
+        pick a few colors? No. I am an engineer, so I need to make it more rewarding. A photograph
+        may contain millions of pixels. Light changes across the surface. Old fibers fade
+        unevenly. Shadows darken one corner. A camera and a screen both add their own character.
+        Even a small flower may contain dozens of reds.
+      </p>
+
+      <p>
+        My goal was not to recover a single, mathematically correct answer. There is no such
+        answer. The goal is to use measurement to see and appreciate the photograph more
+        carefully, then make a palette that feels faithful to the work and remains useful on a
+        map.
+      </p>
+
+      <p>The Kashan palette is a good example.</p>
+
+      <h2>Step 1: Start with the artwork</h2>
+
+      <p>
+        Kashan comes from a sixteenth-century silk carpet in the collection of The Metropolitan
+        Museum of Art. The carpet has a rose field, an indigo central medallion, pale borders,
+        gold details, and touches of green and blue.
+      </p>
+
+      <figure class="post-fig">
+        <Image
+          src={kashanSource}
+          alt="A sixteenth-century silk Kashan carpet with rose field, indigo medallion, gold details, and pale borders"
+          widths={[480, 800, 1200]}
+          sizes="(min-width: 800px) 720px, 100vw"
+        />
+        <figcaption>
+          Silk Kashan Carpet, 16th century, probably made in Kashan, Iran. The Metropolitan Museum
+          of Art, accession 58.46. <a href={MET_KASHAN} target="_blank" rel="noopener">View the
+          object record</a>.
+        </figcaption>
+      </figure>
+
+      <p>
+        If I asked a computer for the most common colors in the whole image, the rose field and
+        tan border would dominate. The small indigo and ivory details could almost disappear from
+        the result, even though they are essential to how the carpet looks.
+      </p>
+
+      <h2>Step 2: Look region by region</h2>
+
+      <p>
+        Instead of treating the carpet as one bag of pixels, I divide it into visual regions. For
+        Kashan, useful regions include the rose field, the central medallion, and the outer
+        border.
+      </p>
+
+      <figure class="post-fig">
+        <Image
+          src={kashanRegions}
+          alt="The Kashan carpet split into three regions: rose field, central medallion, and outer border"
+          widths={[480, 800, 1200]}
+          sizes="(min-width: 800px) 720px, 100vw"
+        />
+      </figure>
+
+      <p>
+        This is an important choice. It tells the computer to listen to quiet parts of the artwork
+        as well as loud ones. It also makes the process personal. Another person might draw the
+        regions differently because another detail caught their eye. That is not a mistake.
+        Looking is part of the method.
+      </p>
+
+      <h2>Step 3: Describe color in CIELAB</h2>
+
+      <p>
+        Screens normally store color as red, green, and blue values. Those values are good for
+        displaying light, but numerical distances in RGB do not line up very well with the
+        differences people see. CIELAB is a mathematical color space defined in 1976 by the
+        International Commission on Illumination (CIE) to describe all colors that humans can see.
+        It is device-independent, uses three numerical coordinates (L*, a*, b*), and models how
+        the human brain perceives color differences.
+      </p>
+
+      <p>
+        For clustering, I convert the sampled pixels to CIELAB, usually shortened to Lab. This
+        color space describes a color with three values:
+      </p>
+
+      <ul>
+        <li><code>L*</code> represents lightness, from dark to light.</li>
+        <li><code>a*</code> moves roughly from green to red.</li>
+        <li><code>b*</code> moves roughly from blue to yellow.</li>
+      </ul>
+
+      <p>
+        The useful idea is simple. In Lab, colors that are numerically closer tend to look closer
+        to us. It is not a perfect model of human vision, but it gives the clustering a better
+        foundation than raw RGB values. The formal definitions come from the
+        <a href={CIE_STD} target="_blank" rel="noopener">CIE colorimetry standard</a>.
+      </p>
+
+      <h2>Step 4: Let k-means find groups</h2>
+
+      <p>
+        Within each region, I use an algorithm called k-means. The k-means algorithm is a popular
+        unsupervised machine learning method that groups unlabeled data into k distinct clusters.
+        <a href={KMEANS} target="_blank" rel="noopener">Read this article</a> if you really,
+        really want to know more about it.
+      </p>
+
+      <p>
+        I asked ChatGPT to help me explain how k-means is used here with an analogy. Here is what
+        it told me, and I actually think it is a great analogy:
+      </p>
+
+      <blockquote>
+        <p>
+          Imagine pouring the pixels onto a table as colored beads. The algorithm places a small
+          number of empty bowls on the table, moves every bead toward its nearest bowl, then moves
+          each bowl toward the center of the beads it collected. It repeats those steps until the
+          groups settle down.
+        </p>
+        <p>
+          Each final bowl gives one cluster center, a representative color for a group of similar
+          pixels. Running the process separately for each region gives a set of candidates from
+          the rose field, another from the medallion, and another from the border.
+        </p>
+      </blockquote>
+
+      <figure class="post-fig">
+        <Image
+          src={kashanClusters}
+          alt="K-means cluster candidates extracted from the rose field, central medallion, and border of the Kashan carpet"
+          widths={[480, 800, 1200]}
+          sizes="(min-width: 800px) 720px, 100vw"
+        />
+      </figure>
+
+      <p>
+        The percentages show how much of that region belongs to each cluster. A color covering two
+        percent of a region may matter more to the design than a background color covering thirty
+        percent. It is all about what you think is important.
+      </p>
+
+      <h2>Step 5: Put the human judgment back in</h2>
+
+      <p>This is where extraction ends and palette making begins.</p>
+
+      <p>
+        I compare the candidates with the carpet. I keep colors that carry its character. I adjust
+        a color when the cluster center looks muddy. I may leave out a common color that adds
+        little to the palette. I may lift the lightness of another so it remains visible in a map.
+        Then I arrange the colors so they make a satisfying path when used as a continuous ramp.
+      </p>
+
+      <p>
+        This part is deliberately not deterministic. The software does not get the last word. My
+        eyes do. The final palette needs to belong to the artwork, feel good as a group, and
+        behave well when it carries actual data.
+      </p>
+
+      <figure class="post-fig">
+        <Image
+          src={kashanCurated}
+          alt="The final curated Kashan palette shown as color chips"
+          widths={[480, 800, 1200]}
+          sizes="(min-width: 800px) 720px, 100vw"
+        />
+      </figure>
+
+      <h2>Step 6: Test it on real data</h2>
+
+      <p>
+        A row of color chips can be beautiful and still fail as a visualization. I test each
+        palette on categorical plots, continuous surfaces, and real map data. I look for
+        neighboring colors that collapse into one another, abrupt jumps in a gradient, and dark
+        colors that hide labels or boundaries.
+      </p>
+
+      <p>
+        Rang also measures pairwise color separation under normal vision and simulated protanopia,
+        deuteranopia, and tritanopia. Those checks do not turn a palette into an accessibility
+        guarantee. They do show problems that are easy to miss. Again, the numbers support the
+        visual decision. They do not replace it.
+      </p>
+
+      <h2>Three palettes to begin with</h2>
+
+      <p>Rang currently begins with three sources, each with a different personality.</p>
+
+      <h3>Kashan</h3>
+
+      <p>
+        Kashan moves through brick red, rose, terracotta, ochre, ivory, sage, blue, and indigo. It
+        came from the structure of a silk carpet and works well for both groups and continuous
+        surfaces.
+      </p>
+
+      <figure class="post-fig">
+        <Image
+          src={kashanPreview}
+          alt="Preview of the Kashan palette applied to sample plots and maps"
+          widths={[480, 800, 1200]}
+          sizes="(min-width: 800px) 720px, 100vw"
+        />
+      </figure>
+
+      <h3>Golestan</h3>
+
+      <p>
+        Golestan came from a hunting-scene tile panel at Golestan Palace in Tehran. I photographed
+        it in 2018 when I was visiting the palace.
+      </p>
+
+      <figure class="post-fig">
+        <Image
+          src={golestanPreview}
+          alt="Preview of the Golestan palette applied to sample plots and maps"
+          widths={[480, 800, 1200]}
+          sizes="(min-width: 800px) 720px, 100vw"
+        />
+      </figure>
+
+      <h3>Termeh</h3>
+
+      <p>
+        Termeh came from a patterned textile associated with Yazd, which I purchased in 2022. I
+        built this one as a sequential water palette, moving from a pale foam color through river
+        blue to deep indigo. I developed this one for my hydraulic modelers out there who want to
+        visualize water depth and water surface elevation maps.
+      </p>
+
+      <figure class="post-fig">
+        <Image
+          src={termehPreview}
+          alt="Preview of the Termeh palette applied to sample plots and maps, moving from foam through river blue to deep indigo"
+          widths={[480, 800, 1200]}
+          sizes="(min-width: 800px) 720px, 100vw"
+        />
+      </figure>
+
+      <h2>From an artwork to the tools I already use</h2>
+
+      <p>
+        I did not want Rang to remain a collection of hex codes in a notebook. The palettes are
+        now packaged for several common workflows:
+      </p>
+
+      <ul>
+        <li>Python and matplotlib</li>
+        <li>R and ggplot2</li>
+        <li>ArcGIS Pro</li>
+        <li>QGIS</li>
+        <li>GeoLibre</li>
+        <li>HEC-RAS and RAS Mapper</li>
+      </ul>
+
+      <p>
+        The same palette definitions generate all of these outputs, which keeps the colors
+        consistent from one program to another. The repository also includes sample maps, source
+        notes, color-vision checks, and some of the tools used to build a new palette.
+      </p>
+
+      <p>
+        You can explore the project, install the packages, and download the GIS files at
+        <a href={RANG_REPO} target="_blank" rel="noopener">github.com/mohsennasab/Rang</a>.
+      </p>
+
+      <p>
+        Rang should grow beyond the works that first caught my eye. If you love Persian art and
+        culture, I would be glad to see what you notice. A carpet from your city, a family
+        textile, a manuscript, a tile panel, or a piece of architecture may hold the next palette.
+        Bring the photograph, bring your knowledge of the work, and bring your own sense of color.
+        The contribution guide included in the repository explains how to turn that beginning into
+        something other people can use in their maps.
+      </p>
+
+      <p>I hope Rang gives you one more reason to look closely.</p>
+
+      <p class="post-signoff">Mohsen :)</p>
+
+      <p class="post-back"><a href="/blog">← Back to blog</a></p>
+    </div>
+  </article>
+</Base>
+
+<style>
+  .post-meta {
+    margin-top: 1rem;
+    font: 600 0.82rem/1 var(--font-sans);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-faint);
+  }
+
+  .post { max-width: 720px; }
+
+  .post-audio {
+    margin: 0 0 2.2rem;
+    padding: 1rem 1.15rem;
+    border: 1px solid var(--border-soft);
+    border-radius: var(--radius-sm);
+    background: var(--bg-elev-2);
+  }
+  .post-audio-head {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    margin-bottom: 0.75rem;
+  }
+  .post-audio-label {
+    font: 700 0.72rem/1 var(--font-sans);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--text);
+  }
+  .post-audio-note {
+    font-size: 0.82rem;
+    line-height: 1.55;
+    color: var(--text-faint);
+  }
+  .post-audio-note a { color: var(--accent); }
+  .post-audio-note a:hover { text-decoration: underline; }
+  .post-audio-player {
+    width: 100%;
+    display: block;
+  }
+
+  .post > p {
+    color: var(--text-dim);
+    line-height: 1.75;
+    margin: 0 0 1.15rem;
+    font-size: 1.03rem;
+  }
+  .post > p a { color: var(--accent); }
+  .post > p a:hover { text-decoration: underline; }
+
+  .post h2 {
+    margin: 2.4rem 0 1rem;
+    font-size: clamp(1.35rem, 1.05rem + 1.2vw, 1.7rem);
+    line-height: 1.25;
+  }
+  .post h3 {
+    margin: 1.8rem 0 0.6rem;
+    font-size: 1.15rem;
+    line-height: 1.3;
+  }
+
+  .post ul, .post ol {
+    padding-left: 1.4rem;
+    margin: 0 0 1.15rem;
+    color: var(--text-dim);
+  }
+  .post ul li, .post ol li {
+    margin: 0.35rem 0;
+    line-height: 1.65;
+  }
+
+  .post code {
+    padding: 0.05rem 0.35rem;
+    background: var(--bg-elev-2);
+    border: 1px solid var(--border-soft);
+    border-radius: 4px;
+    font: 500 0.9em/1 var(--font-mono);
+    color: var(--text);
+  }
+
+  .post blockquote {
+    margin: 1.6rem 0;
+    padding: 0.4rem 0 0.4rem 1.2rem;
+    border-left: 3px solid var(--accent-line);
+    color: var(--text-dim);
+    font-style: italic;
+  }
+  .post blockquote p {
+    margin: 0 0 0.7rem;
+    line-height: 1.7;
+  }
+  .post blockquote p:last-child { margin-bottom: 0; }
+
+  .post-fig {
+    margin: 1.9rem 0;
+  }
+  .post-fig :global(img) {
+    width: 100%; height: auto; display: block;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border-soft);
+  }
+  .post-fig figcaption {
+    margin-top: 0.7rem;
+    font-size: 0.82rem;
+    color: var(--text-faint);
+    line-height: 1.55;
+    text-align: center;
+    font-style: italic;
+  }
+  .post-fig figcaption a { color: var(--text-dim); }
+
+  .post-signoff {
+    margin-top: 2rem;
+    font-style: italic;
+    color: var(--text-dim);
+  }
+  .post-back {
+    margin-top: 2.4rem;
+    padding-top: 1.4rem;
+    border-top: 1px solid var(--border-soft);
+    font: 600 0.85rem/1 var(--font-sans);
+  }
+  .post-back a { color: var(--text-faint); }
+  .post-back a:hover { color: var(--accent); }
+</style>
