@@ -540,15 +540,17 @@ const KMEANS = 'https://www.ibm.com/think/topics/k-means-clustering';
   }
   .carousel-track {
     display: flex;
+    width: 100%;
     transition: transform 0.45s var(--ease);
     will-change: transform;
   }
   .carousel-slide {
-    min-width: 100%;
-    flex: none;
+    flex: 0 0 100%;
+    min-width: 0;
     position: relative;
     aspect-ratio: 16 / 10;
     display: flex; align-items: center; justify-content: center;
+    overflow: hidden;
   }
   .carousel-slide :global(img) {
     width: 100%; height: 100%; display: block;
@@ -615,22 +617,25 @@ const KMEANS = 'https://www.ibm.com/think/topics/k-means-clustering';
         if (!track) return;
         var slides = track.children.length;
         if (!slides) return;
+        var viewport = root.querySelector('.carousel-viewport');
         var prev = root.querySelector('[data-carousel-prev]');
         var next = root.querySelector('[data-carousel-next]');
         var dots = root.querySelectorAll('[data-carousel-dot]');
         var idx = 0;
 
-        function update() {
-          track.style.transform = 'translateX(-' + (idx * 100) + '%)';
+        function update(animate) {
+          var w = viewport ? viewport.clientWidth : root.clientWidth;
+          track.style.transition = animate === false ? 'none' : '';
+          track.style.transform = 'translate3d(-' + (idx * w) + 'px, 0, 0)';
           if (prev) prev.disabled = idx === 0;
           if (next) next.disabled = idx === slides - 1;
           dots.forEach(function (d, di) {
             d.setAttribute('aria-current', di === idx ? 'true' : 'false');
           });
         }
-        function goto(i) {
+        function goto(i, animate) {
           idx = Math.max(0, Math.min(slides - 1, i));
-          update();
+          update(animate);
         }
 
         if (prev) prev.addEventListener('click', function () { goto(idx - 1); });
@@ -661,8 +666,14 @@ const KMEANS = 'https://www.ibm.com/think/topics/k-means-clustering';
           }
         }, { passive: true });
 
+        var resizeT;
+        window.addEventListener('resize', function () {
+          clearTimeout(resizeT);
+          resizeT = setTimeout(function () { update(false); }, 80);
+        });
+
         root.setAttribute('data-carousel-ready', '1');
-        update();
+        update(false);
       });
     }
     document.addEventListener('astro:page-load', initCarousels);
