@@ -1,0 +1,1252 @@
+---
+import { Image } from 'astro:assets';
+import Base from '../../layouts/Base.astro';
+import PageHeader from '../../components/PageHeader.astro';
+
+// Header background
+import headerBg from '../../assets/photos/photo-71.jpg';
+
+// System overview
+import mendenhallOverview from '../../assets/blog/glof/MendenhallOverview.png';
+
+// Figures. File names are the plot generator's names, imported under
+// descriptive aliases matching the article's Figure numbering.
+import figDaily from '../../assets/blog/glof/figures/fig1_river_instantaneous_discharge_1986_2026.png';
+import figAnnualPeaks from '../../assets/blog/glof/figures/fig2_river_annual_peaks.png';
+import figStage from '../../assets/blog/glof/figures/fig6_river_stage_2013_2026.png';
+import figHydrographs from '../../assets/blog/glof/figures/fig3_river_glof_events_2023_2026.png';
+import figBasinElev from '../../assets/blog/glof/figures/fig4_basin_elevation_2024_2026.png';
+import fig2026Event from '../../assets/blog/glof/figures/fig5_event_2026_basin_and_river.png';
+
+// Swipe pairs
+import img1893 from '../../assets/blog/glof/swipe/1893.png';
+import img2018 from '../../assets/blog/glof/swipe/2018.png';
+import spillwayDry from '../../assets/blog/glof/swipe/spillway-dry.jpg';
+import spillwayWet from '../../assets/blog/glof/swipe/spillway-wet.jpg';
+import killewichNormal from '../../assets/blog/glof/swipe/killewich-normal.jpg';
+import killewichFlood from '../../assets/blog/glof/swipe/killewich-flood.jpg';
+
+// External URLs referenced in the article
+const NWS_SUICIDE_BASIN = 'https://www.weather.gov/ajk/suicidebasin';
+const KIENHOLZ_2020 = 'https://doi.org/10.3389/feart.2020.00137';
+const KIENHOLZ_FRONTIERS = 'https://www.frontiersin.org/journals/earth-science/articles/10.3389/feart.2020.00137/full';
+const ABDEL_FATTAH = 'https://doi.org/10.3389/feart.2021.635163';
+const SUICIDE_STORYMAP = 'https://storymaps.arcgis.com/stories/72cef125bbfa4f989356bf9350cd5d63';
+const NWS_2025_REPORT = 'https://www.weather.gov/media/ajk/suicideBasin/08_2025%20-%20NWS%20Summary%20-%20Mendenhall%20River%20Flooding.pdf';
+const NWS_GAUGE = 'https://water.noaa.gov/gauges/MNDA2';
+const USGS_STREAM = 'https://www.usgs.gov/water-science-school/science/how-streamflow-measured';
+const USGS_RATING = 'https://www.usgs.gov/faqs/how-a-rating-curve-used-convert-gage-height-streamflow';
+const USGS_PROVISIONAL = 'https://water.usgs.gov/data/provisional.html';
+const USGS_REVISIONS = 'https://www.usgs.gov/faqs/why-might-usgs-streamflow-data-be-revised';
+const USGS_RIVER = 'https://waterdata.usgs.gov/monitoring-location/USGS-15052500/';
+const USGS_BASIN = 'https://waterdata.usgs.gov/monitoring-location/USGS-1505248590/';
+const CBJ_2023 = 'https://juneau.org/newsroom-item/mendenhall-river-flood-event-update-9-pm-8-7';
+const CBJ_MAPS = 'https://juneau.org/engineering-public-works/flood-inundation-maps';
+const CBJ_PHASE1 = 'https://juneau.org/newsroom-item/phase-1-hesco-reconstruction-and-repairs-now-complete';
+const CBJ_VIEW_DRIVE = 'https://juneau.org/engineering-public-works/view-drive-flooding';
+const CBJ_LONGTERM = 'https://juneau.org/newsroom-item/update-from-the-city-manager-pushing-for-an-enduring-solution-to-glacial-lake-outburst-floods';
+const USACE_PHASE2 = 'https://www.poa.usace.army.mil/Media/News-Releases/Article/4555275/usace-completes-phase-two-of-flood-mitigation-measures-in-mendenhall-river-vall/';
+const USACE_2025_BARRIERS = 'https://www.dvidshub.net/news/545750/temporary-flood-barriers-prove-effective-during-flood-event-juneau';
+const USACE_TECHREPORT = 'https://www.poa.usace.army.mil/Missions/Civil-Works-and-Planning/Mendenhall-Valley-Technical-Report/';
+const CRS_REPORT = 'https://www.congress.gov/crs-product/IN12606';
+const DGGS_GLACIER = 'https://dggs.alaska.gov/hazards/climate/glacier-change.html';
+const NWS_2026_INITIAL = 'https://api.weather.gov/products/00ab6729-7aa6-499a-889b-6b58c025e9dc';
+const NWS_2026_AUG13 = 'https://api.weather.gov/products/cd2a3b6d-6f1d-48a8-b8f7-1d4bf1891a74';
+const NWS_2026_CREST = 'https://api.weather.gov/products/19757fe6-df27-401e-8620-224380bd5b40';
+const NWS_2026_DISCUSSION = 'https://api.weather.gov/products/fd860bcd-6e89-4f06-86ec-10e9ca392072';
+const USGS_2023 = 'https://waterservices.usgs.gov/nwis/iv/?format=json&sites=15052500&parameterCd=00060%2C00065&startDT=2023-08-01&endDT=2023-08-20&siteStatus=all';
+const USGS_2024 = 'https://waterservices.usgs.gov/nwis/iv/?format=json&sites=15052500&parameterCd=00060%2C00065&startDT=2024-08-01&endDT=2024-08-20&siteStatus=all';
+const USGS_2025 = 'https://waterservices.usgs.gov/nwis/iv/?format=json&sites=15052500&parameterCd=00060%2C00065&startDT=2025-08-01&endDT=2025-08-20&siteStatus=all';
+const USGS_2026 = 'https://waterservices.usgs.gov/nwis/iv/?format=json&sites=15052500&parameterCd=00060%2C00065&startDT=2026-08-01&endDT=2026-08-20&siteStatus=all';
+const USGS_BASIN_2024 = 'https://api.waterdata.usgs.gov/ogcapi/v0/collections/continuous/items?monitoring_location_id=USGS-1505248590&parameter_code=00062&datetime=2024-08-01T00%3A00%3A00Z%2F2024-08-20T23%3A59%3A59Z&limit=10000';
+const USGS_BASIN_2025 = 'https://api.waterdata.usgs.gov/ogcapi/v0/collections/continuous/items?monitoring_location_id=USGS-1505248590&parameter_code=00062&datetime=2025-08-01T00%3A00%3A00Z%2F2025-08-20T23%3A59%3A59Z&limit=10000';
+const USGS_BASIN_2026 = 'https://api.waterdata.usgs.gov/ogcapi/v0/collections/continuous/items?monitoring_location_id=USGS-1505248590&parameter_code=00062&datetime=2026-08-01T00%3A00%3A00Z%2F2026-08-20T23%3A59%3A59Z&limit=10000';
+---
+
+<Base
+  title="Mendenhall River GLOFs"
+  description="Suicide Basin, the data, and Juneau's response to the recurring Mendenhall River glacial-lake outburst floods. A data-driven post by Dr. Mohsen Tahmasebi Nasab."
+>
+  <div class="post-hero-tall">
+    <PageHeader
+      eyebrow="// blog"
+      title="Mendenhall River GLOFs"
+      lede="Suicide Basin, the data, and Juneau's response."
+      bgImage={headerBg}
+      bgPos="center 50%"
+    >
+      <p class="post-byline">Mohsen Tahmasebi Nasab, PhD</p>
+      <p class="post-meta">Aug 21, 2026 · about a 12 minute read</p>
+    </PageHeader>
+  </div>
+
+  <article class="section">
+    <div class="wrap post">
+
+      <!-- Opening swipe: 1893 vs 2018 -->
+      <figure class="swipe-fig">
+        <div class="swipe-cue" role="note">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 6L3 12l5 6M16 6l5 6-5 6M3 12h18"/></svg>
+          Drag the divider to compare the two photos
+        </div>
+        <div class="swipe" data-swipe>
+          <Image src={img2018} alt="Suicide Basin and the remnant of Suicide Glacier photographed from Mount McGinnis in 2018" widths={[600, 900, 1400]} sizes="(min-width: 800px) 720px, 100vw" loading="eager" />
+          <div class="swipe-top" data-swipe-top>
+            <Image src={img1893} alt="Suicide Glacier filling the basin, photographed from Mount McGinnis in 1893" widths={[600, 900, 1400]} sizes="(min-width: 800px) 720px, 100vw" loading="eager" />
+          </div>
+          <span class="swipe-label swipe-label-left">1893</span>
+          <span class="swipe-label swipe-label-right">2018</span>
+          <input class="swipe-range" data-swipe-range type="range" min="0" max="100" value="50" aria-label="Drag to compare 1893 and 2018" />
+        </div>
+        <figcaption>
+          Drag the handle to travel 125 years. The left photograph was taken in 1893 by the USGS
+          boundary survey led by William Ogilvie, when Suicide Glacier filled this side valley.
+          The right photograph was taken in 2018 by Christian Kienholz of the University of Alaska
+          Southeast, who climbed Mount McGinnis to stand where the survey party stood. The glacier
+          has retreated out of the valley, and the hollow it left is Suicide Basin, an ice-dammed
+          marginal basin on Mendenhall Glacier whose seasonal release can move rapidly through
+          Mendenhall Lake and the Mendenhall River. Photo pair via the
+          <a href={SUICIDE_STORYMAP} target="_blank" rel="noopener">Suicide Basin story map</a>.
+        </figcaption>
+      </figure>
+
+      <h2 id="short-version">The short version</h2>
+
+      <p>
+        A glacial lake outburst flood, or GLOF, is a rapid release of water from a lake held back
+        by glacier ice, sediment, or both. Juneau's recurring GLOF begins in Suicide Basin, where
+        seasonal meltwater, rain, and snowmelt are impounded by Mendenhall Glacier. When water
+        gains access to a changing path through or beneath the ice dam, the basin can drain
+        quickly into Mendenhall Lake and then the Mendenhall River.
+      </p>
+
+      <p>
+        The root cause of Mendenhall GLOF is a changing glacier landscape rather than a single
+        switch that flips every August. Suicide Glacier detached from Mendenhall Glacier entirely
+        in 2006, leaving a depression that can store water, while Mendenhall Glacier continues to
+        block its outlet. Glacier thinning, ice motion, melting, calving, rain, snowmelt, and the
+        evolving drainage path all matter. Climate warming is the background driver of this
+        deglaciation, but the size and timing of any one flood depend on the local ice geometry
+        and weather that year. One of the best physical accounts is the peer-reviewed study by
+        <a href={KIENHOLZ_2020} target="_blank" rel="noopener">Kienholz and colleagues</a>.
+      </p>
+
+      <figure class="post-fig">
+        <Image src={mendenhallOverview} alt="Annotated satellite image of the Mendenhall system showing Suicide Glacier, Suicide Basin, Mendenhall Glacier, the flood pathway into Mendenhall Lake, and the flood impact zone along the river through Mendenhall Valley" widths={[600, 900, 1400]} sizes="(min-width: 800px) 720px, 100vw" />
+        <figcaption>
+          The whole system in one satellite view. Suicide Glacier feeds Suicide Basin on the east
+          flank of Mendenhall Glacier, about three kilometers above the terminus. The red dashed
+          line traces the flood pathway beneath the ice into Mendenhall Lake, next to the visitor
+          center, and the red box marks the flood impact zone along the Mendenhall River as it
+          winds through the neighborhoods of Mendenhall Valley. The scale bar is two miles.
+          Annotated satellite image via the
+          <a href={NWS_SUICIDE_BASIN} target="_blank" rel="noopener">National Weather Service Juneau Suicide Basin page</a>.
+        </figcaption>
+      </figure>
+
+      <h2 id="technical-vocabulary">The technical vocabulary</h2>
+
+      <div class="post-table-scroll">
+        <table class="post-table">
+          <thead>
+            <tr><th>Term</th><th>What it means here</th><th>Why it matters</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><strong>GLOF</strong></td><td>A rapid glacial-lake release, sometimes called a jokulhlaup.</td><td>The flood source is stored water, not rainfall alone.</td></tr>
+            <tr><td><strong>Ice dam</strong></td><td>Glacier ice blocking a basin outlet.</td><td>It can thin, move, calve, melt, and leak. Its capacity is not fixed.</td></tr>
+            <tr><td><strong>Hydraulic head</strong></td><td>Water's potential to flow because of its elevation and pressure.</td><td>As the basin water level falls, the force driving drainage can change.</td></tr>
+            <tr><td><strong>Subglacial conduit</strong></td><td>A water pathway beneath glacier ice.</td><td>It can enlarge quickly, constrict, shift, or become blocked during one event.</td></tr>
+            <tr><td><strong>Hydrograph</strong></td><td>A graph of streamflow or stage through time.</td><td>The river hydrograph combines the basin release with rainfall, snowmelt, glacier melt, and temporary storage in Mendenhall Lake.</td></tr>
+            <tr><td><strong>Stage</strong></td><td>Water-surface height above a station's local reference level, also called gage height.</td><td>Stage is not water depth, stored volume, or a direct measure of discharge.</td></tr>
+            <tr><td><strong>Discharge</strong></td><td>The volume of water passing a cross section per unit time. Here it is reported in cubic feet per second, or cfs.</td><td>It describes the flow rate that drives flood hazard.</td></tr>
+            <tr><td><strong>Rating curve</strong></td><td>The site-specific relation used to convert measured stage into discharge.</td><td>The relation can change after scour, deposition, debris, or channel change.</td></tr>
+            <tr><td><strong>Digital elevation model, or DEM</strong></td><td>A map of surface elevation made from survey data or imagery.</td><td>A current DEM is needed to convert basin water level into a defensible volume estimate.</td></tr>
+            <tr><td><strong>Provisional data</strong></td><td>Real-time data that USGS has not yet completed for publication.</td><td>It can be revised after field inspection, quality control, and rating-curve review.</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h2 id="pre-2011">A hazard that did not exist before 2011</h2>
+
+      <p>
+        Before July 2011, the downstream gauge had never recorded a GLOF, and the river's peak of
+        record was about 16,000 cfs from a September 1995 rainstorm. Since 2011, Suicide Basin has
+        drained approximately 48 times, with release volumes up to 55,000 acre-feet and river
+        flows as high as approximately 50,000 cfs. Until August 2023, every one of those releases
+        drained only part of the basin. The 2023, 2024, and 2025 events then drained essentially
+        all of it, and each rewrote the flood record. A river that did not have this hazard
+        fifteen years ago now experiences it annually, which is why the National Weather Service
+        and its research partners monitor the basin all season. The
+        <a href={NWS_2025_REPORT} target="_blank" rel="noopener">2025 federal post-event report</a>
+        tabulates this history.
+      </p>
+
+      <p>
+        The gauge record tells the same story without any commentary. Nearly four decades of
+        instantaneous flows show a river with a regular summer rhythm and a handful of
+        rain-driven spikes, then a cluster of peaks since 2023 that stand taller than anything
+        before them.
+      </p>
+
+      <figure class="post-fig">
+        <Image src={figDaily} alt="Instantaneous discharge of the Mendenhall River near Auke Bay from 1986 to 2026, with the outburst flood era since 2011 shaded and shown again in a zoomed lower panel that labels each summer peak" widths={[900, 1400, 2000]} sizes="(min-width: 900px) 900px, 100vw" />
+        <figcaption>
+          Figure 1. Instantaneous discharge at USGS 15052500, at 15 to 60 minute intervals, for
+          the full period of record. The outburst flood era since 2011 is shaded on top and
+          repeated in the lower panel with each summer's largest peak labeled. Blue marks values
+          approved by USGS, orange marks provisional values that may still be revised. The
+          archive is sparse before 1997, so the September 1995 peak of about 16,000 cfs and other
+          early rain-driven peaks fall in the gap. The 2023 through 2026 peaks stand well above
+          anything else in the record.
+        </figcaption>
+      </figure>
+
+      <p>
+        For scale, the National Weather Service defines flood impacts at this gauge in categories:
+        action stage at 8 feet, minor flood at 9 feet, moderate flood at 10 feet, and major flood
+        at 14 feet (<a href={NWS_GAUGE} target="_blank" rel="noopener">NWS gauge reference</a>).
+        Every annual peak from 2023 through 2026 exceeded major flood stage. Before 2011, no
+        annual peak had ever reached it.
+      </p>
+
+      <figure class="post-fig">
+        <Image src={figAnnualPeaks} alt="Annual peak discharge and peak gage height from 1966 to 2026 with National Weather Service flood categories" widths={[600, 900, 1400]} sizes="(min-width: 800px) 720px, 100vw" />
+        <figcaption>
+          Figure 2. Annual peaks from the USGS peak flow file, 1966 through 2025, with the
+          provisional 2026 peak added in orange. The upper panel shows peak discharge and the
+          lower panel the gage height at each peak against the flood categories. The 2023 through
+          2026 peaks are the only ones in the record above the major flood line.
+        </figcaption>
+      </figure>
+
+      <h2 id="how-glof">How Suicide Basin creates a GLOF</h2>
+
+      <p>
+        Suicide Basin is roughly 0.7 square kilometers (about 0.27 square miles) and lies about 3
+        kilometers (about 1.86 miles) upglacier from the Mendenhall Glacier terminus. Ice from the
+        main glacier crosses the basin mouth and acts as a temporary dam. The result is not a
+        fixed lake behind a fixed concrete wall. It is a changing hydraulic system made of moving
+        ice, rock, water, and sediment, and it has released GLOFs annually since 2011.
+        <a href={KIENHOLZ_FRONTIERS} target="_blank" rel="noopener">Kienholz et al.</a>
+        document the setting and its rapid evolution.
+      </p>
+
+      <figure class="post-fig">
+        <img
+          src="/blog/glof/timelapse.gif"
+          alt="Satellite timelapse of Mendenhall Lake and the retreating Mendenhall Glacier from 1985 to 2019"
+          loading="lazy"
+        />
+        <figcaption>
+          Thirty four years of retreat from orbit. This satellite timelapse runs from 1985 to
+          2019, with red bars marking the glacier terminus in 1985 and in 2025 and Suicide Glacier
+          visible in the upper right. Mendenhall Lake grows as the ice pulls back, and the same
+          thinning and retreat is what turned the Suicide Glacier valley into a basin that holds
+          water. Visualization by Mohsen Tahmasebi Nasab.
+        </figcaption>
+      </figure>
+
+      <p>
+        As the basin fills, the water gains <strong>hydraulic head</strong>, meaning the pressure
+        and elevation energy available to drive water downhill. A drainage connection can develop
+        below the glacier. Scientists call this an inferred <strong>subglacial conduit</strong>,
+        not a known pipe, because it is hidden by ice and changes as the event unfolds. Flow
+        through a small passage produces heat, which melts and enlarges the passage. A larger
+        passage carries more water and can generate more melt. That feedback explains why a GLOF
+        often begins gradually and then accelerates sharply, a pattern
+        <a href={ABDEL_FATTAH} target="_blank" rel="noopener">Abdel-Fattah and colleagues</a>
+        describe as a slow start followed by a rapid, exponential rise in discharge once the
+        connection is established. Ice deformation works in the other direction by squeezing the
+        passage toward closure. The competition between opening and closure shapes the flood
+        hydrograph.
+      </p>
+
+      <figure class="post-fig">
+        <video
+          src="/blog/glof/main_basin_2026.mp4"
+          autoplay muted loop playsinline preload="metadata"
+          aria-label="Timelapse of Suicide Basin filling and draining through the 2026 season from the USGS main basin camera"
+        ></video>
+        <figcaption>
+          The 2026 season inside the basin, from the USGS main basin camera, May 12 through
+          August 20, one frame per camera upload. Icebergs lift off the floor as the water rises
+          through June and July, the basin brims in early August, and it empties on August 13 and
+          14. The elevation scale and the 2024 and 2025 high water marks on the right are drawn
+          by USGS. Camera frames by USGS, served through the National Weather Service Juneau.
+          Animation by Mohsen Tahmasebi Nasab.
+        </figcaption>
+      </figure>
+
+      <p>
+        Water can also overflow <strong>supraglacially</strong>, meaning across the surface of the
+        ice dam, before the main subglacial release begins. Kienholz and colleagues observed
+        exactly that in 2019. That observation is one reason the local research team does not
+        treat ice flotation at one fixed lake level as the sole trigger. Past floods have begun
+        early, after overflow, or with interrupted drainage. The more defensible explanation is
+        that drainage begins when the lake connects to an evolving pathway below the ice.
+      </p>
+
+      <figure class="swipe-fig">
+        <div class="swipe-cue" role="note">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 6L3 12l5 6M16 6l5 6-5 6M3 12h18"/></svg>
+          Drag the divider to compare the two photos
+        </div>
+        <div class="swipe" data-swipe>
+          <Image src={spillwayWet} alt="The Suicide Basin spillway with water flowing over the ice dam on August 10, 2026" widths={[600, 900, 1400]} sizes="(min-width: 800px) 720px, 100vw" />
+          <div class="swipe-top" data-swipe-top>
+            <Image src={spillwayDry} alt="The Suicide Basin spillway dry on July 27, 2026" widths={[600, 900, 1400]} sizes="(min-width: 800px) 720px, 100vw" />
+          </div>
+          <span class="swipe-label swipe-label-left">July 27</span>
+          <span class="swipe-label swipe-label-right">August 10</span>
+          <input class="swipe-range" data-swipe-range type="range" min="0" max="100" value="50" aria-label="Drag to compare July 27 and August 10" />
+        </div>
+        <figcaption>
+          The overflow route in action. Drag to compare the spillway on July 27, 2026 at 2:00
+          p.m., dry and two weeks from the release, with the same view on August 10, 2026 at 7:00
+          p.m., as the brimming basin sent water over the top of the ice dam. Camera frames by
+          USGS, served through the National Weather Service Juneau. Times are Alaska daylight
+          time.
+        </figcaption>
+      </figure>
+
+      <p>
+        There is one more long-term wrinkle. As the ice dam thins year by year, the basin cannot
+        hold water to the elevations it once did. The federal record shows a basin pool near
+        1,445 feet in 2016, while the 2023 through 2025 events began their releases from starting
+        pools between about 1,363 and 1,387 feet. A thinning dam stores less head even as the
+        basin itself keeps evolving.
+      </p>
+
+      <h2 id="usgs-stations">What the two USGS stations measure</h2>
+
+      <p>The two stations answer different questions.</p>
+
+      <p>
+        <strong>USGS-15052500, Mendenhall R NR Auke Bay AK,</strong> measures downstream river
+        stage and discharge. Its stage is referenced to a local gage datum. It is neither river
+        depth nor a number that can be compared directly with Suicide Basin's reservoir-elevation
+        reading. USGS derives discharge from continuous stage observations and field measurements
+        using a stage-discharge rating curve. Floods can alter the channel and therefore the
+        curve, which is why streamflow values can be revised. See the
+        <a href={USGS_STREAM} target="_blank" rel="noopener">USGS explanation of streamflow measurement</a>
+        and <a href={USGS_RATING} target="_blank" rel="noopener">rating curves</a>.
+      </p>
+
+      <p>
+        <strong>USGS-1505248590, Glacial Lake 2.5 MI N of Nugget C NR Auke Bay AK,</strong>
+        reports parameter 00062, <em>elevation of reservoir water surface above datum, feet</em>.
+        It measures water level in the basin. It does not directly measure how many cubic feet or
+        cubic meters of water are stored there. The quantity needed for storage is an
+        elevation-volume relation, often called basin hypsometry. That relation must be built
+        from a current map of the basin and ice geometry.
+      </p>
+
+      <p>
+        USGS uses <strong>approved</strong> status after its review and processing are complete.
+        <strong>Provisional</strong> status means the record is subject to revision. An
+        <strong>R</strong> qualifier marks a historic value that USGS later revised. A value is
+        not less useful because it is provisional, but it should not be presented as final. In
+        particular, the 2026 river peak remains provisional. The available 2024 to 2026 Suicide
+        Basin elevation records also remain provisional.
+        <a href={USGS_PROVISIONAL} target="_blank" rel="noopener">USGS data-status guidance</a>
+        explains the distinction. The figures in this post keep that distinction visible.
+        Approved values are drawn in blue and provisional values in orange, so a reader can see
+        at a glance which parts of the story USGS has finished checking.
+      </p>
+
+      <figure class="post-fig">
+        <Image src={figStage} alt="Daily maximum gage height at the Mendenhall River gauge from 2013 to 2026 with flood categories" widths={[600, 900, 1400]} sizes="(min-width: 800px) 720px, 100vw" />
+        <figcaption>
+          Figure 3. Daily maximum gage height at USGS 15052500 since the stage record began in
+          2013, against the flood categories. Approved values in blue, provisional values since
+          October 2025 in orange. Summer peaks above the minor flood line are labeled, and the
+          step change in 2023 is hard to miss.
+        </figcaption>
+      </figure>
+
+      <p>
+        What the gauge records as a rising number, a camera on the lakeshore records as a
+        disappearing shoreline. The river gauge sits at the outlet of Mendenhall Lake, so the
+        lake is the first place the basin release shows up downstream.
+      </p>
+
+      <figure class="post-fig">
+        <img
+          src="/blog/glof/glacier_flood_rise.gif"
+          alt="Timelapse of Mendenhall Lake rising in front of Mendenhall Glacier during the August 2026 outburst flood"
+          loading="lazy"
+        />
+        <figcaption>
+          Mendenhall Lake swelling as the 2026 release arrives. Fifteen frames from the morning
+          of August 12 through 1:00 p.m. on August 13, about an hour before the river crested.
+          The gravel shoreline and the vegetated islands in front of the glacier go under as the
+          lake climbs. Camera frames from the EXPLORE.org Mendenhall Glacier camera, operated in
+          partnership with the Tongass National Forest. Animation by Mohsen Tahmasebi Nasab.
+        </figcaption>
+      </figure>
+
+      <h2 id="record-2023-2026">The 2023 to 2026 record</h2>
+
+      <p>
+        The table below uses the maximum instantaneous USGS river values in an August 1 to 20
+        event window. Times are Alaska daylight time. The 2026 numbers are shown exactly as
+        provisional. The 2023 discharge carries an approved, revised qualifier in the USGS
+        record.
+      </p>
+
+      <div class="post-table-scroll">
+        <table class="post-table post-table--compact">
+          <thead>
+            <tr><th>Year</th><th class="num">Peak river stage</th><th class="num">Peak discharge</th><th>USGS status at retrieval</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>2023</td><td class="num">14.97 ft, Aug. 5 at 11:15 p.m.</td><td class="num">34,200 cfs, Aug. 5 at 11:15 p.m.</td><td>Approved, with revised discharge qualifier</td></tr>
+            <tr><td>2024</td><td class="num">15.99 ft, Aug. 6 at 3:15 a.m.</td><td class="num">42,700 cfs, Aug. 6 at 3:15 a.m.</td><td>Approved</td></tr>
+            <tr><td>2025</td><td class="num">16.65 ft, Aug. 13 at 7:15 a.m.</td><td class="num">48,900 cfs, Aug. 13 at 7:15 a.m.</td><td>Approved</td></tr>
+            <tr><td>2026</td><td class="num">14.71 ft, Aug. 13 at 2:05 p.m.</td><td class="num">35,300 cfs, Aug. 13 at 2:00 p.m.</td><td><strong>Provisional</strong></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="post-source">
+        Source: <a href={USGS_RIVER} target="_blank" rel="noopener">USGS station 15052500</a>
+        instantaneous-value records for
+        <a href={USGS_2023} target="_blank" rel="noopener">2023</a>,
+        <a href={USGS_2024} target="_blank" rel="noopener">2024</a>,
+        <a href={USGS_2025} target="_blank" rel="noopener">2025</a>, and
+        <a href={USGS_2026} target="_blank" rel="noopener">2026</a>.
+      </p>
+
+      <p>
+        Laid side by side, the four floods share a shape and differ in size. Each hydrograph
+        climbs for roughly a day, spikes, and falls back within another day, which is the
+        signature of a conduit that opens, enlarges, and then empties its reservoir.
+      </p>
+
+      <figure class="post-fig">
+        <Image src={figHydrographs} alt="Instantaneous gage height and discharge for the August floods of 2023, 2024, 2025, and 2026" widths={[600, 900, 1400]} sizes="(min-width: 800px) 720px, 100vw" />
+        <figcaption>
+          Figure 4. The four August outburst floods at USGS 15052500, August 1 to 20 of each
+          year, in the instantaneous record. Gage height is on top with the flood categories
+          dashed, discharge below, and each peak is labeled with its value and Alaska local time.
+          The 2026 event is provisional and drawn in orange.
+        </figcaption>
+      </figure>
+
+      <p>
+        The peak numbers above mix two water sources, the basin release and whatever the weather
+        adds. The federal reconstruction separates them. It attributes about 30,610 cfs of the
+        2023 peak, about 40,010 cfs of the 2024 peak, and about 43,230 cfs of the preliminary
+        2025 peak to the GLOF itself, with rainfall and baseflow supplying the rest. That
+        separation matters when comparing years, because a wet August and a dry August can turn
+        similar basin releases into very different river crests.
+      </p>
+
+      <p>
+        The annual progression is sobering. In 2023, the August 5 GLOF prompted a local
+        emergency. The local government reported eight buildings condemned and three wastewater
+        lift stations submerged.
+        <a href={CBJ_2023} target="_blank" rel="noopener">Its August 2023 event update</a>
+        records the immediate consequences. The 2024 crest rose another 1.02 feet. In 2025, the
+        river set its current record crest. The 2026 event peaked lower, but it remained a major
+        flood, nearly two feet above the 14-foot major flood threshold, and a reminder that a
+        lower crest does not mean the underlying hazard is gone.
+      </p>
+
+      <p>
+        For Suicide Basin, the directly comparable raw USGS reservoir-elevation record begins in
+        2024. These are the highest and lowest observed values in the same August 1 to 20 window.
+        They are water levels above the station datum, not basin volume estimates.
+      </p>
+
+      <div class="post-table-scroll">
+        <table class="post-table post-table--compact">
+          <thead>
+            <tr><th>Year</th><th class="num">Highest observed basin water level</th><th class="num">Lowest observed level in window</th><th>Status and limitation</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>2023</td><td>Comparable raw 00062 record not available</td><td>Comparable raw 00062 record not available</td><td>The current continuous record begins in 2024.</td></tr>
+            <tr><td>2024</td><td class="num">1,386.68 ft, Aug. 1</td><td class="num">958.56 ft, Aug. 17</td><td><strong>Provisional</strong></td></tr>
+            <tr><td>2025</td><td class="num">1,373.65 ft, Aug. 10</td><td class="num">975.36 ft, Aug. 17</td><td><strong>Provisional</strong></td></tr>
+            <tr><td>2026</td><td class="num">1,345.62 ft, Aug. 11</td><td class="num">889.76 ft, Aug. 15</td><td><strong>Provisional</strong></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="post-source">
+        Source: <a href={USGS_BASIN} target="_blank" rel="noopener">USGS station 1505248590</a>
+        parameter 00062 records for
+        <a href={USGS_BASIN_2024} target="_blank" rel="noopener">2024</a>,
+        <a href={USGS_BASIN_2025} target="_blank" rel="noopener">2025</a>, and
+        <a href={USGS_BASIN_2026} target="_blank" rel="noopener">2026</a>.
+      </p>
+
+      <p>
+        The basin gauge shows the other half of the system. Each season the water surface climbs
+        for months, then drops hundreds of feet in about two days. The 2024 and 2025 records also
+        show a smaller refill and second release in early autumn, a reminder that the basin does
+        not stay empty once the main flood is over.
+      </p>
+
+      <figure class="post-fig">
+        <Image src={figBasinElev} alt="Suicide Basin water surface elevation from May 2024 to August 2026, with the 2026 season shown in detail" widths={[600, 900, 1400]} sizes="(min-width: 800px) 720px, 100vw" />
+        <figcaption>
+          Figure 5. Water surface elevation at USGS 1505248590 for the full record, with the 2026
+          fill and release in the lower panel. Every value is provisional, so the whole record is
+          orange. Breaks in the line are gaps in the record, most of them over winter. Elevation
+          is water level above the station datum, not stored volume.
+        </figcaption>
+      </figure>
+
+      <p>
+        There is useful 2023 basin context, but it is a different kind of evidence. The National
+        Weather Service retrospective reconstruction lists a starting basin level of 1,387 feet,
+        an ending level below 951 feet, and an estimated 98 percent release. That analysis
+        combines gauges with drone imagery and an elevation-volume model built on the August 6,
+        2024 DEM. It is valuable reconstruction work, but it should not be mixed with the direct
+        2024 to 2026 station series as if they were identical measurements.
+        <a href={NWS_2025_REPORT} target="_blank" rel="noopener">The 2025 post-event report</a>
+        documents the method. The same table lists the 2024 release at 111 percent of estimated
+        storage, an impossible figure taken literally and an honest illustration of how much
+        uncertainty sits inside any basin-volume estimate.
+      </p>
+
+      <p>
+        A fixed camera on the riverbank turns those tables into something you can watch. The
+        framing never changes, so every difference between frames is the river itself.
+      </p>
+
+      <figure class="post-fig">
+        <img
+          src="/blog/glof/river_flood_timelapse.gif"
+          alt="Timelapse of the Mendenhall River rising, cresting, and receding during the August 2026 outburst flood, seen from a fixed riverbank camera"
+          loading="lazy"
+        />
+        <figcaption>
+          The whole 2026 flood from one riverbank camera, August 12 at 7:33 a.m. through August
+          14 at 2:13 p.m., one frame per half hour. The river climbs through the night of August
+          12, runs bank to bank at the crest on the afternoon of August 13, and drops back over
+          the following day. Day and night cycles pass in a few seconds each. Camera frames from
+          a fixed public webcam on the Mendenhall River. Animation by Mohsen Tahmasebi Nasab.
+        </figcaption>
+      </figure>
+
+      <h2 id="why-2026-lower">Why 2026 crested below the forecast</h2>
+
+      <p>
+        The lower 2026 crest has a clear measured part and an unresolved physical part. The
+        measured comparison is below.
+      </p>
+
+      <div class="post-table-scroll">
+        <table class="post-table post-table--compact">
+          <thead>
+            <tr><th>Indicator</th><th class="num">2025</th><th class="num">2026</th><th>What it supports</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Highest raw Suicide Basin water level</td><td class="num">1,373.65 ft, provisional</td><td class="num">1,345.62 ft, provisional</td><td class="wrap">The 2026 high reading was 28.03 feet lower, though a level difference is not a volume difference.</td></tr>
+            <tr><td>Mendenhall River discharge at 8:00 a.m., Aug. 11</td><td class="num">6,890 cfs, approved</td><td class="num">2,590 cfs, provisional</td><td class="wrap">The 2026 river began with less than half the background flow.</td></tr>
+            <tr><td>Weather contribution</td><td class="wrap">Atmospheric river, about 5.5 inches of valley rain to nearly 8 inches at Suicide Basin</td><td class="wrap">Warm and dry under persistent high pressure</td><td class="wrap">2025 rainfall added substantially to the downstream flood.</td></tr>
+            <tr><td>Observed river crest</td><td class="num">16.65 ft, approved</td><td class="num">14.71 ft, provisional</td><td>The 2026 crest was 1.94 feet lower.</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p>
+        The 2025 post-event analysis attributes the record flood to both high GLOF drainage and
+        heavy rainfall. The rain event displayed the signature of an atmospheric river, lasted
+        more than 72 hours, lifted the freezing level above 11,000 feet, and raised river
+        baseflow before the basin release. The storm total was the highest 7-day precipitation on
+        record for that window at the Juneau forecast office. The 2026 forecast discussion
+        instead described warm, dry conditions under stationary high pressure. That contrast,
+        along with the lower antecedent river flow and the lower measured basin level, gives a
+        concrete explanation for much of the lower 2026 river peak.
+        <a href={NWS_2025_REPORT} target="_blank" rel="noopener">The 2025 report</a> and the
+        <a href={NWS_2026_DISCUSSION} target="_blank" rel="noopener">2026 forecast discussion</a>
+        support that comparison.
+      </p>
+
+      <p>
+        Putting the basin gauge and the river gauge on one clock shows how tightly the two are
+        coupled. The basin began to fall slowly late on August 11, accelerated through August 12,
+        and dropped almost vertically on the morning of August 13. The river crested at 2:05 p.m.
+        that afternoon, at nearly the same moment the basin reached bottom.
+      </p>
+
+      <figure class="post-fig">
+        <Image src={fig2026Event} alt="Suicide Basin water surface elevation, Mendenhall River gage height, and discharge during the August 2026 flood on a shared time axis" widths={[600, 900, 1400]} sizes="(min-width: 800px) 720px, 100vw" />
+        <figcaption>
+          Figure 6. The 2026 release and the river response from August 8 to 17 on a shared time
+          axis, Alaska local time. The dotted vertical line marks the river crest. All values are
+          provisional.
+        </figcaption>
+      </figure>
+
+      <p>
+        It does not explain the entire forecast difference. At 12:57 a.m. on August 12, the
+        National Weather Service forecast a crest of 16.1 to 16.6 feet. At 9:45 a.m. on August
+        13, it still forecast 15.8 to 16.3 feet. Both statements were explicit that the forecast
+        rested on an estimated basin volume and release rates drawn from previous events, and
+        that partial versus full drainage is a major source of uncertainty. By 3:06 p.m. that
+        day, the service reported the release was ending and the river had crested around 14.7
+        feet. The careful conclusion is that the event did not sustain the basin-volume and
+        release-rate combination represented by the analog forecast. A published post-event
+        analysis has not yet assigned that difference to a specific conduit change, calving
+        event, or ice-dam mechanism, and any confident single-cause explanation this soon would
+        outrun the evidence. See the
+        <a href={NWS_2026_INITIAL} target="_blank" rel="noopener">initial forecast</a>,
+        <a href={NWS_2026_AUG13} target="_blank" rel="noopener">August 13 update</a>, and
+        <a href={NWS_2026_CREST} target="_blank" rel="noopener">observed-crest statement</a>.
+      </p>
+
+      <h2 id="why-hard">Why exact volume and peak forecasts remain hard</h2>
+
+      <p>
+        The first challenge is storage. A water-level gauge provides an elevation, which can be
+        written as <em>z</em>. To estimate stored volume, scientists need a current relation
+        <em>V(z)</em> between elevation and volume. That requires a contemporaneous DEM, a mapped
+        waterline, and a defensible representation of the ice and basin geometry. Simple
+        subtraction of the start and end water levels is not a volume calculation.
+      </p>
+
+      <p>
+        The difficulty is physical as well as technical. A DEM maps what is visible, not
+        necessarily the lake bed below ice. Floating ice can flex, ground, calve, and move.
+        Grounded ice may block part of an outlet. A thinning dam can reduce how much water is
+        retained, while ice loss inside the basin and basin expansion can create additional
+        storage. These competing changes mean that a lower measured water level can still be
+        associated with a complex and uncertain stored volume. In their detailed analysis of the
+        2018 and 2019 events, Kienholz and colleagues estimated about 29 and 31 million cubic
+        meters drained only after comparing pre- and post-event surveys and correcting for
+        overflow, melt, and other changes.
+        <a href={KIENHOLZ_2020} target="_blank" rel="noopener">Their paper</a> is a good
+        illustration of why the calculation cannot be reduced to one gauge difference. The 111
+        percent release figure in the federal 2024 reconstruction makes the same point from the
+        operational side.
+      </p>
+
+      <p>
+        The second challenge is release behavior. An inferred conduit can open early, drain only
+        part of the basin, speed up, slow down, shift, or close. For most of the record since
+        2011 partial drainage was the norm, and the recent run of essentially full releases is
+        itself a change in behavior. Those variations alter both the timing and the shape of the
+        GLOF hydrograph. The downstream river then adds a second layer of complexity because the
+        GLOF signal is combined with rainfall, snowmelt, glacier melt, tributary inflow, and
+        temporary storage in Mendenhall Lake. The river gauge measures the combined result, not
+        a direct flow meter at the hidden basin outlet.
+      </p>
+
+      <p>
+        The third challenge is data timing. Basin geometry is surveyed at intervals, weather
+        varies sharply between the valley and high glacier terrain, and telemetry can be
+        interrupted during the event. Operational forecasts therefore use the best available
+        water-level estimate and earlier floods as analogs. They are indispensable for warning
+        and preparation, but their uncertainty is part of the science, not a failure to take the
+        hazard seriously. The 2026 forecast that came in high, issued with its uncertainty
+        stated plainly, is what honest operational forecasting looks like when an ice dam
+        changes its behavior.
+      </p>
+
+      <h2 id="reducing-risk">How the valley is reducing risk</h2>
+
+      <p>
+        Juneau's flood strategy is layered. It combines monitoring, early warning, temporary
+        physical defenses, drainage management, evacuation and access planning, flood mapping,
+        and study of longer-term risk reduction. The shared work of residents, municipal staff,
+        and local, state, federal, Tribal, and university partners has made the valley more
+        prepared after a sequence of difficult floods.
+      </p>
+
+      <div class="post-table-scroll">
+        <table class="post-table">
+          <thead>
+            <tr><th>Risk-reduction layer</th><th>How it works</th><th>Limitation to keep in view</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Temporary barriers</td><td>Wire-mesh, geotextile-lined cells filled with soil or sand act as rapidly constructed temporary levees.</td><td>They reduce overbank flooding along a protected alignment. They do not stop the GLOF at its source.</td></tr>
+            <tr><td>Bank armoring and berms</td><td>Armoring reduces scour that could undermine a barrier. A berm blocks a defined overtopping route.</td><td>They protect particular reaches and pathways, not the entire floodplain.</td></tr>
+            <tr><td>Drainage management</td><td>Check valves limit river water backing up through storm drains. Pumps manage seepage and water on the protected side.</td><td>Pumps and valves cannot remove all flood risk or protect every individual property.</td></tr>
+            <tr><td>Forecasting and inundation maps</td><td>Gauges, cameras, weather data, hydraulic modeling, alerts, and closures support decisions before and during an event.</td><td>Maps are scenario tools, not a guarantee of a specific flood depth or flood edge.</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p>
+        The barrier program has moved fast by infrastructure standards. A first-generation
+        temporary levee of about 2.5 miles went in along the riverbank before the 2025 melt
+        season, and it was credited with holding back the record 2025 crest well enough to
+        prevent a repeat of the 2024 neighborhood flooding
+        (<a href={USACE_2025_BARRIERS} target="_blank" rel="noopener">federal account</a>).
+        Ahead of the 2026 season the system was rebuilt using damage observations from 2025 and
+        updated hydrologic and hydraulic modeling, with a stated design capacity of 63,500 cfs,
+        described locally as roughly an 18-foot stage event
+        (<a href={CBJ_PHASE1} target="_blank" rel="noopener">completion notice, July 2026</a>).
+        Separate federal emergency work under Public Law 84-99 added 2.72 miles of temporary
+        gabion-style barriers, 1.85 miles of riverbank armoring, and a 1,100-foot earthen berm
+        (<a href={USACE_PHASE2} target="_blank" rel="noopener">federal Phase 2 release</a>).
+        These are meaningful interim defenses. They are not permanent or fail-safe protection.
+      </p>
+
+      <p>
+        The municipal inundation maps are also more useful when read with their limits. They
+        cover 8-foot through 20-foot lake stage scenarios, were produced through hydrologic and
+        hydraulic modeling by an engineering consultant with review by federal agencies and the
+        state university, and were calibrated to confirmed high-water marks from the 2024 flood.
+        They show predicted flood extent rather than depth, and the barriers appear only on the
+        14 through 18 foot maps because the barrier design height was set from 2024 event data.
+        <a href={CBJ_MAPS} target="_blank" rel="noopener">The flood-map page and its FAQ</a>
+        spell out the assumptions, which is exactly why the maps should guide preparation rather
+        than be treated as a promise.
+      </p>
+
+      <p>
+        Some locations cannot be protected safely by temporary barriers because of soil stability
+        and home elevations. In those places, the local government is pursuing voluntary buyouts
+        through a federal watershed-protection program as another risk-reduction tool
+        (<a href={CBJ_VIEW_DRIVE} target="_blank" rel="noopener">View Drive page</a>). For the
+        enduring problem, the long-term technical study continues to examine controlled drainage
+        at Suicide Basin, flood-control structures, levees or floodwalls, bypass channels,
+        relocation, and related nonstructural options. Controlled drainage, often called a lake
+        tap, drew a coordinated endorsement from Tribal, federal land-management, and municipal
+        partners. In February 2025, however, the local government reported that the federal
+        engineering agency was pivoting away from advancing the lake tap as the identified
+        long-term solution, and no permanent alternative has been selected since. The 2025 and
+        2026 flood seasons were therefore fought with temporary defenses while the long-term
+        question stays open. Any durable option will need engineering, geotechnical,
+        environmental, cultural, permitting, funding, and community review.
+        <a href={CBJ_LONGTERM} target="_blank" rel="noopener">The long-term update</a> and
+        <a href={USACE_TECHREPORT} target="_blank" rel="noopener">federal technical-study page</a>
+        explain the current status.
+      </p>
+
+      <figure class="swipe-fig">
+        <div class="swipe-cue" role="note">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 6L3 12l5 6M16 6l5 6-5 6M3 12h18"/></svg>
+          Drag the divider to compare the two photos
+        </div>
+        <div class="swipe" data-swipe>
+          <Image src={killewichFlood} alt="The Mendenhall River at Killewich Drive on August 13, 2026, filling the channel to the top of the temporary barrier near the flood crest" widths={[600, 900, 1400]} sizes="(min-width: 800px) 720px, 100vw" />
+          <div class="swipe-top" data-swipe-top>
+            <Image src={killewichNormal} alt="The Mendenhall River at Killewich Drive on the morning of August 12, 2026, at normal summer flow below the temporary barrier" widths={[600, 900, 1400]} sizes="(min-width: 800px) 720px, 100vw" />
+          </div>
+          <span class="swipe-label swipe-label-left">Aug 12, 7:33 a.m.</span>
+          <span class="swipe-label swipe-label-right">Aug 13, 1:23 p.m.</span>
+          <input class="swipe-range" data-swipe-range type="range" min="0" max="100" value="50" aria-label="Drag to compare Aug 12, 7:33 a.m. and Aug 13, 1:23 p.m." />
+        </div>
+        <figcaption>
+          What the barriers were built for. Drag to compare the upstream view at Killewich Drive
+          on the morning of August 12, 2026, with the river at its normal late summer level and
+          the rock bank exposed far below the green barrier wall, against 1:23 p.m. on August
+          13, when Mendenhall Lake stood at 14.44 feet and the river pressed against the top of
+          the temporary barrier, about forty minutes before the 14.71 foot crest. The wall held.
+          Camera frames from the Juneau Flood Solution Advocates neighborhood camera stream.
+        </figcaption>
+      </figure>
+
+      <p>
+        The strongest lesson from 2023 through 2026 is not that Juneau has solved the problem.
+        It is that the community has met a brand-new hazard with serious science, hard physical
+        work, and care for neighbors. In fifteen years the valley went from never having seen a
+        GLOF to monitoring an ice dam in real time, forecasting its releases, and holding back
+        a record flood with defenses built in months. That work deserves respect. It also needs
+        to continue with the same clear-eyed attention to uncertainty that good flood
+        preparation requires.
+      </p>
+
+      <h2 id="sources">Sources and data method</h2>
+
+      <ol class="post-sources">
+        <li>
+          <strong>Kienholz, C., and colleagues, 2020.</strong>
+          <a href={KIENHOLZ_2020} target="_blank" rel="noopener"><em>Deglacierization of a Marginal Basin and Implications for Outburst Floods, Mendenhall Glacier, Alaska</em></a>,
+          <em>Frontiers in Earth Science</em>, 8, 137. Primary academic source for Suicide Basin
+          geometry, ice-dam evolution, drainage mechanisms, and the 2018 and 2019 volume
+          estimates.
+        </li>
+        <li>
+          <strong>Abdel-Fattah, D., and colleagues, 2021.</strong>
+          <a href={ABDEL_FATTAH} target="_blank" rel="noopener"><em>User Engagement in Developing Use-Inspired Glacial Lake Outburst Flood Decision Support Tools in Juneau and the Kenai Peninsula, Alaska</em></a>,
+          <em>Frontiers in Earth Science</em>, 9. Academic source for GLOF hydrograph behavior
+          and Juneau decision-support context.
+        </li>
+        <li>
+          <strong>U.S. Geological Survey, station 15052500.</strong>
+          <a href={USGS_RIVER} target="_blank" rel="noopener">Mendenhall R NR Auke Bay AK monitoring page</a>.
+          The river table reports the maximum instantaneous values in the linked August 1 to 20
+          raw queries. Parameter 00065 is stage and parameter 00060 is discharge.
+        </li>
+        <li>
+          <strong>U.S. Geological Survey, station 1505248590.</strong>
+          <a href={USGS_BASIN} target="_blank" rel="noopener">Glacial Lake 2.5 MI N of Nugget C NR Auke Bay AK monitoring page</a>.
+          The basin table uses parameter 00062, reservoir-water-surface elevation above datum.
+          The comparable continuous series begins in 2024.
+        </li>
+        <li>
+          <strong>U.S. Geological Survey.</strong>
+          <a href={USGS_PROVISIONAL} target="_blank" rel="noopener">Provisional-data statement</a>,
+          <a href={USGS_REVISIONS} target="_blank" rel="noopener">why streamflow values are revised</a>,
+          <a href={USGS_STREAM} target="_blank" rel="noopener">streamflow measurement overview</a>, and
+          <a href={USGS_RATING} target="_blank" rel="noopener">rating-curve explanation</a>.
+          Sources for data-status and measurement terminology.
+        </li>
+        <li>
+          <strong>National Weather Service.</strong>
+          <a href={NWS_2025_REPORT} target="_blank" rel="noopener">August 2025 Mendenhall River Flooding Summary</a>.
+          Federal post-event report for the pre-2011 baseline, the release count, rainfall,
+          baseflow, GLOF-only flow reconstruction, volume-method caveats, and the historical
+          basin-pool elevations. Its 51,000 cfs 2025 figure was preliminary. This post uses the
+          current approved USGS 2025 peak of 48,900 cfs.
+        </li>
+        <li>
+          <strong>National Weather Service.</strong>
+          <a href={NWS_GAUGE} target="_blank" rel="noopener">Mendenhall River near Auke Bay gauge and flood categories</a>.
+          Archived 2026 products:
+          <a href={NWS_2026_INITIAL} target="_blank" rel="noopener">initial forecast and uncertainty statement</a>,
+          <a href={NWS_2026_AUG13} target="_blank" rel="noopener">August 13 forecast update</a>,
+          <a href={NWS_2026_CREST} target="_blank" rel="noopener">release-end and crest statement</a>, and
+          <a href={NWS_2026_DISCUSSION} target="_blank" rel="noopener">warm, dry forecast discussion</a>.
+        </li>
+        <li>
+          <strong>City and Borough of Juneau.</strong>
+          <a href={CBJ_2023} target="_blank" rel="noopener">August 2023 flood-event update</a>,
+          <a href={CBJ_MAPS} target="_blank" rel="noopener">flood-inundation maps and FAQ</a>,
+          <a href={CBJ_PHASE1} target="_blank" rel="noopener">Phase 1 barrier completion notice</a>,
+          <a href={CBJ_VIEW_DRIVE} target="_blank" rel="noopener">View Drive risk-reduction page</a>, and
+          <a href={CBJ_LONGTERM} target="_blank" rel="noopener">February 2025 long-term update</a>.
+        </li>
+        <li>
+          <strong>U.S. Army Corps of Engineers.</strong>
+          <a href={USACE_PHASE2} target="_blank" rel="noopener">Phase 2 mitigation completion release</a>,
+          <a href={USACE_2025_BARRIERS} target="_blank" rel="noopener">2025 barrier performance account</a>, and
+          <a href={USACE_TECHREPORT} target="_blank" rel="noopener">Mendenhall Valley Technical Report page</a>.
+        </li>
+        <li>
+          <strong>Congressional Research Service, 2025.</strong>
+          <a href={CRS_REPORT} target="_blank" rel="noopener"><em>Glacial Lake Outburst Floods: Mendenhall Glacier Case Study and Issues for Congress</em></a>.
+          Federal policy-level overview of the Mendenhall GLOF problem.
+        </li>
+        <li>
+          <strong>Alaska Division of Geological and Geophysical Surveys.</strong>
+          <a href={DGGS_GLACIER} target="_blank" rel="noopener">Glacier-change hazard monitoring</a>.
+          State source for real-time monitoring of ice-dammed lakes at four Alaska sites,
+          including Suicide Basin.
+        </li>
+        <li>
+          <strong>Figures.</strong> All six figures were drawn from the complete USGS records
+          for both stations, downloaded on August 21, 2026 through the USGS water services and
+          the newer USGS water data API. Approved values are blue and provisional values are
+          orange throughout. The downloaded data, the checks run on it, and the plotting code
+          are kept alongside this post so the figures can be rebuilt once USGS finishes
+          reviewing the 2026 record.
+        </li>
+      </ol>
+
+      <p class="post-signoff">Mohsen :)</p>
+
+      <p class="post-back"><a href="/blog">← Back to blog</a></p>
+    </div>
+  </article>
+</Base>
+
+<style>
+  /* Taller header + gentler fade for this post, so more of the glacier photo shows.
+     :global() breaks out of Astro's per-page scoping to reach into the PageHeader
+     component's classes; the outer .post-hero-tall class keeps the override scoped
+     to this page only. */
+  .post-hero-tall :global(.page-header.has-bg) {
+    padding-top: clamp(7rem, 18vw, 12rem);
+    padding-bottom: clamp(6rem, 14vw, 9rem);
+  }
+  .post-hero-tall :global(.ph-bg) {
+    opacity: 0.55;
+    filter: saturate(1.02);
+  }
+  :global([data-theme='light']) .post-hero-tall :global(.ph-bg) {
+    opacity: 0.68;
+  }
+  .post-hero-tall :global(.ph-bg-fade) {
+    background:
+      linear-gradient(180deg,
+        transparent 0%,
+        transparent 30%,
+        color-mix(in oklab, var(--bg) 25%, transparent) 55%,
+        color-mix(in oklab, var(--bg) 65%, transparent) 80%,
+        var(--bg) 100%),
+      linear-gradient(95deg,
+        color-mix(in oklab, var(--bg) 22%, transparent),
+        transparent 55%),
+      radial-gradient(720px 320px at 86% -8%, var(--accent-soft), transparent 70%);
+  }
+
+  .post-byline {
+    margin-top: 1.1rem;
+    font: 600 1rem/1.3 var(--font-sans);
+    color: var(--text);
+    letter-spacing: -0.005em;
+  }
+  .post-meta {
+    margin-top: 0.35rem;
+    font: 600 0.82rem/1 var(--font-sans);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-faint);
+  }
+
+  .post { max-width: 960px; }
+
+  .post > p {
+    color: var(--text-dim);
+    line-height: 1.75;
+    margin: 0 0 1.15rem;
+    font-size: 1.03rem;
+  }
+  .post > p a { color: var(--accent); }
+  .post > p a:hover { text-decoration: underline; }
+
+  .post h2 {
+    margin: 2.6rem 0 1rem;
+    font-size: clamp(1.35rem, 1.05rem + 1.2vw, 1.7rem);
+    line-height: 1.25;
+    scroll-margin-top: 90px;
+  }
+  .post h3 {
+    margin: 1.8rem 0 0.6rem;
+    font-size: 1.15rem;
+    line-height: 1.3;
+  }
+
+  .post ul, .post ol {
+    padding-left: 1.4rem;
+    margin: 0 0 1.15rem;
+    color: var(--text-dim);
+  }
+  .post ul li, .post ol li {
+    margin: 0.35rem 0;
+    line-height: 1.65;
+  }
+
+  .post code {
+    padding: 0.05rem 0.35rem;
+    background: var(--bg-elev-2);
+    border: 1px solid var(--border-soft);
+    border-radius: 4px;
+    font: 500 0.9em/1 var(--font-mono);
+    color: var(--text);
+  }
+
+  /* Static and animated figures */
+  .post-fig { margin: 1.9rem 0; }
+  .post-fig :global(img), .post-fig video {
+    width: 100%; height: auto; display: block;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border-soft);
+    background: #000;
+  }
+  .post-fig video { background: #000; }
+  .post-fig figcaption {
+    margin-top: 0.7rem;
+    font-size: 0.82rem;
+    color: var(--text-faint);
+    line-height: 1.6;
+    text-align: center;
+    font-style: italic;
+  }
+  .post-fig figcaption a { color: var(--text-dim); }
+  .post-fig figcaption a:hover { color: var(--accent); }
+
+  /* Zoomable plots: cursor + subtle hover */
+  .post-fig[data-zoomable] :global(img) { cursor: zoom-in; transition: filter .15s var(--ease); }
+  .post-fig[data-zoomable]:hover :global(img) { filter: brightness(1.03); }
+
+  /* Swipe (before/after) figure */
+  .swipe-fig { margin: 1.9rem 0; }
+  .swipe-cue {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55rem;
+    margin: 0 auto 0.7rem;
+    padding: 0.5rem 0.95rem;
+    background: #e14b3d;
+    color: #fff;
+    font: 650 0.82rem/1.2 var(--font-sans);
+    letter-spacing: 0.02em;
+    border-radius: 6px;
+    box-shadow: 0 2px 8px rgba(225, 75, 61, 0.28);
+  }
+  .swipe-fig { display: flex; flex-direction: column; align-items: center; }
+  .swipe-fig .swipe, .swipe-fig figcaption { width: 100%; }
+  .swipe-fig figcaption {
+    margin-top: 0.7rem;
+    font-size: 0.82rem;
+    color: var(--text-faint);
+    line-height: 1.6;
+    text-align: center;
+    font-style: italic;
+  }
+  .swipe-fig figcaption a { color: var(--text-dim); }
+  .swipe-fig figcaption a:hover { color: var(--accent); }
+
+  .swipe {
+    position: relative;
+    max-width: 100%;
+    margin: 0 auto;
+    user-select: none;
+    -webkit-user-select: none;
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+    border: 1px solid var(--border-soft);
+    background: var(--bg-elev-2);
+  }
+  .swipe > :global(img) {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+  .swipe-top {
+    position: absolute;
+    top: 0; left: 0;
+    height: 100%;
+    width: 50%;
+    overflow: hidden;
+    border-right: 2px solid #fff;
+    box-shadow: 2px 0 6px rgba(0,0,0,0.55);
+  }
+  .swipe-top :global(img) {
+    display: block;
+    height: 100% !important;
+    width: auto !important;
+    max-width: none !important;
+  }
+  .swipe-label {
+    position: absolute;
+    padding: 4px 10px;
+    background: rgba(0, 0, 0, 0.62);
+    color: #fff;
+    font: 600 12px/1 var(--font-sans);
+    letter-spacing: 0.02em;
+    border-radius: 4px;
+    pointer-events: none;
+    z-index: 2;
+  }
+  .swipe-label-left { left: 12px; top: 12px; }
+  .swipe-label-right { right: 12px; top: 12px; }
+  .swipe-range {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    opacity: 0;
+    cursor: ew-resize;
+    z-index: 3;
+  }
+
+  /* Tables */
+  .post-table-scroll {
+    overflow-x: auto;
+    margin: 0 0 1.4rem;
+    border: 1px solid var(--border-soft);
+    border-radius: var(--radius-sm);
+    background: var(--bg-elev-2);
+  }
+  .post-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.92rem;
+    color: var(--text-dim);
+  }
+  .post-table thead th {
+    text-align: left;
+    padding: 0.7rem 0.95rem;
+    background: var(--bg-elev);
+    color: var(--text);
+    font: 600 0.78rem/1.25 var(--font-sans);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    border-bottom: 1px solid var(--border);
+    white-space: nowrap;
+  }
+  .post-table tbody td {
+    padding: 0.65rem 0.95rem;
+    border-top: 1px solid var(--border-soft);
+    line-height: 1.5;
+    vertical-align: top;
+  }
+  .post-table td strong { color: var(--text); font-weight: 650; }
+  .post-table td.num, .post-table th.num {
+    white-space: nowrap;
+    font-variant-numeric: tabular-nums;
+  }
+  /* Small compact tables (peak/basin/comparison) get a minimum width so cells
+     stay on one line at the widened .post width; container scrolls only when
+     the viewport itself is narrower. */
+  .post-table--compact { min-width: 780px; }
+  .post-table--compact tbody td { white-space: nowrap; }
+  .post-table--compact tbody td.wrap { white-space: normal; min-width: 18rem; }
+  .post-source {
+    margin: -0.9rem 0 1.6rem;
+    font-size: 0.82rem;
+    color: var(--text-faint);
+    line-height: 1.55;
+    font-style: italic;
+  }
+  .post-source a { color: var(--text-dim); }
+  .post-source a:hover { color: var(--accent); }
+
+  /* Sources list */
+  .post-sources {
+    list-style: decimal;
+    padding-left: 1.4rem;
+    margin: 0 0 1.5rem;
+  }
+  .post-sources li {
+    margin: 0.6rem 0;
+    line-height: 1.6;
+    color: var(--text-dim);
+    font-size: 0.94rem;
+  }
+  .post-sources li strong { color: var(--text); }
+  .post-sources li a { color: var(--accent); }
+  .post-sources li a:hover { text-decoration: underline; }
+
+  /* Footer */
+  .post-signoff {
+    margin-top: 2rem;
+    font-style: italic;
+    color: var(--text-dim);
+  }
+  .post-back {
+    margin-top: 2.4rem;
+    padding-top: 1.4rem;
+    border-top: 1px solid var(--border-soft);
+    font: 600 0.85rem/1 var(--font-sans);
+  }
+  .post-back a { color: var(--text-faint); }
+  .post-back a:hover { color: var(--accent); }
+
+  /* Lightbox */
+  :global(.lightbox) {
+    position: fixed; inset: 0;
+    display: none;
+    align-items: center; justify-content: center;
+    background: rgba(0, 0, 0, 0.88);
+    z-index: 100;
+    padding: clamp(0.6rem, 3vw, 2rem);
+    cursor: zoom-out;
+  }
+  :global(.lightbox.lightbox-open) { display: flex; }
+  :global(.lightbox-img) {
+    max-width: 100%;
+    max-height: 92vh;
+    display: block;
+    margin: 0 auto;
+    border-radius: 4px;
+    box-shadow: 0 8px 40px rgba(0, 0, 0, 0.6);
+  }
+  :global(.lightbox-close) {
+    position: absolute;
+    top: 14px; right: 14px;
+    width: 40px; height: 40px;
+    padding: 0;
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    border-radius: 50%;
+    background: rgba(0, 0, 0, 0.55);
+    color: #fff;
+    font: 300 22px/1 var(--font-sans);
+    cursor: pointer;
+    transition: background .15s var(--ease), border-color .15s var(--ease);
+  }
+  :global(.lightbox-close:hover) {
+    background: rgba(0, 0, 0, 0.8);
+    border-color: rgba(255, 255, 255, 0.5);
+  }
+</style>
+
+<script is:inline>
+  (function () {
+    // Before/after swipe sliders
+    function initSwipes() {
+      document.querySelectorAll('[data-swipe]:not([data-swipe-ready])').forEach(function (box) {
+        var top = box.querySelector('[data-swipe-top]');
+        var range = box.querySelector('[data-swipe-range]');
+        if (!top || !range) return;
+        function set(v) { top.style.width = v + '%'; }
+        range.addEventListener('input', function () { set(range.value); });
+        set(range.value);
+        box.setAttribute('data-swipe-ready', '1');
+      });
+    }
+
+    // Lightbox: click a static plot to enlarge
+    var overlay = null, overlayImg = null;
+    function ensureOverlay() {
+      if (overlay) return;
+      overlay = document.createElement('div');
+      overlay.className = 'lightbox';
+      overlay.setAttribute('role', 'dialog');
+      overlay.setAttribute('aria-modal', 'true');
+      overlay.setAttribute('aria-label', 'Enlarged figure');
+      overlayImg = document.createElement('img');
+      overlayImg.className = 'lightbox-img';
+      overlayImg.alt = '';
+      var closeBtn = document.createElement('button');
+      closeBtn.type = 'button';
+      closeBtn.className = 'lightbox-close';
+      closeBtn.setAttribute('aria-label', 'Close enlarged view');
+      closeBtn.innerHTML = '&times;';
+      overlay.appendChild(overlayImg);
+      overlay.appendChild(closeBtn);
+      overlay.addEventListener('click', function (e) {
+        if (e.target === overlay || e.target === closeBtn) closeLightbox();
+      });
+      document.body.appendChild(overlay);
+      document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape') closeLightbox();
+      });
+    }
+    function largestFromSrcset(img) {
+      var srcset = img.getAttribute('srcset');
+      if (!srcset) return img.currentSrc || img.src;
+      var best = { url: img.currentSrc || img.src, w: 0 };
+      srcset.split(',').forEach(function (s) {
+        var parts = s.trim().split(/\s+/);
+        var w = parseInt((parts[1] || '0').replace(/w$/, ''), 10) || 0;
+        if (w >= best.w) { best = { url: parts[0], w: w }; }
+      });
+      return best.url;
+    }
+    function openLightbox(img) {
+      ensureOverlay();
+      overlayImg.src = largestFromSrcset(img);
+      overlayImg.alt = img.alt || '';
+      overlay.classList.add('lightbox-open');
+      document.body.style.overflow = 'hidden';
+    }
+    function closeLightbox() {
+      if (!overlay) return;
+      overlay.classList.remove('lightbox-open');
+      document.body.style.overflow = '';
+    }
+    function initLightbox() {
+      document.querySelectorAll('.post-fig:not([data-lightbox-ready])').forEach(function (fig) {
+        // Skip figures whose content is a GIF or a <video>
+        if (fig.querySelector('video')) { fig.setAttribute('data-lightbox-ready', '1'); return; }
+        var img = fig.querySelector('img');
+        if (!img) { fig.setAttribute('data-lightbox-ready', '1'); return; }
+        var src = img.getAttribute('src') || '';
+        if (src.indexOf('.gif') !== -1) { fig.setAttribute('data-lightbox-ready', '1'); return; }
+        fig.setAttribute('data-zoomable', '1');
+        img.setAttribute('role', 'button');
+        img.setAttribute('tabindex', '0');
+        img.setAttribute('aria-label', 'Click to enlarge');
+        img.addEventListener('click', function () { openLightbox(img); });
+        img.addEventListener('keydown', function (e) {
+          if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openLightbox(img); }
+        });
+        fig.setAttribute('data-lightbox-ready', '1');
+      });
+    }
+
+    function init() { initSwipes(); initLightbox(); }
+    document.addEventListener('astro:page-load', init);
+    init();
+  })();
+</script>
