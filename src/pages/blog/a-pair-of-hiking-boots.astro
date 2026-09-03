@@ -1,0 +1,157 @@
+---
+import { Image } from 'astro:assets';
+import Base from '../../layouts/Base.astro';
+import PageHeader from '../../components/PageHeader.astro';
+import headerBg from '../../assets/blog/boots/badlands-dangerous-cliff.jpg';
+import notchLadder from '../../assets/blog/boots/badlands-notch-ladder.jpg';
+import keenBoots from '../../assets/blog/boots/keen-boots.jpg';
+import dangerousCliff from '../../assets/blog/boots/badlands-dangerous-cliff.jpg';
+---
+
+<Base
+  title="A Pair of Hiking Boots"
+  description="A worn-out pair of boots, a 2017 road trip to the Badlands, and the people who were there. By Dr. Mohsen Tahmasebi Nasab."
+>
+  <PageHeader
+    eyebrow="// blog"
+    title="A Pair of Hiking Boots"
+    lede="A sole coming apart in a river in Puerto Rico, and everything the boots had walked through since 2017."
+    bgImage={headerBg}
+    bgPos="center 55%"
+  >
+    <p class="post-meta">Sep 2, 2026 · about a 2 minute read</p>
+  </PageHeader>
+
+  <article class="section">
+    <div class="wrap post">
+      <p>
+        I've never thought of myself as someone who gets attached to things. Or maybe it is more
+        accurate to say that I didn't think I attached sentimental value to objects. At least not
+        until recently.
+      </p>
+
+      <p>
+        A week ago, I was standing in the Río Yauco, upstream of Lago Lucchetti in Puerto Rico,
+        when I noticed that the sole of one of my hiking boots was separating from the rest of the
+        shoe. Normally, that would have been it. The boots were worn out. I would throw them away,
+        buy another pair, and move on.
+      </p>
+
+      <figure class="post-fig">
+        <Image
+          src={keenBoots}
+          alt="A worn pair of Keen hiking boots with teal and tan panels, laces loose, sitting on a blue carpet by a window"
+          widths={[480, 800, 1200]}
+          sizes="(min-width: 800px) 720px, 100vw"
+        />
+        <figcaption>The boots, nine years in.</figcaption>
+      </figure>
+
+      <p>
+        But standing there in the river, I realized these boots meant more to me than I had
+        expected. I bought them in 2017, when I was getting ready for one of my first real
+        adventures in the U.S., a road trip to the Badlands in South Dakota. I wasn't going alone.
+        Hassan and Amin had signed up for the trip too.
+      </p>
+
+      <figure class="post-fig">
+        <Image
+          src={notchLadder}
+          alt="Looking down a wooden ladder bolted to a steep white rock face in the Badlands, with a hiker partway down"
+          widths={[480, 800, 1200]}
+          sizes="(min-width: 800px) 720px, 100vw"
+        />
+        <figcaption>Badlands National Park, South Dakota, 2017.</figcaption>
+      </figure>
+
+      <p>
+        I remember thinking surprisingly hard about whether I should buy those boots. They cost
+        around $100. I had no idea what I was actually buying.
+      </p>
+
+      <figure class="post-fig">
+        <Image
+          src={dangerousCliff}
+          alt="A hiker walking along a ridge in the Badlands at dusk, with a sign in the foreground reading Dangerous Cliff, Keep Right"
+          widths={[480, 800, 1200]}
+          sizes="(min-width: 800px) 720px, 100vw"
+        />
+        <figcaption>Keep right.</figcaption>
+      </figure>
+
+      <p>
+        Looking back now, I feel grateful for the places I have had the chance to see. But even
+        more than that, I'm grateful for the people who have been part of those adventures. The
+        friends who were there at the beginning. The people I met along the way. The conversations,
+        wrong turns, long drives, exhausting hikes, and small moments that I probably did not
+        realize at the time would stay with me.
+      </p>
+
+      <p>
+        I still don't think I'm someone who gets particularly attached to objects. But maybe, every
+        once in a while, an object stays with you long enough that it stops being just an object.
+      </p>
+
+      <p>
+        Sometimes it becomes a way of remembering who you were when you first picked it up,
+        everywhere you went afterward, and how much life happened in between.
+      </p>
+
+      <p class="post-signoff">Mohsen :)</p>
+
+      <p class="post-back"><a href="/blog">← Back to blog</a></p>
+    </div>
+  </article>
+</Base>
+
+<style>
+  .post-meta {
+    margin-top: 1rem;
+    font: 600 0.82rem/1 var(--font-sans);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-faint);
+  }
+
+  .post { max-width: 720px; }
+
+  .post > p {
+    color: var(--text-dim);
+    line-height: 1.75;
+    margin: 0 0 1.15rem;
+    font-size: 1.03rem;
+  }
+  .post > p a { color: var(--accent); }
+  .post > p a:hover { text-decoration: underline; }
+
+  .post-fig {
+    margin: 1.9rem 0;
+  }
+  .post-fig :global(img) {
+    width: 100%; height: auto; display: block;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border-soft);
+  }
+  .post-fig figcaption {
+    margin-top: 0.7rem;
+    font-size: 0.82rem;
+    color: var(--text-faint);
+    line-height: 1.55;
+    text-align: center;
+    font-style: italic;
+  }
+
+  .post-signoff {
+    margin-top: 2rem;
+    font-style: italic;
+    color: var(--text-dim);
+  }
+  .post-back {
+    margin-top: 2.4rem;
+    padding-top: 1.4rem;
+    border-top: 1px solid var(--border-soft);
+    font: 600 0.85rem/1 var(--font-sans);
+  }
+  .post-back a { color: var(--text-faint); }
+  .post-back a:hover { color: var(--accent); }
+</style>
