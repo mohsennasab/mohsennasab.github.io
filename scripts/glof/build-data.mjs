@@ -801,6 +801,7 @@ function buildFigure4(stage, discharge) {
         xMin: '2000-08-01T00:00:00.000-08:00',
         xMax: '2000-08-20T23:59:59.999-08:00',
         yMin: 0,
+        yMax: 55000,
         tickFormat: 'monthDay',
         annotations: years.map((year) => {
           const point = firstMaximum(dischargeByYear.get(year));
