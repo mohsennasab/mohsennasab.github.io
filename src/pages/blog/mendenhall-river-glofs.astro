@@ -2,6 +2,7 @@
 import { Image } from 'astro:assets';
 import Base from '../../layouts/Base.astro';
 import PageHeader from '../../components/PageHeader.astro';
+import InteractiveFigure from '../../components/blog/InteractiveFigure.astro';
 
 // Header background
 import headerBg from '../../assets/photos/photo-71.jpg';
@@ -43,17 +44,15 @@ const USGS_BASIN = 'https://waterdata.usgs.gov/monitoring-location/USGS-15052485
 const CBJ_2023 = 'https://juneau.org/newsroom-item/mendenhall-river-flood-event-update-9-pm-8-7';
 const CBJ_MAPS = 'https://juneau.org/engineering-public-works/flood-inundation-maps';
 const CBJ_PHASE1 = 'https://juneau.org/newsroom-item/phase-1-hesco-reconstruction-and-repairs-now-complete';
-const CBJ_VIEW_DRIVE = 'https://juneau.org/engineering-public-works/view-drive-flooding';
-const CBJ_LONGTERM = 'https://juneau.org/newsroom-item/update-from-the-city-manager-pushing-for-an-enduring-solution-to-glacial-lake-outburst-floods';
 const USACE_PHASE2 = 'https://www.poa.usace.army.mil/Media/News-Releases/Article/4555275/usace-completes-phase-two-of-flood-mitigation-measures-in-mendenhall-river-vall/';
 const USACE_2025_BARRIERS = 'https://www.dvidshub.net/news/545750/temporary-flood-barriers-prove-effective-during-flood-event-juneau';
-const USACE_TECHREPORT = 'https://www.poa.usace.army.mil/Missions/Civil-Works-and-Planning/Mendenhall-Valley-Technical-Report/';
 const CRS_REPORT = 'https://www.congress.gov/crs-product/IN12606';
 const DGGS_GLACIER = 'https://dggs.alaska.gov/hazards/climate/glacier-change.html';
-const NWS_2026_INITIAL = 'https://api.weather.gov/products/00ab6729-7aa6-499a-889b-6b58c025e9dc';
-const NWS_2026_AUG13 = 'https://api.weather.gov/products/cd2a3b6d-6f1d-48a8-b8f7-1d4bf1891a74';
-const NWS_2026_CREST = 'https://api.weather.gov/products/19757fe6-df27-401e-8620-224380bd5b40';
-const NWS_2026_DISCUSSION = 'https://api.weather.gov/products/fd860bcd-6e89-4f06-86ec-10e9ca392072';
+// Durable Iowa Environmental Mesonet copies of NWS Juneau text products.
+const NWS_2026_INITIAL = 'https://mesonet.agron.iastate.edu/wx/afos/p.php?pil=FLSAJK&e=202608120857';
+const NWS_2026_AUG13 = 'https://mesonet.agron.iastate.edu/wx/afos/p.php?pil=FLSAJK&e=202608131745';
+const NWS_2026_CREST = 'https://mesonet.agron.iastate.edu/wx/afos/p.php?pil=FLSAJK&e=202608132306';
+const NWS_2026_DISCUSSION = 'https://mesonet.agron.iastate.edu/wx/afos/p.php?pil=AFDAJK&e=202608121814';
 const USGS_2023 = 'https://waterservices.usgs.gov/nwis/iv/?format=json&sites=15052500&parameterCd=00060%2C00065&startDT=2023-08-01&endDT=2023-08-20&siteStatus=all';
 const USGS_2024 = 'https://waterservices.usgs.gov/nwis/iv/?format=json&sites=15052500&parameterCd=00060%2C00065&startDT=2024-08-01&endDT=2024-08-20&siteStatus=all';
 const USGS_2025 = 'https://waterservices.usgs.gov/nwis/iv/?format=json&sites=15052500&parameterCd=00060%2C00065&startDT=2025-08-01&endDT=2025-08-20&siteStatus=all';
@@ -76,12 +75,19 @@ const USGS_BASIN_2026 = 'https://api.waterdata.usgs.gov/ogcapi/v0/collections/co
       bgPos="center 50%"
     >
       <p class="post-byline">Mohsen Tahmasebi Nasab, PhD</p>
-      <p class="post-meta">Aug 21, 2026 · about a 12 minute read</p>
+      <p class="post-meta">Aug 21, 2026 · updated Sep 5, 2026 · about a 12 minute read</p>
     </PageHeader>
   </div>
 
   <article class="section">
     <div class="wrap post">
+
+      <p class="post-intro">
+        For the past year, I have been working on the Mendenhall River GLOF problem. This post is
+        a short introduction to the challenge and to the public data behind it: USGS gauges and
+        cameras, National Weather Service forecasts, and post-event reports. I have tried to
+        separate what those records show directly from what remains uncertain.
+      </p>
 
       <!-- Opening swipe: 1893 vs 2018 -->
       <figure class="swipe-fig">
@@ -166,7 +172,7 @@ const USGS_BASIN_2026 = 'https://api.waterdata.usgs.gov/ogcapi/v0/collections/co
         </table>
       </div>
 
-      <h2 id="pre-2011">A hazard that did not exist before 2011</h2>
+      <h2 id="pre-2011">How the river record changed after 2011</h2>
 
       <p>
         Before July 2011, the downstream gauge had never recorded a GLOF, and the river's peak of
@@ -182,42 +188,52 @@ const USGS_BASIN_2026 = 'https://api.waterdata.usgs.gov/ogcapi/v0/collections/co
       </p>
 
       <p>
-        The gauge record tells the same story without any commentary. Nearly four decades of
-        instantaneous flows show a river with a regular summer rhythm and a handful of
-        rain-driven spikes, then a cluster of peaks since 2023 that stand taller than anything
-        before them.
+        Figure 1 places the recent floods in the longer instantaneous-flow record. Nearly four
+        decades of measurements show the river's regular summer rhythm and a handful of
+        rain-driven spikes, followed by a cluster of peaks since 2023 that stand above the rest
+        of the record.
       </p>
 
-      <figure class="post-fig">
-        <Image src={figDaily} alt="Instantaneous discharge of the Mendenhall River near Auke Bay from 1986 to 2026, with the outburst flood era since 2011 shaded and shown again in a zoomed lower panel that labels each summer peak" widths={[900, 1400, 2000]} sizes="(min-width: 900px) 900px, 100vw" />
-        <figcaption>
-          Figure 1. Instantaneous discharge at USGS 15052500, at 15 to 60 minute intervals, for
-          the full period of record. The outburst flood era since 2011 is shaded on top and
-          repeated in the lower panel with each summer's largest peak labeled. Blue marks values
-          approved by USGS, orange marks provisional values that may still be revised. The
-          archive is sparse before 1997, so the September 1995 peak of about 16,000 cfs and other
-          early rain-driven peaks fall in the gap. The 2023 through 2026 peaks stand well above
-          anything else in the record.
-        </figcaption>
-      </figure>
+      <InteractiveFigure
+        figureId={1}
+        dataUrl="/blog/glof/data/figure-1.json"
+        src={figDaily}
+        alt="Instantaneous discharge of the Mendenhall River near Auke Bay from 1986 to 2026, with the outburst flood era since 2011 shaded and shown again in a zoomed lower panel that labels each summer peak"
+        widths={[900, 1400, 2000]}
+        sizes="(min-width: 900px) 900px, 100vw"
+      >
+        <Fragment slot="caption">
+          Figure 1. Instantaneous discharge at USGS 15052500 for the full period of record; the
+          sampling interval varies over time. The outburst-flood era since 2011 is shaded in the
+          upper panel and repeated below, with each summer's largest peak labeled. Blue marks
+          USGS-approved values, and orange marks provisional values that may still be revised.
+          The instantaneous archive is sparse before 1997, so the September 1995 peak of about
+          16,000 cfs and other early rain-driven peaks fall in the gap.
+        </Fragment>
+      </InteractiveFigure>
 
       <p>
-        For scale, the National Weather Service defines flood impacts at this gauge in categories:
-        action stage at 8 feet, minor flood at 9 feet, moderate flood at 10 feet, and major flood
-        at 14 feet (<a href={NWS_GAUGE} target="_blank" rel="noopener">NWS gauge reference</a>).
-        Every annual peak from 2023 through 2026 exceeded major flood stage. Before 2011, no
-        annual peak had ever reached it.
+        Figure 2 shifts from the continuous record to annual peaks and adds the National Weather
+        Service flood categories: action stage at 8 feet, minor flood at 9 feet, moderate flood
+        at 10 feet, and major flood at 14 feet
+        (<a href={NWS_GAUGE} target="_blank" rel="noopener">NWS gauge reference</a>). Every annual
+        maximum from 2023 through 2026 exceeded major flood stage. Before 2011, no annual maximum
+        in the published record had reached it.
       </p>
 
-      <figure class="post-fig">
-        <Image src={figAnnualPeaks} alt="Annual peak discharge and peak gage height from 1966 to 2026 with National Weather Service flood categories" widths={[600, 900, 1400]} sizes="(min-width: 800px) 720px, 100vw" />
-        <figcaption>
-          Figure 2. Annual peaks from the USGS peak flow file, 1966 through 2025, with the
-          provisional 2026 peak added in orange. The upper panel shows peak discharge and the
-          lower panel the gage height at each peak against the flood categories. The 2023 through
-          2026 peaks are the only ones in the record above the major flood line.
-        </figcaption>
-      </figure>
+      <InteractiveFigure
+        figureId={2}
+        dataUrl="/blog/glof/data/figure-2.json"
+        src={figAnnualPeaks}
+        alt="Annual peak discharge and peak gage height from 1966 to 2026 with National Weather Service flood categories"
+      >
+        <Fragment slot="caption">
+          Figure 2. Annual USGS peak-flow observations from 1966 through 2025, with the provisional
+          2026 maximum discharge and maximum gage height added in orange. The upper panel shows
+          discharge and the lower panel shows gage height against the flood categories. In 2026,
+          the first observations of those two maxima were five minutes apart.
+        </Fragment>
+      </InteractiveFigure>
 
       <h2 id="how-glof">How Suicide Basin creates a GLOF</h2>
 
@@ -321,9 +337,9 @@ const USGS_BASIN_2026 = 'https://api.waterdata.usgs.gov/ogcapi/v0/collections/co
         basin itself keeps evolving.
       </p>
 
-      <h2 id="usgs-stations">What the two USGS stations measure</h2>
+      <h2 id="usgs-stations">Two gauges, two parts of the flood</h2>
 
-      <p>The two stations answer different questions.</p>
+      <p>The two USGS stations answer different questions.</p>
 
       <p>
         <strong>USGS-15052500, Mendenhall R NR Auke Bay AK,</strong> measures downstream river
@@ -353,20 +369,24 @@ const USGS_BASIN_2026 = 'https://api.waterdata.usgs.gov/ogcapi/v0/collections/co
         particular, the 2026 river peak remains provisional. The available 2024 to 2026 Suicide
         Basin elevation records also remain provisional.
         <a href={USGS_PROVISIONAL} target="_blank" rel="noopener">USGS data-status guidance</a>
-        explains the distinction. The figures in this post keep that distinction visible.
-        Approved values are drawn in blue and provisional values in orange, so a reader can see
-        at a glance which parts of the story USGS has finished checking.
+        explains the distinction. The numbered plots keep it visible: approved values are blue
+        and provisional values are orange. Figure 3 shows where that status changes across the
+        continuous river-stage record.
       </p>
 
-      <figure class="post-fig">
-        <Image src={figStage} alt="Daily maximum gage height at the Mendenhall River gauge from 2013 to 2026 with flood categories" widths={[600, 900, 1400]} sizes="(min-width: 800px) 720px, 100vw" />
-        <figcaption>
-          Figure 3. Daily maximum gage height at USGS 15052500 since the stage record began in
-          2013, against the flood categories. Approved values in blue, provisional values since
-          October 2025 in orange. Summer peaks above the minor flood line are labeled, and the
-          step change in 2023 is hard to miss.
-        </figcaption>
-      </figure>
+      <InteractiveFigure
+        figureId={3}
+        dataUrl="/blog/glof/data/figure-3.json"
+        src={figStage}
+        alt="Daily maximum gage height at the Mendenhall River gauge from 2013 to 2026 with flood categories"
+      >
+        <Fragment slot="caption">
+          Figure 3. Daily maxima calculated from the continuous gage-height observations at USGS
+          15052500 since 2013, shown against the flood categories. Approved values are blue;
+          provisional values since October 2025 are orange. Summer peaks above minor flood stage
+          are labeled.
+        </Fragment>
+      </InteractiveFigure>
 
       <p>
         What the gauge records as a rising number, a camera on the lakeshore records as a
@@ -421,20 +441,24 @@ const USGS_BASIN_2026 = 'https://api.waterdata.usgs.gov/ogcapi/v0/collections/co
       </p>
 
       <p>
-        Laid side by side, the four floods share a shape and differ in size. Each hydrograph
-        climbs for roughly a day, spikes, and falls back within another day, which is the
-        signature of a conduit that opens, enlarges, and then empties its reservoir.
+        Figure 4 puts the four August event windows side by side. Each has a steep final rise and
+        a quick recession, but their lead-ins and peak sizes differ. The 2025 hydrograph, in
+        particular, carries a longer weather-driven rise before the GLOF peak.
       </p>
 
-      <figure class="post-fig">
-        <Image src={figHydrographs} alt="Instantaneous gage height and discharge for the August floods of 2023, 2024, 2025, and 2026" widths={[600, 900, 1400]} sizes="(min-width: 800px) 720px, 100vw" />
-        <figcaption>
+      <InteractiveFigure
+        figureId={4}
+        dataUrl="/blog/glof/data/figure-4.json"
+        src={figHydrographs}
+        alt="Instantaneous gage height and discharge for the August floods of 2023, 2024, 2025, and 2026"
+      >
+        <Fragment slot="caption">
           Figure 4. The four August outburst floods at USGS 15052500, August 1 to 20 of each
           year, in the instantaneous record. Gage height is on top with the flood categories
           dashed, discharge below, and each peak is labeled with its value and Alaska local time.
           The 2026 event is provisional and drawn in orange.
-        </figcaption>
-      </figure>
+        </Fragment>
+      </InteractiveFigure>
 
       <p>
         The peak numbers above mix two water sources, the basin release and whatever the weather
@@ -446,8 +470,8 @@ const USGS_BASIN_2026 = 'https://api.waterdata.usgs.gov/ogcapi/v0/collections/co
       </p>
 
       <p>
-        The annual progression is sobering. In 2023, the August 5 GLOF prompted a local
-        emergency. The local government reported eight buildings condemned and three wastewater
+        The sequence also shows how quickly the consequences changed. In 2023, the August 5 GLOF
+        prompted a local emergency. The local government reported eight buildings condemned and three wastewater
         lift stations submerged.
         <a href={CBJ_2023} target="_blank" rel="noopener">Its August 2023 event update</a>
         records the immediate consequences. The 2024 crest rose another 1.02 feet. In 2025, the
@@ -484,21 +508,25 @@ const USGS_BASIN_2026 = 'https://api.waterdata.usgs.gov/ogcapi/v0/collections/co
       </p>
 
       <p>
-        The basin gauge shows the other half of the system. Each season the water surface climbs
-        for months, then drops hundreds of feet in about two days. The 2024 and 2025 records also
-        show a smaller refill and second release in early autumn, a reminder that the basin does
-        not stay empty once the main flood is over.
+        Figure 5 shows the other half of the system. The basin water surface climbs for months,
+        then drops hundreds of feet during the main release. The 2024 and 2025 records also show
+        a smaller refill and second release in early autumn; the basin does not stay empty once
+        the main flood is over.
       </p>
 
-      <figure class="post-fig">
-        <Image src={figBasinElev} alt="Suicide Basin water surface elevation from May 2024 to August 2026, with the 2026 season shown in detail" widths={[600, 900, 1400]} sizes="(min-width: 800px) 720px, 100vw" />
-        <figcaption>
+      <InteractiveFigure
+        figureId={5}
+        dataUrl="/blog/glof/data/figure-5.json"
+        src={figBasinElev}
+        alt="Suicide Basin water surface elevation from May 2024 to August 2026, with the 2026 season shown in detail"
+      >
+        <Fragment slot="caption">
           Figure 5. Water surface elevation at USGS 1505248590 for the full record, with the 2026
           fill and release in the lower panel. Every value is provisional, so the whole record is
           orange. Breaks in the line are gaps in the record, most of them over winter. Elevation
           is water level above the station datum, not stored volume.
-        </figcaption>
-      </figure>
+        </Fragment>
+      </InteractiveFigure>
 
       <p>
         There is useful 2023 basin context, but it is a different kind of evidence. The National
@@ -515,7 +543,7 @@ const USGS_BASIN_2026 = 'https://api.waterdata.usgs.gov/ogcapi/v0/collections/co
 
       <p>
         A fixed camera on the riverbank turns those tables into something you can watch. The
-        framing never changes, so every difference between frames is the river itself.
+        fixed view makes the rise and recession easy to follow even as light and weather change.
       </p>
 
       <figure class="post-fig">
@@ -533,17 +561,17 @@ const USGS_BASIN_2026 = 'https://api.waterdata.usgs.gov/ogcapi/v0/collections/co
         </figcaption>
       </figure>
 
-      <h2 id="why-2026-lower">Why 2026 crested below the forecast</h2>
+      <h2 id="why-2026-lower">Reading the lower 2026 crest</h2>
 
       <p>
-        The lower 2026 crest has a clear measured part and an unresolved physical part. The
-        measured comparison is below.
+        The 2026 crest came in below the forecast. The observations provide useful context, but
+        they do not support a complete physical explanation on their own.
       </p>
 
       <div class="post-table-scroll">
         <table class="post-table post-table--compact">
           <thead>
-            <tr><th>Indicator</th><th class="num">2025</th><th class="num">2026</th><th>What it supports</th></tr>
+            <tr><th>Indicator</th><th class="num">2025</th><th class="num">2026</th><th>How to interpret it</th></tr>
           </thead>
           <tbody>
             <tr><td>Highest raw Suicide Basin water level</td><td class="num">1,373.65 ft, provisional</td><td class="num">1,345.62 ft, provisional</td><td class="wrap">The 2026 high reading was 28.03 feet lower, though a level difference is not a volume difference.</td></tr>
@@ -560,29 +588,40 @@ const USGS_BASIN_2026 = 'https://api.waterdata.usgs.gov/ogcapi/v0/collections/co
         more than 72 hours, lifted the freezing level above 11,000 feet, and raised river
         baseflow before the basin release. The storm total was the highest 7-day precipitation on
         record for that window at the Juneau forecast office. The 2026 forecast discussion
-        instead described warm, dry conditions under stationary high pressure. That contrast,
-        along with the lower antecedent river flow and the lower measured basin level, gives a
-        concrete explanation for much of the lower 2026 river peak.
+        instead described warm, dry conditions under stationary high pressure. The river therefore
+        entered the 2026 release at a lower flow, without a concurrent rain pulse. The lower basin
+        reading shows a lower water-surface elevation, but without a current elevation-volume
+        relation it does not, by itself, tell us how much less water was stored. These measurements
+        describe the different starting conditions; they do not partition the causes of the lower
+        crest.
         <a href={NWS_2025_REPORT} target="_blank" rel="noopener">The 2025 report</a> and the
         <a href={NWS_2026_DISCUSSION} target="_blank" rel="noopener">2026 forecast discussion</a>
         support that comparison.
       </p>
 
       <p>
-        Putting the basin gauge and the river gauge on one clock shows how tightly the two are
-        coupled. The basin began to fall slowly late on August 11, accelerated through August 12,
-        and dropped almost vertically on the morning of August 13. The river crested at 2:05 p.m.
-        that afternoon, at nearly the same moment the basin reached bottom.
+        Figure 6 puts the basin and river gauges on the same clock. The basin began to fall slowly
+        late on August 11, and the drawdown accelerated through August 12 and 13. At the first
+        14.71-foot river reading, the basin was still in the steep final part of its drawdown:
+        956.11 feet at 2:00 p.m. and 949.21 feet at 2:15 p.m. It first fell below 900 feet at
+        4:15 p.m., just over two hours after the river crest, and continued slowly downward to
+        the lowest reported provisional reading of 889.76 feet on August 15.
       </p>
 
-      <figure class="post-fig">
-        <Image src={fig2026Event} alt="Suicide Basin water surface elevation, Mendenhall River gage height, and discharge during the August 2026 flood on a shared time axis" widths={[600, 900, 1400]} sizes="(min-width: 800px) 720px, 100vw" />
-        <figcaption>
-          Figure 6. The 2026 release and the river response from August 8 to 17 on a shared time
-          axis, Alaska local time. The dotted vertical line marks the river crest. All values are
-          provisional.
-        </figcaption>
-      </figure>
+      <InteractiveFigure
+        figureId={6}
+        dataUrl="/blog/glof/data/figure-6.json"
+        src={fig2026Event}
+        alt="Suicide Basin water surface elevation, Mendenhall River gage height, and discharge during the August 2026 flood on a shared time axis"
+      >
+        <Fragment slot="caption">
+          Figure 6. Provisional USGS observations of the 2026 Suicide Basin release and Mendenhall
+          River response on a shared Alaska daylight time axis (AKDT, UTC−8), August 8–17. The
+          dotted line marks the first 14.71-foot river gage-height observation at 2:05 p.m. on
+          August 13. Maximum discharge was 35,300 cfs from 2:00 through 2:15 p.m. The basin series
+          contains gaps and ends at 8:15 a.m. on August 15 within this plotting window.
+        </Fragment>
+      </InteractiveFigure>
 
       <p>
         It does not explain the entire forecast difference. At 12:57 a.m. on August 12, the
@@ -644,9 +683,9 @@ const USGS_BASIN_2026 = 'https://api.waterdata.usgs.gov/ogcapi/v0/collections/co
         interrupted during the event. Operational forecasts therefore use the best available
         water-level estimate and earlier floods as analogs. They are indispensable for warning
         and preparation, but their uncertainty is part of the science, not a failure to take the
-        hazard seriously. The 2026 forecast that came in high, issued with its uncertainty
-        stated plainly, is what honest operational forecasting looks like when an ice dam
-        changes its behavior.
+        hazard seriously. The 2026 forecast stated that uncertainty clearly; the difference
+        between the forecast and the observed crest shows how much the event-specific release
+        behavior still matters.
       </p>
 
       <h2 id="reducing-risk">How the valley is reducing risk</h2>
@@ -701,26 +740,6 @@ const USGS_BASIN_2026 = 'https://api.waterdata.usgs.gov/ogcapi/v0/collections/co
         than be treated as a promise.
       </p>
 
-      <p>
-        Some locations cannot be protected safely by temporary barriers because of soil stability
-        and home elevations. In those places, the local government is pursuing voluntary buyouts
-        through a federal watershed-protection program as another risk-reduction tool
-        (<a href={CBJ_VIEW_DRIVE} target="_blank" rel="noopener">View Drive page</a>). For the
-        enduring problem, the long-term technical study continues to examine controlled drainage
-        at Suicide Basin, flood-control structures, levees or floodwalls, bypass channels,
-        relocation, and related nonstructural options. Controlled drainage, often called a lake
-        tap, drew a coordinated endorsement from Tribal, federal land-management, and municipal
-        partners. In February 2025, however, the local government reported that the federal
-        engineering agency was pivoting away from advancing the lake tap as the identified
-        long-term solution, and no permanent alternative has been selected since. The 2025 and
-        2026 flood seasons were therefore fought with temporary defenses while the long-term
-        question stays open. Any durable option will need engineering, geotechnical,
-        environmental, cultural, permitting, funding, and community review.
-        <a href={CBJ_LONGTERM} target="_blank" rel="noopener">The long-term update</a> and
-        <a href={USACE_TECHREPORT} target="_blank" rel="noopener">federal technical-study page</a>
-        explain the current status.
-      </p>
-
       <figure class="swipe-fig">
         <div class="swipe-cue" role="note">
           <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 6L3 12l5 6M16 6l5 6-5 6M3 12h18"/></svg>
@@ -739,20 +758,19 @@ const USGS_BASIN_2026 = 'https://api.waterdata.usgs.gov/ogcapi/v0/collections/co
           What the barriers were built for. Drag to compare the upstream view at Killewich Drive
           on the morning of August 12, 2026, with the river at its normal late summer level and
           the rock bank exposed far below the green barrier wall, against 1:23 p.m. on August
-          13, when Mendenhall Lake stood at 14.44 feet and the river pressed against the top of
-          the temporary barrier, about forty minutes before the 14.71 foot crest. The wall held.
+          13, when the river gage was about 14.55 feet and the water pressed against the top of
+          the temporary barrier, about forty minutes before the first 14.71-foot reading. The wall held.
           Camera frames from the Juneau Flood Solution Advocates neighborhood camera stream.
         </figcaption>
       </figure>
 
       <p>
-        The strongest lesson from 2023 through 2026 is not that Juneau has solved the problem.
-        It is that the community has met a brand-new hazard with serious science, hard physical
-        work, and care for neighbors. In fifteen years the valley went from never having seen a
-        GLOF to monitoring an ice dam in real time, forecasting its releases, and holding back
-        a record flood with defenses built in months. That work deserves respect. It also needs
-        to continue with the same clear-eyed attention to uncertainty that good flood
-        preparation requires.
+        Four consecutive major floods make clear how much the river's recent behavior differs
+        from the earlier record. In fifteen years, Juneau has built a real-time monitoring and
+        forecasting system and temporary defenses around a hazard that had not appeared at the
+        river gage before 2011. Those measures reduce risk; they do not remove it. Continued
+        monitoring, review of each new record, barrier maintenance, and longer-term study remain
+        necessary.
       </p>
 
       <h2 id="sources">Sources and data method</h2>
@@ -802,7 +820,7 @@ const USGS_BASIN_2026 = 'https://api.waterdata.usgs.gov/ogcapi/v0/collections/co
         <li>
           <strong>National Weather Service.</strong>
           <a href={NWS_GAUGE} target="_blank" rel="noopener">Mendenhall River near Auke Bay gauge and flood categories</a>.
-          Archived 2026 products:
+          Archived NWS Juneau text products, preserved by the Iowa Environmental Mesonet:
           <a href={NWS_2026_INITIAL} target="_blank" rel="noopener">initial forecast and uncertainty statement</a>,
           <a href={NWS_2026_AUG13} target="_blank" rel="noopener">August 13 forecast update</a>,
           <a href={NWS_2026_CREST} target="_blank" rel="noopener">release-end and crest statement</a>, and
@@ -812,15 +830,12 @@ const USGS_BASIN_2026 = 'https://api.waterdata.usgs.gov/ogcapi/v0/collections/co
           <strong>City and Borough of Juneau.</strong>
           <a href={CBJ_2023} target="_blank" rel="noopener">August 2023 flood-event update</a>,
           <a href={CBJ_MAPS} target="_blank" rel="noopener">flood-inundation maps and FAQ</a>,
-          <a href={CBJ_PHASE1} target="_blank" rel="noopener">Phase 1 barrier completion notice</a>,
-          <a href={CBJ_VIEW_DRIVE} target="_blank" rel="noopener">View Drive risk-reduction page</a>, and
-          <a href={CBJ_LONGTERM} target="_blank" rel="noopener">February 2025 long-term update</a>.
+          and <a href={CBJ_PHASE1} target="_blank" rel="noopener">Phase 1 barrier completion notice</a>.
         </li>
         <li>
           <strong>U.S. Army Corps of Engineers.</strong>
           <a href={USACE_PHASE2} target="_blank" rel="noopener">Phase 2 mitigation completion release</a>,
-          <a href={USACE_2025_BARRIERS} target="_blank" rel="noopener">2025 barrier performance account</a>, and
-          <a href={USACE_TECHREPORT} target="_blank" rel="noopener">Mendenhall Valley Technical Report page</a>.
+          and <a href={USACE_2025_BARRIERS} target="_blank" rel="noopener">2025 barrier performance account</a>.
         </li>
         <li>
           <strong>Congressional Research Service, 2025.</strong>
@@ -834,12 +849,12 @@ const USGS_BASIN_2026 = 'https://api.waterdata.usgs.gov/ogcapi/v0/collections/co
           including Suicide Basin.
         </li>
         <li>
-          <strong>Figures.</strong> All six figures were drawn from the complete USGS records
-          for both stations, downloaded on August 21, 2026 through the USGS water services and
-          the newer USGS water data API. Approved values are blue and provisional values are
-          orange throughout. The downloaded data, the checks run on it, and the plotting code
-          are kept alongside this post so the figures can be rebuilt once USGS finishes
-          reviewing the 2026 record.
+          <strong>Numbered data figures.</strong> The six static figures were drawn from USGS
+          records downloaded on August 21, 2026. Their interactive companions use a checked,
+          reproducible USGS snapshot retrieved on September 5, 2026. Approved values are blue and
+          provisional values are orange throughout. Long series are reduced with a
+          peak-preserving display sample; the source queries and build script are kept with the
+          site so the figures can be updated after USGS finishes reviewing the 2026 record.
         </li>
       </ol>
 
@@ -895,6 +910,11 @@ const USGS_BASIN_2026 = 'https://api.waterdata.usgs.gov/ogcapi/v0/collections/co
   }
 
   .post { max-width: 960px; }
+
+  .post > .post-intro {
+    color: var(--text);
+    font-size: clamp(1.08rem, 1rem + 0.35vw, 1.2rem);
+  }
 
   .post > p {
     color: var(--text-dim);

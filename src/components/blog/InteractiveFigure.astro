@@ -1,0 +1,285 @@
+---
+import { Image } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+
+interface Props {
+  figureId: string | number;
+  dataUrl: string;
+  src: ImageMetadata;
+  alt: string;
+  widths?: number[];
+  sizes?: string;
+  loading?: 'eager' | 'lazy';
+  class?: string;
+}
+
+const {
+  figureId,
+  dataUrl,
+  src,
+  alt,
+  widths = [600, 900, 1400, 2000],
+  sizes = '(min-width: 1000px) 896px, calc(100vw - 2.2rem)',
+  loading = 'lazy',
+  class: className,
+} = Astro.props;
+
+const safeId = String(figureId).trim().toLowerCase().replace(/[^a-z0-9_-]+/g, '-');
+const chartId = `interactive-figure-${safeId}-chart`;
+const captionId = `interactive-figure-${safeId}-caption`;
+const statusId = `interactive-figure-${safeId}-status`;
+---
+
+<interactive-glof-figure
+  class:list={['interactive-figure-host', className]}
+  data-figure-id={figureId}
+  data-data-url={dataUrl}
+  data-alt={alt}
+  data-view="static"
+>
+  <figure class="interactive-figure" data-interactive-plot>
+    <div class="interactive-figure__controls" aria-label={`Figure ${figureId} controls`}>
+      <button
+        class="interactive-figure__button interactive-figure__button--primary"
+        type="button"
+        data-plot-toggle
+        aria-controls={chartId}
+        aria-expanded="false"
+      >
+        Explore Figure {figureId} interactively
+      </button>
+      <button
+        class="interactive-figure__button"
+        type="button"
+        data-plot-reset
+        hidden
+      >
+        Reset zoom
+      </button>
+      <a class="interactive-figure__download" href={dataUrl} download>
+        Download plot data (JSON)
+      </a>
+    </div>
+
+    <p
+      class="interactive-figure__status"
+      id={statusId}
+      data-plot-status
+      role="status"
+      aria-live="polite"
+      hidden
+    ></p>
+
+    <div class="interactive-figure__static" data-plot-static>
+      <Image src={src} alt={alt} {widths} {sizes} {loading} />
+    </div>
+
+    <section
+      class="interactive-figure__shell"
+      id={chartId}
+      data-plot-shell
+      aria-describedby={`${captionId} ${statusId}`}
+      hidden
+    >
+      <h3 class="interactive-figure__title" data-plot-title></h3>
+      <div
+        class="interactive-figure__chart"
+        data-plot-chart
+        role="img"
+        aria-label={alt}
+        aria-describedby={captionId}
+        tabindex="0"
+      ></div>
+    </section>
+
+    <fieldset class="interactive-figure__series" data-plot-series-controls hidden>
+      <legend>Visible series</legend>
+      <div class="interactive-figure__series-list" data-plot-series-list></div>
+    </fieldset>
+
+    <figcaption id={captionId}>
+      <slot name="caption" />
+    </figcaption>
+  </figure>
+</interactive-glof-figure>
+
+<script>
+  import '../../scripts/glof-plots';
+</script>
+
+<style>
+  .interactive-figure-host {
+    display: block;
+    margin: 1.9rem 0;
+  }
+
+  .interactive-figure { margin: 0; }
+
+  .interactive-figure__controls {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 0.55rem 0.7rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .interactive-figure-host:not(:defined) .interactive-figure__controls,
+  .interactive-figure-host:not(:defined) .interactive-figure__status,
+  .interactive-figure-host:not(:defined) .interactive-figure__series {
+    display: none;
+  }
+
+  .interactive-figure__button,
+  .interactive-figure__download {
+    display: inline-flex;
+    min-height: 2.35rem;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    padding: 0.55rem 0.9rem;
+    background: var(--bg-elev);
+    color: var(--text);
+    font: 600 0.79rem/1.2 var(--font-sans);
+    text-decoration: none;
+    cursor: pointer;
+    transition:
+      border-color 0.15s var(--ease),
+      background 0.15s var(--ease),
+      color 0.15s var(--ease),
+      transform 0.15s var(--ease);
+  }
+
+  .interactive-figure__button:hover,
+  .interactive-figure__download:hover {
+    border-color: var(--accent-line);
+    background: var(--bg-elev-2);
+    text-decoration: none;
+    transform: translateY(-1px);
+  }
+
+  .interactive-figure__button--primary {
+    border-color: transparent;
+    background: var(--accent);
+    color: var(--accent-ink);
+  }
+
+  .interactive-figure__button--primary:hover {
+    background: var(--accent-2);
+    color: var(--accent-ink);
+  }
+
+  .interactive-figure__button:disabled {
+    cursor: wait;
+    opacity: 0.7;
+    transform: none;
+  }
+
+  .interactive-figure__status {
+    margin: -0.15rem 0 0.7rem;
+    color: var(--text-faint);
+    font: 500 0.77rem/1.45 var(--font-sans);
+    text-align: center;
+  }
+
+  .interactive-figure__status[data-tone='error'] { color: #ef8b78; }
+  :global([data-theme='light']) .interactive-figure__status[data-tone='error'] { color: #a83c28; }
+
+  .interactive-figure__static :global(img) {
+    display: block;
+    width: 100%;
+    height: auto;
+    border: 1px solid var(--border-soft);
+    border-radius: var(--radius-sm);
+    background: #fff;
+  }
+
+  .interactive-figure__shell {
+    overflow: hidden;
+    border: 1px solid var(--border-soft);
+    border-radius: var(--radius-sm);
+    background: var(--bg-elev);
+    box-shadow: 0 8px 30px rgba(8, 13, 18, 0.12);
+  }
+
+  .interactive-figure__title {
+    margin: 0;
+    padding: 0.85rem 1rem 0.25rem;
+    color: var(--text);
+    font-size: clamp(0.98rem, 0.88rem + 0.45vw, 1.2rem);
+    line-height: 1.35;
+    text-align: center;
+  }
+
+  .interactive-figure__chart {
+    width: 100%;
+    min-height: 24rem;
+    outline-offset: -3px;
+  }
+
+  .interactive-figure__series {
+    min-width: 0;
+    margin: 0.75rem 0 0;
+    border: 1px solid var(--border-soft);
+    border-radius: 8px;
+    padding: 0.55rem 0.75rem 0.65rem;
+    color: var(--text-dim);
+  }
+
+  .interactive-figure__series legend {
+    padding: 0 0.35rem;
+    color: var(--text-faint);
+    font: 600 0.72rem/1.2 var(--font-sans);
+  }
+
+  .interactive-figure__series-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem 0.9rem;
+  }
+
+  :global(.interactive-figure__series-option) {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    color: var(--text-dim);
+    font: 500 0.78rem/1.3 var(--font-sans);
+    cursor: pointer;
+  }
+
+  :global(.interactive-figure__series-option input) {
+    width: 1rem;
+    height: 1rem;
+    margin: 0;
+    accent-color: var(--accent);
+  }
+
+  .interactive-figure figcaption {
+    margin-top: 0.7rem;
+    color: var(--text-faint);
+    font-size: 0.82rem;
+    font-style: italic;
+    line-height: 1.6;
+    text-align: center;
+  }
+
+  .interactive-figure figcaption :global(a) { color: var(--text-dim); }
+  .interactive-figure figcaption :global(a:hover) { color: var(--accent); }
+
+  [hidden] { display: none !important; }
+
+  @media (max-width: 600px) {
+    .interactive-figure__controls { justify-content: stretch; }
+    .interactive-figure__button,
+    .interactive-figure__download { flex: 1 1 auto; }
+    .interactive-figure__shell {
+      margin-inline: calc(clamp(0rem, 3vw, 0.65rem) * -1);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .interactive-figure__button,
+    .interactive-figure__download { transition: none; }
+  }
+</style>
