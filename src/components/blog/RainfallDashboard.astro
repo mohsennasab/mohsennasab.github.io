@@ -1,0 +1,377 @@
+---
+// Interactive map and charts of each year's largest event. The same component
+// draws two kinds of data, set by data.kind:
+//   rain: each year's wettest window, with hourly playback
+//   snow: each winter's peak snow water equivalent, with daily playback
+// The data comes from scripts/extreme-rainfall (JSON for the facts, small
+// binary files for the maps). The dashboard keeps one dark olive look in both
+// site themes so the map colors read the same way everywhere.
+
+interface Props {
+  data: Record<string, any>;
+  /** Folder under public/ that holds the binary map files. */
+  assetBase: string;
+  poster?: string;
+}
+
+const { data, assetBase, poster } = Astro.props;
+const { width, height } = data.grid;
+const hours = data.duration_hours;
+const snow = data.kind === 'snow';
+const largest = [...data.events].filter((e: any) => e.animated).sort((a: any, b: any) => a.rank - b.rank);
+const monthYear = new Intl.DateTimeFormat('en-US', { timeZone: data.timezone, month: 'short', year: 'numeric' });
+const pickLabel = (event: any) => (snow ? event.label : monthYear.format(new Date(event.end_local)));
+
+const text = snow
+  ? {
+      label: `${data.region} snow water equivalent dashboard`,
+      title: `Peak snow water equivalent of each winter in ${data.region}`,
+      sub: `Statewide average on each winter's peak day, ${data.first_year} to ${data.last_year}. Snow water equivalent is the depth of water the snow would leave if it melted. Pick a winter to see where the snow was.`,
+      annual: 'Annual chart. Use the left and right arrow keys to change the winter.',
+      picks: 'Five largest, with daily playback',
+      legend: 'Snow water equivalent, inches',
+      play: 'Play the winter',
+      scrub: 'Day of the winter',
+      noPlayer: 'Daily playback is available for the five largest winters, shown in gold.',
+      poster: 'The still image below shows the largest winter in the record.',
+      posterAlt: `Map of the largest snow water equivalent in ${data.region}`,
+    }
+  : {
+      label: `${data.region} rainfall dashboard`,
+      title: `The wettest ${hours} hours of each year in ${data.region}`,
+      sub: `Statewide average rainfall, ${data.first_year} to ${data.last_year}. Pick a year to see where the rain fell.`,
+      annual: 'Annual chart. Use the left and right arrow keys to change the year.',
+      picks: 'Five largest, with hourly playback',
+      legend: 'Inches of rain',
+      play: 'Play the storm',
+      scrub: 'Hour of the storm',
+      noPlayer: 'Hourly playback is available for the five largest events, shown in gold.',
+      poster: 'The still image below shows the largest event in the record.',
+      posterAlt: `Map of the largest ${hours}-hour rainfall event in ${data.region}`,
+    };
+const tiles = snow ? ['mean', 'peak', 'area', 'season'] : ['mean', 'peak', 'area'];
+
+// The browser script needs the facts but not the outlines, which are drawn here.
+const { outline_path, county_mesh_path, cities, ...facts } = data;
+const json = JSON.stringify(facts).replace(/</g, '\\u003c');
+---
+
+<section
+  class="rd"
+  data-rain-dashboard
+  data-kind={snow ? 'snow' : 'rain'}
+  data-asset-base={assetBase}
+  aria-label={text.label}
+>
+  <script type="application/json" data-rain-data set:html={json} />
+
+  <header class="rd-top">
+    <div>
+      <h3 class="rd-title">{text.title}</h3>
+      <p class="rd-sub">{text.sub}</p>
+    </div>
+    <button type="button" class="rd-btn rd-btn--quiet" data-fullscreen aria-pressed="false">
+      <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg>
+      <span data-fullscreen-label>Full screen</span>
+    </button>
+  </header>
+
+  <div class="rd-annual-wrap">
+    <div
+      class="rd-annual"
+      data-annual-chart
+      tabindex="0"
+      aria-label={text.annual}
+    ></div>
+    <div class="rd-tip rd-annual-tip" data-annual-tip hidden><strong data-annual-tip-value></strong><span data-annual-tip-date></span></div>
+  </div>
+
+  <div class="rd-picks">
+    <span class="rd-picks-label">{text.picks}</span>
+    {largest.map((event: any) => (
+      <button type="button" class="rd-pick" data-pick={event.year} aria-pressed="false">
+        <b>{event.rank}</b>
+        {pickLabel(event)}
+      </button>
+    ))}
+  </div>
+
+  <div class="rd-main">
+    <div class="rd-head">
+      <h4 data-event-title></h4>
+      <p><span data-event-rank></span><span class="rd-sep" aria-hidden="true"></span><span data-event-window></span></p>
+    </div>
+
+    <div class="rd-map" data-map style={`aspect-ratio:${width} / ${height}`}>
+      <canvas data-map-canvas></canvas>
+      <svg class="rd-overlay" viewBox={`0 0 ${width} ${height}`} preserveAspectRatio="none" aria-hidden="true">
+        <path class="rd-county" d={county_mesh_path}></path>
+        <path class="rd-outline" data-outline d={outline_path}></path>
+      </svg>
+      {cities.map((city: any) => (
+        <span
+          class="rd-city"
+          data-anchor={city.anchor}
+          style={`left:${((city.x / width) * 100).toFixed(2)}%;top:${((city.y / height) * 100).toFixed(2)}%`}
+        ><i></i>{city.name}</span>
+      ))}
+      <span class="rd-peak" data-peak hidden><i></i><b data-peak-label></b></span>
+      <div class="rd-clock" data-clock><strong data-clock-main></strong><span data-clock-sub></span></div>
+      <div class="rd-tip" data-tip hidden><strong data-tip-value></strong><span data-tip-place></span></div>
+      <div class="rd-loading" aria-hidden="true">Loading map</div>
+    </div>
+
+    <div class="rd-legend">
+      <span class="rd-legend-title" data-legend-title>{text.legend}</span>
+      <canvas data-legend width="512" height="12"></canvas>
+      <div class="rd-legend-ticks" data-legend-ticks></div>
+    </div>
+
+    <div class="rd-controls">
+      <div class="rd-player" data-player>
+        <button type="button" class="rd-btn rd-btn--play" data-play data-state="paused">
+          <svg class="rd-icon-play" viewBox="0 0 24 24" width="14" height="14" fill="currentColor" aria-hidden="true"><path d="M7 4.5v15l13-7.5z"/></svg>
+          <svg class="rd-icon-pause" viewBox="0 0 24 24" width="14" height="14" fill="currentColor" aria-hidden="true"><path d="M6 4.5h4.5v15H6zM13.5 4.5H18v15h-4.5z"/></svg>
+          <span data-play-label>{text.play}</span>
+        </button>
+        <input type="range" class="rd-scrub" data-scrub min="0" step="0.05" value="0" aria-label={text.scrub} />
+        {snow ? (
+          <button type="button" class="rd-btn rd-btn--rest" data-rest>Back to the peak day</button>
+        ) : (
+          <div class="rd-modes" role="group" aria-label="What the map shows during playback">
+            <button type="button" data-mode="running" aria-pressed="true">Total so far</button>
+            <button type="button" data-mode="hourly" aria-pressed="false">Hour by hour</button>
+          </div>
+        )}
+      </div>
+      <p class="rd-note" data-no-player hidden>{text.noPlayer}</p>
+      <p class="rd-status" data-status role="status" hidden></p>
+    </div>
+
+    <dl class="rd-tiles" data-count={tiles.length}>
+      {tiles.map((key) => (
+        <div class="rd-tile" data-tile={key}>
+          <dd data-value></dd>
+          <dt data-caption></dt>
+        </div>
+      ))}
+    </dl>
+
+    <div class="rd-chartcol">
+      <p class="rd-note rd-cold" data-cold-note hidden></p>
+      <div class="rd-eventchart" data-event-chart></div>
+    </div>
+  </div>
+
+  <noscript>
+    <p class="rd-note">
+      This dashboard needs JavaScript.
+      {poster && <span>{text.poster}</span>}
+    </p>
+    {poster && <img src={poster} alt={text.posterAlt} />}
+  </noscript>
+</section>
+
+<script>
+  import '../../scripts/rainfall-dashboard';
+</script>
+
+<style is:global>
+  .rd {
+    --rd-bg: #1a1f12;
+    --rd-panel: #252c19;
+    --rd-line: #3f4a2b;
+    --rd-text: #f1f3e6;
+    --rd-dim: #c1c8a9;
+    --rd-faint: #939c78;
+    --rd-shade: 13, 16, 8;
+    --rd-gold: #ebc05c;
+    --rd-red: #f04a23;
+    --rd-blue: #518ffd;
+    --rd-cyan: #74ecf9;
+    container-type: inline-size;
+    padding: clamp(0.9rem, 2.2vw, 1.4rem);
+    border: 1px solid var(--rd-line);
+    border-radius: 16px;
+    background: var(--rd-bg);
+    color: var(--rd-text);
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 14px;
+    line-height: 1.45;
+    box-shadow: 0 14px 40px rgba(9, 12, 5, 0.3);
+  }
+  .rd *, .rd *::before, .rd *::after { box-sizing: border-box; }
+  .rd [hidden] { display: none !important; }
+  .rd button { font: inherit; color: inherit; cursor: pointer; }
+
+  .rd-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem; }
+  .rd-title { margin: 0; font: 700 clamp(1.05rem, 0.9rem + 0.6vw, 1.3rem)/1.25 Arial, Helvetica, sans-serif; color: var(--rd-text); letter-spacing: 0; }
+  .rd-sub { margin: 0.3rem 0 0; color: var(--rd-dim); font-size: 0.9rem; }
+
+  .rd-btn {
+    display: inline-flex; align-items: center; gap: 0.45rem; flex: none;
+    padding: 0.5rem 0.85rem; border: 1px solid var(--rd-line); border-radius: 999px;
+    background: var(--rd-panel); font-size: 0.82rem; font-weight: 700;
+    transition: border-color 0.15s, background 0.15s;
+  }
+  .rd-btn:hover { border-color: var(--rd-faint); }
+  .rd-btn--quiet { font-weight: 400; color: var(--rd-dim); }
+  .rd-btn--play { border-color: transparent; background: var(--rd-gold); color: #1c1608; padding-inline: 1rem; }
+  .rd-btn--play:hover { background: #f3cf7d; border-color: transparent; }
+  .rd-btn--play[data-state='playing'] .rd-icon-play,
+  .rd-btn--play[data-state='paused'] .rd-icon-pause { display: none; }
+  .rd-btn--rest { font-weight: 400; color: var(--rd-dim); padding: 0.42rem 0.8rem; font-size: 0.8rem; }
+  .rd-btn--rest:disabled { opacity: 0.45; cursor: default; border-color: var(--rd-line); }
+  .rd :focus-visible { outline: 2px solid var(--rd-cyan); outline-offset: 2px; }
+
+  .rd-annual-wrap { position: relative; margin-top: 0.9rem; }
+  .rd-annual { height: clamp(170px, 24cqw, 230px); border-radius: 8px; }
+  .rd-annual-tip { transform: translate(-50%, calc(-100% - 8px)); text-align: center; }
+  .rd-annual-tip[data-side='left'] { transform: translate(-90%, calc(-100% - 8px)); }
+  .rd-annual-tip[data-side='right'] { transform: translate(-10%, calc(-100% - 8px)); }
+  .rd-annual svg, .rd-eventchart svg { display: block; width: 100%; height: 100%; overflow: visible; }
+  .rd-axis { fill: var(--rd-faint); font: 11px Arial, Helvetica, sans-serif; }
+  .rd-rank { fill: var(--rd-gold); font: 700 11px Arial, Helvetica, sans-serif; }
+  .rd-panel-label { fill: var(--rd-dim); font: 700 11px Arial, Helvetica, sans-serif; }
+  .rd-bar { transition: opacity 0.12s; opacity: 0.78; }
+  .rd-bar.is-hover { opacity: 1; }
+  .rd-bar.is-selected { opacity: 1; stroke: #fff; stroke-width: 1.5; }
+  .rd-hit { cursor: pointer; }
+  .rd-hour { opacity: 0.55; }
+  .rd-hour.is-now { opacity: 1; fill: var(--rd-red); }
+  .rd-dot-label { fill: #fff; font: 700 12px Arial, Helvetica, sans-serif; paint-order: stroke; stroke: var(--rd-bg); stroke-width: 4px; stroke-linejoin: round; }
+  .rd-eventchart svg.is-seekable { cursor: ew-resize; touch-action: none; }
+
+  .rd-picks { display: flex; flex-wrap: wrap; align-items: center; gap: 0.45rem; margin-top: 0.7rem; }
+  .rd-picks-label { color: var(--rd-faint); font-size: 0.8rem; margin-right: 0.2rem; }
+  .rd-pick {
+    display: inline-flex; align-items: center; gap: 0.45rem;
+    padding: 0.32rem 0.7rem 0.32rem 0.36rem; border: 1px solid var(--rd-line); border-radius: 999px;
+    background: var(--rd-panel); font-size: 0.82rem; color: var(--rd-dim);
+  }
+  .rd-pick b {
+    display: inline-grid; place-items: center; width: 1.35rem; height: 1.35rem; border-radius: 50%;
+    background: var(--rd-gold); color: #1c1608; font-size: 0.74rem;
+  }
+  .rd-pick:hover { border-color: var(--rd-faint); color: var(--rd-text); }
+  .rd-pick[aria-pressed='true'] { border-color: var(--rd-gold); color: var(--rd-text); }
+
+  .rd-main {
+    display: grid; margin-top: 1rem; gap: 0.8rem 1.4rem;
+    grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+    grid-template-rows: auto auto minmax(0, 1fr) auto auto;
+    grid-template-areas:
+      'map head'
+      'map tiles'
+      'map chart'
+      'legend chart'
+      'controls chart';
+  }
+  .rd-head { grid-area: head; }
+  .rd-head h4 { margin: 0; font: 700 clamp(1.15rem, 1rem + 0.8vw, 1.55rem)/1.2 Arial, Helvetica, sans-serif; color: var(--rd-text); letter-spacing: 0; }
+  .rd-head p { margin: 0.3rem 0 0; color: var(--rd-dim); font-size: 0.86rem; }
+  .rd-sep::before { content: '·'; margin: 0 0.45em; color: var(--rd-faint); }
+
+  .rd-map { grid-area: map; position: relative; width: 100%; align-self: start; }
+  .rd-map canvas, .rd-overlay { position: absolute; inset: 0; width: 100%; height: 100%; }
+  .rd-overlay path { fill: none; vector-effect: non-scaling-stroke; }
+  .rd-county { stroke: rgba(255, 255, 255, 0.13); stroke-width: 0.7; }
+  .rd-outline { stroke: rgba(255, 255, 255, 0.72); stroke-width: 1.2; }
+  .rd-city {
+    position: absolute; display: inline-flex; align-items: center; gap: 4px;
+    transform: translate(-2.5px, -50%); pointer-events: none; white-space: nowrap;
+    font-size: 11px; color: #fff;
+    text-shadow: 0 0 3px rgba(0, 0, 0, 0.95), 0 0 6px rgba(0, 0, 0, 0.8);
+  }
+  .rd-city i { width: 5px; height: 5px; border-radius: 50%; background: #fff; box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.6); flex: none; }
+  .rd-city[data-anchor='end'] { flex-direction: row-reverse; transform: translate(calc(-100% + 2.5px), -50%); }
+  .rd-peak { position: absolute; display: inline-flex; align-items: center; gap: 5px; transform: translate(-7px, -50%); pointer-events: none; }
+  .rd-peak i { width: 14px; height: 14px; border-radius: 50%; border: 2px solid #fff; box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.7), inset 0 0 0 1px rgba(0, 0, 0, 0.7); flex: none; }
+  .rd-peak b { padding: 2px 6px; border-radius: 4px; background: rgba(var(--rd-shade), 0.86); font-size: 11px; white-space: nowrap; }
+  .rd-peak[data-side='left'] { flex-direction: row-reverse; transform: translate(calc(-100% + 7px), -50%); }
+
+  .rd-clock {
+    position: absolute; right: 0; top: 0; display: grid; gap: 1px; justify-items: end; text-align: right;
+    padding: 0.4rem 0.6rem; border-radius: 8px; background: rgba(var(--rd-shade), 0.78);
+    font-variant-numeric: tabular-nums; pointer-events: none;
+  }
+  .rd-clock strong { font-size: 0.92rem; }
+  .rd-clock span { color: var(--rd-dim); font-size: 0.76rem; }
+  .rd-tip {
+    position: absolute; z-index: 3; display: grid; gap: 1px; transform: translate(12px, -50%);
+    padding: 0.35rem 0.55rem; border: 1px solid var(--rd-line); border-radius: 6px;
+    background: rgba(var(--rd-shade), 0.94); white-space: nowrap; pointer-events: none;
+  }
+  .rd-tip[data-side='left'] { transform: translate(calc(-100% - 12px), -50%); }
+  .rd-tip strong { font-size: 0.86rem; }
+  .rd-tip span { color: var(--rd-dim); font-size: 0.74rem; }
+  .rd-loading {
+    position: absolute; top: 46%; left: 50%; transform: translate(-50%, -50%); display: none;
+    padding: 0.35rem 0.7rem; border-radius: 999px; background: rgba(var(--rd-shade), 0.86); color: var(--rd-dim); font-size: 0.8rem;
+  }
+  .rd[data-loading] .rd-loading { display: block; }
+
+  .rd-legend { grid-area: legend; position: relative; padding-bottom: 1.1rem; }
+  .rd-legend-title { display: block; margin-bottom: 0.3rem; color: var(--rd-dim); font-size: 0.78rem; }
+  .rd-legend canvas { display: block; width: 100%; height: 10px; border-radius: 3px; }
+  .rd-legend-ticks { position: absolute; left: 0; right: 0; bottom: 0; height: 1rem; }
+  .rd-legend-ticks span { position: absolute; transform: translateX(-50%); color: var(--rd-faint); font-size: 11px; }
+  .rd-legend-ticks span:last-child { transform: translateX(-100%); }
+
+  .rd-controls { grid-area: controls; min-height: 2.4rem; }
+  .rd-player { display: flex; flex-wrap: wrap; align-items: center; gap: 0.6rem 0.8rem; }
+  .rd-scrub {
+    flex: 1 1 8rem; min-width: 6rem; height: 18px; margin: 0; background: transparent;
+    -webkit-appearance: none; appearance: none; cursor: pointer;
+  }
+  .rd-scrub::-webkit-slider-runnable-track {
+    height: 4px; border-radius: 2px;
+    background: linear-gradient(to right, var(--rd-red) var(--fill, 100%), var(--rd-line) var(--fill, 100%));
+  }
+  .rd-scrub::-moz-range-track { height: 4px; border-radius: 2px; background: var(--rd-line); }
+  .rd-scrub::-moz-range-progress { height: 4px; border-radius: 2px; background: var(--rd-red); }
+  .rd-scrub::-webkit-slider-thumb {
+    -webkit-appearance: none; width: 14px; height: 14px; margin-top: -5px; border-radius: 50%;
+    background: var(--rd-red); border: 2px solid #fff;
+  }
+  .rd-scrub::-moz-range-thumb { width: 11px; height: 11px; border-radius: 50%; background: var(--rd-red); border: 2px solid #fff; }
+  .rd-modes { display: inline-flex; border: 1px solid var(--rd-line); border-radius: 999px; overflow: hidden; flex: none; }
+  .rd-modes button { padding: 0.42rem 0.75rem; border: 0; background: transparent; color: var(--rd-dim); font-size: 0.8rem; }
+  .rd-modes button[aria-pressed='true'] { background: var(--rd-line); color: var(--rd-text); font-weight: 700; }
+  .rd-note { margin: 0.2rem 0 0; color: var(--rd-faint); font-size: 0.82rem; }
+  .rd-status { margin: 0.4rem 0 0; color: #ffb49f; font-size: 0.82rem; }
+
+  .rd-tiles { grid-area: tiles; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0.5rem; margin: 0; }
+  .rd-tiles[data-count='3'] { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .rd-tile { padding: 0.6rem 0.7rem; border: 1px solid var(--rd-line); border-radius: 10px; background: var(--rd-panel); min-width: 0; }
+  .rd-tile dd { margin: 0; font: 700 clamp(1.05rem, 0.9rem + 0.7vw, 1.4rem)/1.15 Arial, Helvetica, sans-serif; font-variant-numeric: tabular-nums; }
+  .rd-tile dt { margin-top: 0.25rem; color: var(--rd-dim); font-size: 0.76rem; line-height: 1.3; }
+  .rd-tile[data-tile='mean'] dd { color: var(--rd-cyan); }
+
+  .rd-chartcol { grid-area: chart; display: flex; flex-direction: column; gap: 0.5rem; min-width: 0; min-height: 0; }
+  .rd-eventchart { flex: 1 1 auto; min-height: 250px; }
+  .rd-cold { margin: 0; padding: 0.5rem 0.7rem; border-left: 3px solid var(--rd-cyan); border-radius: 0 8px 8px 0; background: var(--rd-panel); color: var(--rd-dim); }
+  .rd-halo { paint-order: stroke; stroke: var(--rd-bg); stroke-width: 4px; stroke-linejoin: round; fill: var(--rd-dim); }
+  .rd-halo-strong { paint-order: stroke; stroke: var(--rd-bg); stroke-width: 4px; stroke-linejoin: round; }
+
+  @container (max-width: 760px) {
+    .rd-main {
+      grid-template-columns: minmax(0, 1fr);
+      grid-template-rows: none;
+      grid-template-areas: 'head' 'map' 'legend' 'controls' 'tiles' 'chart';
+    }
+    .rd-map { max-width: 520px; justify-self: center; }
+    .rd-tiles { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .rd-tiles[data-count='3'] { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .rd-eventchart { flex: none; height: 270px; }
+    .rd-btn--quiet span { display: none; }
+  }
+
+  .rd:fullscreen {
+    display: flex; flex-direction: column; width: 100vw; height: 100vh; overflow: auto;
+    border: 0; border-radius: 0; padding: 1.2rem 1.8rem; font-size: 15px;
+  }
+  .rd:fullscreen .rd-annual { height: 20vh; flex: none; }
+  .rd:fullscreen .rd-main { flex: 1; min-height: 0; grid-template-columns: auto minmax(0, 1fr); }
+  .rd:fullscreen .rd-map { width: auto; height: calc(80vh - 260px); min-height: 300px; }
+</style>

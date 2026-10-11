@@ -1,0 +1,1113 @@
+---
+import { Image } from 'astro:assets';
+import Base from '../../layouts/Base.astro';
+import PageHeader from '../../components/PageHeader.astro';
+import RainfallDashboard from '../../components/blog/RainfallDashboard.astro';
+import rain from '../../data/minnesota-rainfall.json';
+import snow from '../../data/minnesota-snow.json';
+
+import headerBg from '../../assets/photos/photo-58.jpg';
+import zumbroFalls from '../../assets/blog/mn-rain/zumbro-falls-2010.jpg';
+import rapidanDam from '../../assets/blog/mn-rain/rapidan-dam-2024.jpg';
+import rushford from '../../assets/blog/mn-rain/rushford-2007.jpg';
+import duluth from '../../assets/blog/mn-rain/duluth-2012.jpg';
+import stPaul2019 from '../../assets/blog/mn-snow/st-paul-flood-2019.jpg';
+import oslo2011 from '../../assets/blog/mn-snow/oslo-red-river-2011.jpg';
+
+// Links
+const CONF = 'https://waterconference.umn.edu/';
+const MNAFPM = 'https://www.mnafpm.org/';
+const DNR = 'https://www.dnr.state.mn.us/';
+const DNR_APPS = 'https://climateapps.dnr.state.mn.us/doc/journal/';
+const DNR_MEGA = `${DNR}climate/summaries_and_publications/mega_rain_events.html`;
+const DNR_FILES = 'https://files.dnr.state.mn.us/natural_resources/climate/summaries_and_publications/';
+const DNR_2003 = `${DNR_APPS}flash_floods/ff030622-25.htm`;
+const DNR_2007 = `${DNR}climate/journal/ff070820.html`;
+const DNR_2010 = `${DNR}climate/journal/ff100924.html`;
+const DNR_2014 = `${DNR}climate/journal/heavyrain140531_140602.html`;
+const DNR_JUNE_2014 = `${DNR}climate/journal/140630_wet_june.html`;
+const DNR_HC_2014 = `${DNR}hydroclim/hc1407.html`;
+const DNR_2016 = `${DNR}climate/journal/160711_12_flood.html`;
+const DNR_2024 = `${DNR}climate/journal/soggy-june-15-22-2024.html`;
+const DNR_XMAS = `${DNR}climate/journal/warm-humid-wet-xmas-2023.html`;
+const DNR_2026 = `${DNR}climate/journal/mega-rain-flash-flood-july-2-2026.html`;
+const DNR_BOUNDARY = 'https://gis.data.mn.gov/maps/cf5f11b563bb4491bb90b856dc6af594/about';
+const NWS_ARX_2026 = 'https://www.weather.gov/arx/july2026heavyrain';
+const KTTC_2026 = 'https://www.kttc.com/2026/07/02/photos-videos-flooding-southeast-minnesota/';
+const NWS_DLH_2024 = 'https://www.weather.gov/dlh/june2024flood';
+const NWS_MPX_2003 = 'https://www.weather.gov/mpx/20030624_Central_MN_Tornado_Outbreak';
+const STORM_EVENTS = 'https://www.ncei.noaa.gov/stormevents/';
+const REFORMER_COOK = 'https://minnesotareformer.com/2024/06/23/in-cook-businesses-and-homeowners-confront-the-deluge/';
+const MPR_RAPIDAN = 'https://www.mprnews.org/story/2024/06/26/ap-what-happened-to-minnesotas-rapidan-dam-heres-what-to-know';
+const AORC_REGISTRY = 'https://registry.opendata.aws/noaa-nws-aorc/';
+const AORC_METHODS = 'https://www.weather.gov/media/owp/operations/aorc_v1_1_methods.pdf';
+const AORC_PAPER = 'https://doi.org/10.1111/1752-1688.13143';
+const PRISM = 'https://prism.oregonstate.edu/';
+const ACIS = 'https://www.rcc-acis.org/';
+const STAGE4 = 'https://mesonet.agron.iastate.edu/archive/';
+const RANG = 'https://github.com/mohsennasab/Rang';
+const COMMONS = 'https://commons.wikimedia.org/wiki/File:';
+
+// Snow links
+const UA_SWE = 'https://climate.arizona.edu/data/UA_SWE/';
+const UA_README = 'https://climate.arizona.edu/data/UA_SWE/Readme.txt';
+const UA_NSIDC = 'https://nsidc.org/data/nsidc-0719/versions/1';
+const UA_PAPER = 'https://doi.org/10.1029/2018GL079621';
+const UA_PAPER_800 = 'https://doi.org/10.1029/2023EA002964';
+const SNODAS = 'https://nsidc.org/data/g02158/versions/1';
+const SNOTEL_MAP = 'https://nwcc-apps.sc.egov.usda.gov/imap/';
+const DNR_FEB_2019 = `${DNR}climate/journal/record-snows-february-2019.html`;
+const NWS_MAR_2019 = 'https://www.weather.gov/media/mpx/March2019FloodingSummary.pdf';
+const MPR_2019 = 'https://www.mprnews.org/story/2019/05/11/flood-waters-recede-shepard-warner-roads-reopen';
+const DNR_WINTER_2023 = `${DNR}climate/journal/snowy-winter-2022-23.html`;
+const DNR_HEAT_2023 = `${DNR}climate/journal/mid-april-heat-wave-2023.html`;
+const DNR_DOME = `${DNR}climate/journal/101210_11_blizzard.html`;
+const DNR_HC_MAR_2011 = `${DNR_APPS}hc1103.htm`;
+const DNR_HC_APR_2001 = `${DNR_APPS}hc0104.htm`;
+const DNR_HC_MAY_2001 = `${DNR_APPS}hc0105.htm`;
+const USGS_2001 = 'https://pubs.usgs.gov/publication/fs00202';
+const DNR_HC_APR_2013 = `${DNR}hydroclim/hc1304.html`;
+const DNR_HC_MAY_2013 = `${DNR}hydroclim/hc1305.html`;
+const DNR_MAY_2013 = `${DNR}climate/journal/130503_snow.html`;
+const DNR_LOST = `${DNR}climate/journal/lost-winter-2023-24.html`;
+const NWPS = 'https://water.noaa.gov/gauges/';
+const RANG_STORY = '/blog/the-story-behind-rang';
+
+// Numbers used in the text come from the same files the dashboards read.
+type RainEvent = (typeof rain.events)[number];
+const events = rain.events as RainEvent[];
+const count = events.length;
+const byYear = new Map(events.map((e) => [e.year, e]));
+const ranked = [...events].sort((a, b) => a.rank - b.rank);
+const largest = ranked[0];
+const hours = rain.duration_hours;
+const totalHours = (Date.UTC(rain.last_year + 1, 0, 1) - Date.UTC(rain.first_year, 0, 1)) / 3600_000;
+const ordinal = (n: number) => {
+  const tens = n % 100;
+  const suffix = tens >= 11 && tens <= 13 ? 'th' : ['th', 'st', 'nd', 'rd'][Math.min(n % 10, 4)] ?? 'th';
+  return `${n}${suffix}`;
+};
+const WORDS = ['zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten', 'eleven', 'twelve', 'thirteen'];
+const word = (n: number) => WORDS[n] ?? String(n);
+const capital = (text: string) => text.charAt(0).toUpperCase() + text.slice(1);
+const inches = (value: number, digits = 2) => value.toFixed(digits);
+const whole = (value: number) => Math.round(value).toLocaleString('en-US');
+const percent = (value: number) => Math.round(value);
+
+// The count by month uses the longer record, 1980 onward.
+const season = rain.season;
+const seasonCount = season.events.length;
+const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+const monthCounts = new Array(12).fill(0);
+for (const event of season.events) monthCounts[event.month - 1] += 1;
+const busiest = Math.max(...monthCounts);
+const coldEvents = season.events.filter((e) => (e.cold_share ?? 0) >= 0.1);
+const coldOnDashboard = coldEvents.filter((e) => e.year >= rain.first_year).length;
+
+const megaRains = rain.reference_events;
+const megaMatched = megaRains.filter((e) => e.is_annual_maximum).length;
+const listedDates = (start: string, end: string) => {
+  const a = new Date(`${start}T12:00:00Z`);
+  const b = new Date(`${end}T12:00:00Z`);
+  const month = new Intl.DateTimeFormat('en-US', { timeZone: 'UTC', month: 'short' });
+  const head = `${month.format(a)} ${a.getUTCDate()}`;
+  if (start === end) return `${head}, ${a.getUTCFullYear()}`;
+  const tail = a.getUTCMonth() === b.getUTCMonth() ? `${b.getUTCDate()}` : `${month.format(b)} ${b.getUTCDate()}`;
+  return `${head} to ${tail}, ${a.getUTCFullYear()}`;
+};
+
+const screening = rain.screening;
+const yearShare = Math.round((largest.mean_in / screening.aorc_mean_in_per_year) * 100);
+const gaugeTotal = events.reduce((sum, e) => sum + (e.gauges ?? 0), 0);
+const gaugeClose = events.filter((e) => e.aorc_over_gauges > 0.9 && e.aorc_over_gauges < 1.1).length;
+const e2003 = byYear.get(2003)!;
+const e2007 = byYear.get(2007)!;
+const e2010 = byYear.get(2010)!;
+const e2014 = byYear.get(2014)!;
+const e2016 = byYear.get(2016)!;
+const e2022 = byYear.get(2022)!;
+const e2023 = byYear.get(2023)!;
+const e2024 = byYear.get(2024)!;
+const hokah = megaRains.find((e) => e.listed_start === '2007-08-18')!;
+
+// Snow
+type Winter = (typeof snow.events)[number];
+const winters = snow.events as Winter[];
+const winterCount = winters.length;
+const winterOf = new Map(winters.map((w) => [w.year, w]));
+const wintersRanked = [...winters].sort((a, b) => a.rank - b.rank);
+const smallest = wintersRanked[winterCount - 1];
+const w2001 = winterOf.get(2001)!;
+const w2011 = winterOf.get(2011)!;
+const w2013 = winterOf.get(2013)!;
+const w2018 = winterOf.get(2018)!;
+const w2019 = winterOf.get(2019)!;
+const w2023 = winterOf.get(2023)!;
+const w2024 = winterOf.get(2024)!;
+const longDate = (iso: string, withYear = true) =>
+  new Intl.DateTimeFormat('en-US', { timeZone: 'UTC', month: 'long', day: 'numeric', ...(withYear ? { year: 'numeric' } : {}) })
+    .format(new Date(`${iso}T12:00:00Z`));
+const fewestDeepDays = Math.min(...wintersRanked.slice(0, 5).map((w) => w.days_at_least_1in));
+const check = snow.check!;
+
+// Timing of the snow peak, over the longer record of winters.
+const snowSeason = snow.season!;
+const snowPeaks = snowSeason.events;
+const snowCount = snowPeaks.length;
+const snowMonthCounts = new Array(12).fill(0);
+for (const peak of snowPeaks) snowMonthCounts[peak.month - 1] += 1;
+const tallestMonth = Math.max(busiest, ...snowMonthCounts);
+const dayOfYear = (iso: string) => (Date.parse(`${iso}T00:00:00Z`) - Date.UTC(Number(iso.slice(0, 4)), 0, 1)) / 86_400_000 + 1;
+const peakDays = snowPeaks.map((peak) => dayOfYear(peak.peak_date)).sort((a, b) => a - b);
+const quantile = (share: number) => {
+  const at = (peakDays.length - 1) * share;
+  const low = Math.floor(at);
+  const value = peakDays[low] + (peakDays[Math.min(low + 1, peakDays.length - 1)] - peakDays[low]) * (at - low);
+  // Shown as a date in a year without a leap day.
+  return new Intl.DateTimeFormat('en-US', { timeZone: 'UTC', month: 'long', day: 'numeric' })
+    .format(new Date(Date.UTC(2023, 0, Math.floor(value))));
+};
+const byPeakDay = [...snowPeaks].sort((a, b) => dayOfYear(a.peak_date) - dayOfYear(b.peak_date));
+const earliestPeaks = byPeakDay.filter((peak) => dayOfYear(peak.peak_date) === dayOfYear(byPeakDay[0].peak_date));
+const latestPeak = byPeakDay[byPeakDay.length - 1];
+const winter1997 = snowPeaks.find((peak) => peak.year === 1997)!;
+
+// Days from each year's snow peak to the middle of its wettest 72 hours.
+const snowPeakOf = new Map(snowPeaks.map((peak) => [peak.year, peak.peak_date]));
+const gaps = season.events
+  .filter((e) => snowPeakOf.has(e.year))
+  .map((e) => {
+    const middle = Date.parse(e.end_local) - (hours / 2) * 3600_000;
+    return Math.round((middle - Date.parse(`${snowPeakOf.get(e.year)}T12:00:00-06:00`)) / 86_400_000);
+  })
+  .sort((a, b) => a - b);
+const medianGap = Math.round((gaps[Math.floor((gaps.length - 1) / 2)] + gaps[Math.ceil((gaps.length - 1) / 2)]) / 2);
+const rainAfterSnow = gaps.filter((days) => days > 0).length;
+---
+
+<Base
+  title="The Wettest Days and the Whitest Winters"
+  description="Minnesota's largest 72-hour rainfall of every year and peak snow water equivalent of every winter from 2000 through 2025, with interactive maps that play each storm hour by hour and each winter day by day. By Dr. Mohsen Tahmasebi Nasab."
+>
+  <div class="post-hero">
+    <PageHeader
+      eyebrow="// blog"
+      title="The Wettest Days and the Whitest Winters"
+      lede="Minnesota's largest 72-hour rainfall and peak snow water equivalent, year by year from 2000 through 2025."
+      bgImage={headerBg}
+      bgPos="center 62%"
+    >
+      <p class="post-byline">Mohsen Tahmasebi Nasab, PhD</p>
+      <p class="post-meta">Oct 10, 2026 · about an 18 minute read</p>
+    </PageHeader>
+  </div>
+
+  <article>
+    <section class="section section--tight">
+      <div class="wrap post">
+        <p class="post-intro">
+          I will be at two Minnesota water meetings this fall, the
+          <a href={CONF} target="_blank" rel="noopener">Minnesota Water Resources Conference</a> in October and the
+          <a href={MNAFPM} target="_blank" rel="noopener">Minnesota Association of Floodplain Managers</a> conference in
+          November, and I wanted to arrive with something Minnesotan to show people. I took {count} years of hourly
+          rainfall maps for the state, {rain.first_year} through {rain.last_year}, and for each year I found the
+          {hours} hours that put the most water on Minnesota as a whole. Then I did the same for snow and found the day
+          of each winter when the snowpack held the most water, its peak snow water equivalent.
+        </p>
+        <p>
+          The post has two dashboards, <a href="#rain">one for rain</a> and <a href="#snow">one for snow</a>. After
+          them come the months when each kind of extreme tends to fall, a comparison with the Minnesota DNR's list of
+          mega-rains, and the data and checks behind the numbers.
+        </p>
+        <p>
+          Every rainfall number in this post comes from one data set, NOAA's AORC, and every snow number from the
+          University of Arizona's snow analysis. Another data set would give somewhat different amounts and could put
+          the years in a different order. I show how much under <a href="#checks">What I checked</a>.
+        </p>
+
+        <h2 id="rain">The wettest {hours} hours of every year</h2>
+        <p>
+          The dashboard below holds the rainfall result for every year. Pick a bar to see where the rain fell. The five
+          largest events have hourly playback, so you can watch each storm build across the state while a red dot
+          follows the statewide average.
+        </p>
+      </div>
+    </section>
+
+    <section class="section section--flush" id="rain-map">
+      <div class="wrap wrap--wide">
+        <RainfallDashboard data={rain} assetBase="/blog/minnesota-rainfall" poster="/blog/minnesota-rainfall/poster.png" />
+        <p class="dash-help">
+          Click a bar or use the left and right arrow keys. Gold bars have hourly playback. Hover over the map to read
+          the amount at any spot. All times are Central. Data: NOAA AORC.
+        </p>
+      </div>
+    </section>
+
+    <section class="section section--tight">
+      <div class="wrap post">
+        <h2 id="the-number">What the number means</h2>
+        <p>
+          Each bar is a statewide average. Take all the rain that fell inside Minnesota in {hours} hours and spread it
+          evenly over the state's {whole(rain.region_area_sq_mi)} square miles of land and inland lakes. The depth of
+          that layer is the number.
+        </p>
+        <p>
+          The median year tops out at {inches(rain.median_in)} inches. The largest, {inches(largest.mean_in)} inches, is
+          about {yearShare} percent of an average year's precipitation delivered in three days.
+        </p>
+        <p>
+          To score well on a statewide average, a storm has to rain on most of Minnesota. A cloudburst over two
+          counties barely moves it. By this measure the wettest {hours} hours of 2007 came at the end of March, five
+          months before the Hokah flood.
+        </p>
+        <p>
+          I chose {hours} hours because weather systems take one to three days to cross a state this size, and because
+          it is the longest of the standard storm durations engineers use in design. It is also long enough to hold any
+          event on the Minnesota DNR's list of mega-rains, which runs on a 24-hour clock.
+        </p>
+
+        <h2 id="five-largest">The five largest since {rain.first_year}</h2>
+
+        <h3 class="storm">
+          <span>September 22 to 25, 2010</span>
+          <span class="storm-value">{inches(e2010.mean_in)} in</span>
+        </h3>
+        <p>
+          A warm front stalled across southern Minnesota, and
+          <a href={DNR_2010} target="_blank" rel="noopener">waves of thunderstorms ran east along it</a> for a day and a
+          half. Amboy recorded 10.68 inches. The DNR put the area with six inches or more at over 5,000 square miles,
+          and the grid gives about {whole(Math.round(e2010.area_at_least_in['6'].sq_mi / 100) * 100)}. Zumbro Falls, Pine Island, and Owatonna
+          flooded. A week later the Mississippi at St. Paul rose above flood stage, the first autumn flood there in
+          records going back to 1893.
+        </p>
+        <p>
+          This storm is also on the DNR's mega-rain list. It rained hard enough to wreck towns and widely enough to
+          move the statewide number.
+          <a class="maplink" href="#rain-map" data-storm="2010">Show 2010 on the map</a>
+        </p>
+
+        <figure class="post-fig">
+          <Image
+            src={zumbroFalls}
+            alt="Business owners in Zumbro Falls pile ruined furniture and debris along the main street after the September 2010 flood"
+            widths={[600, 900, 1400]}
+            sizes="(min-width: 860px) 780px, 100vw"
+          />
+          <figcaption>
+            Zumbro Falls on September 28, 2010, cleaning up after the Zumbro River flooded downtown. Photo by Patsy
+            Lynch for FEMA, public domain, via
+            <a href={`${COMMONS}FEMA_-_45452_-_Debris_lines_the_street_as_Zumbro_Falls,_MN_cleans_up_after_the_flood.jpg`} target="_blank" rel="noopener">Wikimedia Commons</a>.
+          </figcaption>
+        </figure>
+
+        <h3 class="storm">
+          <span>July 9 to 12, 2016</span>
+          <span class="storm-value">{inches(e2016.mean_in)} in</span>
+        </h3>
+        <p>
+          The setup was similar, with a front lying across central Minnesota.
+          <a href={DNR_2016} target="_blank" rel="noopener">Storms formed along it</a> on the morning of July 11 and
+          kept forming into the early hours of the 12th. Much of Pine County got more than eight inches, and Willow
+          River measured 9.93. Southbound Interstate 35 closed for a time, Highway 61 closed, and tornadoes damaged
+          homes in Watkins and Litchfield.
+        </p>
+        <p>
+          The grid's largest total for this storm, {inches(e2016.peak_point_in, 1)} inches, sits in Crow Wing County, 16
+          miles from Breezy Point, where a trained spotter reported 10.30.
+          <a class="maplink" href="#rain-map" data-storm="2016">Show 2016 on the map</a>
+        </p>
+
+        <h3 class="storm">
+          <span>June 15 to 18, 2024</span>
+          <span class="storm-value">{inches(e2024.mean_in)} in</span>
+        </h3>
+        <p>
+          Most Minnesotans will remember this stretch. Rain fell across central and southern Minnesota over the weekend
+          of June 15 and 16. Then on Tuesday the 18th the northeast got what the DNR called
+          <a href={DNR_2024} target="_blank" rel="noopener">"one of the largest rains on record in northeastern Minnesota."</a>
+          Up to 7.5 inches fell at the headwaters of the St. Louis and Cloquet rivers, according to the
+          <a href={NWS_DLH_2024} target="_blank" rel="noopener">National Weather Service in Duluth</a>, and by the next
+          afternoon <a href={REFORMER_COOK} target="_blank" rel="noopener">downtown Cook was under water</a>.
+        </p>
+        <p>
+          The rain then moved south. From June 20 to 22 far southern Minnesota took another six to nine inches, and on
+          June 24 the Blue Earth River
+          <a href={MPR_RAPIDAN} target="_blank" rel="noopener">cut a new channel around the west side of the Rapidan Dam</a>.
+          That second round was devastating where it fell, and it covered far less of the state. Its best {hours} hours
+          average 1.25 inches statewide.
+        </p>
+        <p>
+          This entry comes with a caution, because NOAA's files are blank for all of June 18, 2024. I filled that day
+          from a sister product, as described under <a href="#checks">What I checked</a>. With the patch, 2024 lands
+          {inches(e2016.mean_in - e2024.mean_in, 3)} inches behind 2016, which is a tie for any practical purpose.
+          <a class="maplink" href="#rain-map" data-storm="2024">Show 2024 on the map</a>
+        </p>
+
+        <figure class="post-fig">
+          <Image
+            src={rapidanDam}
+            alt="Aerial view of the Blue Earth River pouring around the west end of the Rapidan Dam, with the eroded bank beside it"
+            widths={[600, 900, 1400]}
+            sizes="(min-width: 860px) 780px, 100vw"
+          />
+          <figcaption>
+            The Rapidan Dam on June 25, 2024, the day after the Blue Earth River carved around its west abutment. This
+            came from the second round of rain, after the {hours} hours ranked above. Photo by Wikideas1, CC0, via
+            <a href={`${COMMONS}Rapidan_Dam_failure-5.jpg`} target="_blank" rel="noopener">Wikimedia Commons</a>.
+          </figcaption>
+        </figure>
+
+        <h3 class="storm">
+          <span>May 30 to June 2, 2014</span>
+          <span class="storm-value">{inches(e2014.mean_in)} in</span>
+        </h3>
+        <p>
+          <a href={DNR_2014} target="_blank" rel="noopener">Waves of thunderstorms crossed the state</a> over a long
+          weekend, first across the south and center and by Monday mostly in the north. A farm gauge near Sauk
+          Centre caught 4.60 inches in one hour on the afternoon of May 31. The airport at Hibbing measured 5.96 inches
+          in 54 hours and Big Falls 5.10, in the same county where the grid puts its largest total of
+          {inches(e2014.peak_point_in, 1)} inches. Lake Minnetonka rose to its highest level in 109 years of records.
+          In the grid, {percent(e2014.area_at_least_in['1'].percent)} percent of the state got at least an inch.
+        </p>
+        <p>
+          The rest of the month stayed wet. June 2014 averaged
+          <a href={DNR_JUNE_2014} target="_blank" rel="noopener">8.03 inches statewide</a>, the wettest month in
+          Minnesota's record. A second {hours}-hour stretch from June 14 to 17 averaged 2.10 inches, which would place
+          tenth on this list if a year could appear twice. The Rainy River passed a record that had stood since 1950, a
+          hillside slid away below the University of Minnesota hospital in Minneapolis, and
+          <a href={DNR_HC_2014} target="_blank" rel="noopener">the governor declared an emergency in 35 counties</a>.
+          <a class="maplink" href="#rain-map" data-storm="2014">Show 2014 on the map</a>
+        </p>
+
+        <h3 class="storm">
+          <span>June 22 to 25, 2003</span>
+          <span class="storm-value">{inches(e2003.mean_in)} in</span>
+        </h3>
+        <p>
+          Rain came in rounds along a band about 30 miles wide, from
+          <a href={DNR_2003} target="_blank" rel="noopener">Traverse County on the western border to Pine County on the eastern one</a>.
+          Five-day totals topped six inches along the band and eight in places. Elk River measured 8.19 inches in 24
+          hours and Monticello 7.50. The grid's largest total, {inches(e2003.peak_point_in, 1)} inches, sits four miles
+          from Alexandria, where NOAA's <a href={STORM_EVENTS} target="_blank" rel="noopener">storm records</a> describe
+          cars floating in the streets and three feet of water in the hospital's boiler room.
+        </p>
+        <p>
+          The evening of June 24 also brought
+          <a href={NWS_MPX_2003} target="_blank" rel="noopener">15 tornadoes</a>. The strongest, an F2, went through
+          Buffalo Lake in Renville County, and nobody was killed.
+          <a class="maplink" href="#rain-map" data-storm="2003">Show 2003 on the map</a>
+        </p>
+
+        <p>
+          The order of this list is soft. The five are separated by {inches(ranked[0].mean_in - ranked[4].mean_in)}
+          inches, and the next four years sit within another {inches(ranked[4].mean_in - ranked[8].mean_in)}. PRISM, a
+          second rainfall data set I used as a cross-check, also has 2010 first and 2016 second. After that it ranks
+          June 2013 third, June 2024 fourth, and October 2005 fifth, with 2014 sixth and 2003 eighth. Part of that gap
+          comes from the clock, because PRISM's days run from morning to morning and my window can start at any hour. I
+          would treat the first two as firm and the rest as a group of about nine storms of similar size.
+        </p>
+      </div>
+    </section>
+
+    <section class="section section--tight" id="snow">
+      <div class="wrap post">
+        <h2 id="snow-intro">Peak snow water equivalent of every winter</h2>
+        <p>
+          Many of Minnesota's largest river floods come from snow. The Red, the Minnesota, and the upper Mississippi
+          rise in spring, when a winter's worth of snow melts in a few weeks. So I ran the same kind of search on snow.
+        </p>
+        <p>
+          The measure is snow water equivalent, SWE for short. Melt the snow on the ground and measure the depth of
+          the water. A foot of fresh powder holds about an inch of water, and a foot of old, settled March snow can
+          hold three or four.
+        </p>
+        <p>
+          For each winter from 1999-2000 through 2024-25, I found the day when the statewide average was largest. The
+          maps come from the <a href={UA_SWE} target="_blank" rel="noopener">University of Arizona's daily snow analysis</a>,
+          described <a href="#snow-data">further down</a>. A winter is labeled by the year in which it ends, so the bar
+          for 2019 is the winter of 2018-19.
+        </p>
+      </div>
+    </section>
+
+    <section class="section section--flush" id="snow-map">
+      <div class="wrap wrap--wide">
+        <RainfallDashboard data={snow} assetBase="/blog/minnesota-snow" poster="/blog/minnesota-snow/poster.png" />
+        <p class="dash-help">
+          Click a bar or use the left and right arrow keys. Gold bars have daily playback from the first snow to the
+          last. The circle on the map marks the deepest spot on the day shown. Days with snow on the ground statewide
+          are days when the statewide average is at least 0.05 inches. Data: University of Arizona SWE.
+        </p>
+      </div>
+    </section>
+
+    <section class="section section--tight">
+      <div class="wrap post">
+        <p>
+          The median winter peaks at {inches(snow.median_in)} inches of water. That is more than the largest three-day
+          rainfall of the {count} years, sitting on the ground at once.
+        </p>
+
+        <h2 id="five-winters">The five largest winters</h2>
+
+        <h3 class="storm">
+          <span>Winter of 2018-19</span>
+          <span class="storm-value">{inches(w2019.mean_in)} in</span>
+        </h3>
+        <p>
+          February 2019 was
+          <a href={DNR_FEB_2019} target="_blank" rel="noopener">the snowiest February on record at 47 of Minnesota's long-running weather stations</a>.
+          The Twin Cities measured 39.0 inches for the month, and Rochester's 40.0 was about double its old February
+          record. In early March the National Weather Service
+          <a href={NWS_MAR_2019} target="_blank" rel="noopener">estimated three to seven inches of water</a> in the snow
+          across west-central and southwest Minnesota. The grid puts its deepest snow in the same part of the state. On
+          {longDate(w2019.peak_date, false)} it shows four inches or more over
+          {percent(w2019.area_at_least_in['4'].percent)} percent of the state.
+        </p>
+        <p>
+          The Mississippi at St. Paul crested at 20.19 feet on March 31 and stayed above flood stage for
+          <a href={MPR_2019} target="_blank" rel="noopener">42 days, a record</a>.
+          <a class="maplink" href="#snow-map" data-winter="2019">Show 2018-19 on the map</a>
+        </p>
+
+        <figure class="post-fig">
+          <Image
+            src={stPaul2019}
+            alt="An Amtrak train passes below downtown St. Paul on a raised track, with Shepard Road and its streetlights under brown floodwater beside it"
+            widths={[600, 900, 1400]}
+            sizes="(min-width: 860px) 780px, 100vw"
+          />
+          <figcaption>
+            St. Paul on March 31, 2019, the day the Mississippi crested. Shepard Road is under water at left. Photo by
+            Jerry Huddleston, CC BY 2.0, via
+            <a href={`${COMMONS}Empire_Builder_next_to_flooded_road_in_St._Paul,_March_2019.jpg`} target="_blank" rel="noopener">Wikimedia Commons</a>.
+          </figcaption>
+        </figure>
+
+        <h3 class="storm">
+          <span>Winter of 2022-23</span>
+          <span class="storm-value">{inches(w2023.mean_in)} in</span>
+        </h3>
+        <p>
+          Duluth finished the season with
+          <a href={DNR_WINTER_2023} target="_blank" rel="noopener">140.1 inches of snow, a record</a>, and the Twin
+          Cities with 90.3, their third snowiest. The peak came late, on {longDate(w2023.peak_date, false)}. The day
+          before, about half of Minnesota still had 18 inches of snow or more on the ground.
+        </p>
+        <p>
+          Then came <a href={DNR_HEAT_2023} target="_blank" rel="noopener">four days of record heat</a>, with 88°F in the
+          Twin Cities on April 12. By the 13th the snow was gone from southern and much of central Minnesota. The grid
+          has the statewide average falling by {inches(w2023.largest_week_drop_in)} inches of water in the week ending
+          {longDate(w2023.largest_week_drop_end!, false)}, the fastest loss in the {winterCount} winters. The St. Croix
+          at Stillwater crested in major flood on April 24, and the Mississippi at St. Paul crested at 18.13 feet a day
+          later.
+          <a class="maplink" href="#snow-map" data-winter="2023">Show 2022-23 on the map</a>
+        </p>
+
+        <h3 class="storm">
+          <span>Winter of 2010-11</span>
+          <span class="storm-value">{inches(w2011.mean_in)} in</span>
+        </h3>
+        <p>
+          This is the winter the Metrodome roof collapsed. The storm of December 10 and 11, 2010
+          <a href={DNR_DOME} target="_blank" rel="noopener">left 17.1 inches at the Twin Cities airport</a>, and the
+          snow kept coming. In early March the DNR reported
+          <a href={DNR_HC_MAR_2011} target="_blank" rel="noopener">three to five inches of water in the snow</a> at most
+          Minnesota locations and six in parts of the west, a range that holds the grid's statewide
+          {inches(w2011.mean_in)}. The deepest snow in the grid that winter is in the southwest, north of Pipestone.
+        </p>
+        <p>
+          The Red River at Fargo crested at 38.81 feet on April 9, the fourth highest in its record, and the
+          Mississippi at St. Paul passed 19 feet on March 29.
+          <a class="maplink" href="#snow-map" data-winter="2011">Show 2010-11 on the map</a>
+        </p>
+
+        <figure class="post-fig">
+          <Image
+            src={oslo2011}
+            alt="Two snow-topped Minnesota National Guard trucks drive through floodwater covering a highway near Oslo, with road signs standing in the water behind them"
+            widths={[600, 900, 1400]}
+            sizes="(min-width: 860px) 780px, 100vw"
+          />
+          <figcaption>
+            Minnesota National Guard trucks ford Red River floodwater near Oslo on April 16, 2011. Photo by Tech. Sgt.
+            Erik Gudmundson, public domain, via
+            <a href={`${COMMONS}National_Guard_trucks_ford_flood_in_Minnesota.jpg`} target="_blank" rel="noopener">Wikimedia Commons</a>.
+          </figcaption>
+        </figure>
+
+        <h3 class="storm">
+          <span>Winter of 2000-01</span>
+          <span class="storm-value">{inches(w2001.mean_in)} in</span>
+        </h3>
+        <p>
+          Snowfall ran 18 to 24 inches above average across much of southern Minnesota, and the DNR wrote that as of
+          March 26 the snowpack statewide
+          <a href={DNR_HC_APR_2001} target="_blank" rel="noopener">"generally contained two to four inches of water."</a>
+          The grid's peak, ten days before that date, is {inches(w2001.mean_in)} inches.
+        </p>
+        <p>
+          The Mississippi at St. Paul crested at 23.76 feet on April 18. The DNR ranked the flood
+          <a href={DNR_HC_MAY_2001} target="_blank" rel="noopener">third highest on record at St. Paul and second highest at Stillwater and Granite Falls</a>,
+          and about <a href={USGS_2001} target="_blank" rel="noopener">50 counties were declared disaster areas</a>.
+          <a class="maplink" href="#snow-map" data-winter="2001">Show 2000-01 on the map</a>
+        </p>
+
+        <h3 class="storm">
+          <span>Winter of 2012-13</span>
+          <span class="storm-value">{inches(w2013.mean_in)} in</span>
+        </h3>
+        <p>
+          The statewide peak came on {longDate(w2013.peak_date, false)}, and winter kept going for six more weeks.
+          April 2013 brought Duluth 50.8 inches of snow,
+          <a href={DNR_HC_MAY_2013} target="_blank" rel="noopener">its snowiest month on record for any month of the year</a>.
+          In the storm of May 1 to 3, Dodge Center
+          <a href={DNR_MAY_2013} target="_blank" rel="noopener">measured 15.4 inches in a day</a>, a state record for
+          May. The grid keeps snow on the ground statewide until {longDate(w2013.last_snow_date, false)}.
+        </p>
+        <p>
+          In early April the outlook for the Red River was
+          <a href={DNR_HC_APR_2013} target="_blank" rel="noopener">a high risk of major flooding</a>. The river stayed
+          well below that, which the DNR credited to "a nearly ideal melt scenario." Fargo crested at 33.31 feet on
+          May 1.
+          <a class="maplink" href="#snow-map" data-winter="2013">Show 2012-13 on the map</a>
+        </p>
+
+        <p>
+          At the other end, the winter of {smallest.label} peaked at {inches(smallest.mean_in)} inches. The winter of
+          2023-24, which the DNR called <a href={DNR_LOST} target="_blank" rel="noopener">the lost winter</a>, peaked at
+          {inches(w2024.mean_in)} inches on {longDate(w2024.peak_date, false)}. Its statewide average reached one inch
+          of water on only {w2024.days_at_least_1in} days, against {fewestDeepDays} or more in each of the five winters
+          above.
+        </p>
+
+        <h2 id="season">
+          When the wettest {hours} hours and the peak snow water equivalent fall, {season.first_year} to
+          {season.last_year}
+        </h2>
+        <p>
+          This section uses a longer record than the rest of the post. AORC starts in {season.first_year}, and the
+          Arizona snow analysis starts with the winter of {snowSeason.first_year - 1}-{String(snowSeason.first_year).slice(2)}.
+          A count by month is steadier with {seasonCount} years of rain and {snowCount} winters of snow than with
+          {count} of each, so here I kept all of them.
+        </p>
+
+        <figure
+          class="months"
+          aria-label={`Number of annual rainfall events and winter snow peaks that fall in each month, ${season.first_year} to ${season.last_year}`}
+        >
+          <p class="months-key">
+            <span><i class="months-swatch"></i>Wettest {hours} hours, {season.first_year} to {season.last_year}</span>
+            <span><i class="months-swatch months-swatch--snow"></i>Peak snow water equivalent, winters {snowSeason.first_year} to {snowSeason.last_year}</span>
+          </p>
+          <div class="months-bars">
+            {monthNames.map((name, i) => (
+              <div class="months-col">
+                <div class="months-pair">
+                  <div class="months-one">
+                    <span class="months-n">{monthCounts[i] > 0 ? monthCounts[i] : ''}</span>
+                    <span class="months-bar" style={`height:calc((100% - 1.2rem) * ${(monthCounts[i] / tallestMonth).toFixed(4)})`}></span>
+                  </div>
+                  <div class="months-one">
+                    <span class="months-n">{snowMonthCounts[i] > 0 ? snowMonthCounts[i] : ''}</span>
+                    <span class="months-bar months-bar--snow" style={`height:calc((100% - 1.2rem) * ${(snowMonthCounts[i] / tallestMonth).toFixed(4)})`}></span>
+                  </div>
+                </div>
+                <span class="months-name">{name}</span>
+              </div>
+            ))}
+          </div>
+          <figcaption>
+            Number of years in which the wettest {hours} hours fall in each month, and number of winters in which the
+            snow peaks in each month.
+          </figcaption>
+        </figure>
+
+        <p>
+          The snow peaks first, and in a narrow window. The statewide peak falls in March in {snowMonthCounts[2]} of
+          the {snowCount} winters and in February in {snowMonthCounts[1]}. The median date is {quantile(0.5)}, and half
+          of all peaks fall between {quantile(0.25)} and {quantile(0.75)}. The earliest is
+          {longDate(earliestPeaks[0].peak_date, false)}, in both {earliestPeaks.map((peak) => peak.year).join(' and ')},
+          and the latest is {longDate(latestPeak.peak_date)}, the day after the blizzard of April 13 to 16.
+        </p>
+        <p>
+          The wettest {hours} hours come later and spread over more of the year. June holds {monthCounts[5]} of the
+          {seasonCount} years. September and October hold {monthCounts[8] + monthCounts[9]} between them. July and
+          August, the heart of thunderstorm season, hold {monthCounts[6] + monthCounts[7]}.
+        </p>
+        <p>
+          My reading is that midsummer storms in Minnesota tend to be intense and compact, while the systems of June
+          and early fall are broader and slower. Forty-six events cannot prove that, though the maps for June 2014 and
+          September 2010 look the part.
+        </p>
+        <p>
+          In {rainAfterSnow === gaps.length ? `all ${gaps.length}` : `${rainAfterSnow} of the ${gaps.length}`} years
+          with both records, the wettest {hours} hours came after the snow peak, and the median gap is {medianGap}
+          days, a little over four months. The shortest gap is 2009. The snow peaked on March 11 that year, and the wettest {hours} hours began on
+          March 22 with about an inch and a half of water still in the snowpack statewide. Three days after that window
+          closed, the Red River at Fargo reached
+          <a href={`${NWPS}fgon8`} target="_blank" rel="noopener">its record crest of 40.84 feet</a>.
+        </p>
+        <p>
+          {capital(word(coldEvents.length))} of the {seasonCount} rainfall events came with cold air. In November 1996,
+          73 percent of the water fell with temperatures at or below 34°F, so most of it was snow and ice. March 2009
+          was 40 percent. AORC counts snow by its melted depth, and the rain dashboard flags the
+          {word(coldOnDashboard)} such years since {rain.first_year} when you select them.
+        </p>
+        <p>
+          The oddest entry is 2023. The wettest {hours} hours of that year ran from the evening of December 23 to the
+          evening of December 26, a Christmas rainstorm in what the DNR described as
+          <a href={DNR_XMAS} target="_blank" rel="noopener">an extremely warm, humid air mass</a>. It put at least an
+          inch on {percent(e2023.area_at_least_in['1'].percent)} percent of the state in a month when that water
+          normally arrives as snow.
+          <a class="maplink" href="#rain-map" data-storm="2023">Show 2023 on the map</a>
+        </p>
+
+        <h2 id="mega-rains">How the DNR's mega-rains rank</h2>
+        <p>
+          The rainfall ranking is easier to judge next to a list that people in the state's water community already
+          know, the one kept by the Minnesota DNR. An event is a
+          <a href={DNR_MEGA} target="_blank" rel="noopener">mega-rain</a> when six inches of rain covers more than 1,000
+          square miles in 24 hours or less, with at least eight inches somewhere inside that area.
+          {capital(word(megaRains.length))} events on the list fall between {rain.first_year} and {rain.last_year}.
+        </p>
+        <p>
+          One thousand square miles is 1.2 percent of Minnesota. A storm can meet the DNR's test and leave nine tenths
+          of the state dry, so I expected the two lists to differ. They overlap about half the time.
+          {capital(word(megaMatched))} of the {word(megaRains.length)} mega-rains are also the wettest {hours} hours of
+          their year statewide.
+        </p>
+
+        <div class="post-table-scroll">
+          <table class="post-table">
+            <thead>
+              <tr>
+                <th>Mega-rain on the DNR list</th>
+                <th>Where</th>
+                <th class="num">Statewide, best {hours} hours</th>
+                <th class="num">Largest of that year</th>
+                <th>Same storm</th>
+              </tr>
+            </thead>
+            <tbody>
+              {megaRains.map((row) => (
+                <tr>
+                  <td class="nowrap">{listedDates(row.listed_start, row.listed_end)}</td>
+                  <td>{row.name}</td>
+                  <td class="num">{inches(row.mean_in)} in</td>
+                  <td class="num">{inches(row.annual_max_mean_in)} in</td>
+                  <td>{row.is_annual_maximum ? <strong>Yes</strong> : 'No'}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+
+        <p>
+          Hokah is the clearest case. In August 2007 a gauge one mile south of town
+          <a href={DNR_2007} target="_blank" rel="noopener">collected 15.10 inches in 24 hours</a>, which is still the
+          state record. The best {hours} hours around that storm average {inches(hokah.mean_in)} inches statewide. The
+          wettest {hours} hours of 2007 came at the end of March, a {inches(e2007.mean_in)}-inch mix of rain and wet
+          snow that I doubt many people remember.
+        </p>
+
+        <div class="post-pair">
+          <figure class="post-fig">
+            <Image
+              src={rushford}
+              alt="Two residents in masks and rubber boots pass belongings out through the window of a flooded house in Rushford"
+              widths={[500, 800, 1200]}
+              sizes="(min-width: 860px) 380px, 100vw"
+            />
+            <figcaption>
+              Rushford, August 24, 2007. Photo by Patsy Lynch for FEMA, public domain, via
+              <a href={`${COMMONS}FEMA_-_31804_-_Minnesota_residents_start_to_clean_up_their_home.jpg`} target="_blank" rel="noopener">Wikimedia Commons</a>.
+            </figcaption>
+          </figure>
+          <figure class="post-fig">
+            <Image
+              src={duluth}
+              alt="Aerial view of houses and trees surrounded by brown floodwater near Duluth"
+              widths={[500, 800, 1200]}
+              sizes="(min-width: 860px) 380px, 100vw"
+            />
+            <figcaption>
+              Near Duluth, June 24, 2012. U.S. Coast Guard photo by Petty Officer 1st Class Matthew Schofield, public
+              domain, via
+              <a href={`${COMMONS}Over_Flight_of_Duluth_Flood_120624-G-HE371-003.jpg`} target="_blank" rel="noopener">Wikimedia Commons</a>.
+            </figcaption>
+          </figure>
+        </div>
+
+        <h2 id="data">Where the rainfall data comes from</h2>
+        <p>
+          The rainfall maps come from NOAA's
+          <a href={AORC_REGISTRY} target="_blank" rel="noopener">Analysis of Record for Calibration</a>, AORC for short.
+          It is an hourly estimate of precipitation on a grid of cells about half a mile across, covering the lower 48
+          states from 1979 to the present. NOAA built it to calibrate river forecast models, and it is free to
+          download.
+        </p>
+        <p>
+          AORC is assembled from other measurements, and
+          <a href={AORC_METHODS} target="_blank" rel="noopener">the ingredients change over time</a>. Through 2001 the
+          daily totals come from an analysis of rain gauges on a 12-kilometer grid, and older radar summaries decide
+          how each day's total is split among its hours. From 2002 on, daily and hourly amounts come from Stage IV, a
+          blend of weather radar and rain gauges at about 4 kilometers. The half-mile grid is finer than the
+          information inside it.
+        </p>
+        <p>The processing has four steps.</p>
+        <ol>
+          <li>
+            I cut out Minnesota using the DNR's
+            <a href={DNR_BOUNDARY} target="_blank" rel="noopener">state boundary</a>, trimmed at the Lake Superior
+            shoreline so the average covers land and inland lakes.
+          </li>
+          <li>
+            For each of the {whole(totalHours)} hours I averaged the rainfall over the state, weighting every cell by
+            its area.
+          </li>
+          <li>
+            I slid a {hours}-hour window along that series and kept the window with the largest total in each calendar
+            year, on Central Time.
+          </li>
+          <li>For each of those {count} windows I went back to the maps to measure where the rain fell.</li>
+        </ol>
+
+        <h2 id="snow-data">Where the snow data comes from</h2>
+        <p>
+          The snow maps come from the University of Arizona's
+          <a href={UA_SWE} target="_blank" rel="noopener">daily snow water equivalent and snow depth analysis</a>, which
+          covers the lower 48 states from October 1981. According to its
+          <a href={UA_README} target="_blank" rel="noopener">documentation</a>, it combines daily temperature and
+          precipitation grids from PRISM, snow water and snow depth measured at SNOTEL stations, and snow depth
+          reported by National Weather Service cooperative observers. I used the version on an 800-meter grid.
+        </p>
+        <p>
+          SNOTEL stations weigh the snowpack directly, and they are a mountain network.
+          <a href={SNOTEL_MAP} target="_blank" rel="noopener">Minnesota has none</a>. In this state the water content is
+          worked out from observed snow depth and from the weather, so every snow number in this post is an estimate
+          built on depth.
+        </p>
+        <p>
+          The steps match the rainfall ones. I cut Minnesota out of each daily national map, averaged over the state
+          with every cell weighted by its area, and kept the day with the largest average in each winter. The grid has
+          no values over the largest lakes, such as Lake of the Woods, the Red Lakes, and Mille Lacs. Those
+          {whole(snow.left_out_sq_mi)} square miles are left out of the average, and the map fills them from the
+          nearest shore.
+        </p>
+
+        <h2 id="checks">What I checked</h2>
+        <p>I tested the rainfall grid in two ways and the snow grid in one.</p>
+        <p>
+          First, I compared every day of rainfall against <a href={PRISM} target="_blank" rel="noopener">PRISM</a>, an
+          independent grid built mainly from rain gauge observations, using statewide daily averages from the
+          <a href={ACIS} target="_blank" rel="noopener">ACIS</a> service. Over {whole(screening.days_compared)} days the
+          two track each other closely. They name the same storm as the year's largest three-day total in
+          {screening.years_same_storm} of {screening.years_compared} years, and for that storm AORC is within 10
+          percent of PRISM in {screening.years_within_10_percent} of them. The two still rank the years differently, as
+          the list of five above shows.
+        </p>
+        <p>
+          Second, I compared each of the {count} events with rain gauges, one gauge against the grid cell it sits in,
+          {whole(gaugeTotal)} comparisons in all. AORC's average at the gauges is within 10 percent of the gauge
+          average in {gaugeClose} of {count} events.
+        </p>
+        <p>
+          The first check caught two bad days. For May 30, 2022, AORC holds 1.39 inches statewide where PRISM and Stage
+          IV both hold about half an inch. Until I caught it, Memorial Day weekend 2022 sat near the top of this list.
+          With the day corrected, the wettest {hours} hours of 2022 fall in mid-May and rank {ordinal(e2022.rank)}. For
+          October 2, 2009, the error runs the other way. I replaced both days with
+          <a href={STAGE4} target="_blank" rel="noopener">Stage IV</a>, hour by hour.
+        </p>
+        <p>
+          A third problem was already known. NOAA
+          <a href={AORC_REGISTRY} target="_blank" rel="noopener">announced in April 2026</a> that a small share of AORC
+          had been blanked by mistake and that corrected files were on the way. One of the blanks is all of June 18,
+          2024, the day of the northeast Minnesota flood. I filled it from Stage IV as well. On the hours next to the
+          gap, the two products agree within one percent.
+        </p>
+        <p>
+          For snow, I compared the Arizona grid with <a href={SNODAS} target="_blank" rel="noopener">SNODAS</a>, NOAA's
+          own daily snow analysis, which begins in the fall of 2003. For each of the {check.winters_compared} winters
+          since then I took the SNODAS map for my peak day and for the days one, two, and three weeks to either side.
+          On the peak day the Arizona statewide average is within 20 percent of SNODAS in {check.within_20_percent}
+          winters, and the middle case is 5 percent lower.
+        </p>
+        <p>
+          The two products pick the same five winters as the largest since 2004, and they order them differently.
+          SNODAS puts 2012-13 second, ahead of 2022-23. The winter of 2000-01 is older than SNODAS, so 2013-14 takes
+          its place in that comparison. The widest gap is in 2018, when the Arizona grid holds
+          {inches(w2018.mean_in)} inches the day after the April blizzard and SNODAS holds 1.77. The official
+          statements quoted above, such as three to five inches in March 2011, are a looser check, and the statewide
+          numbers sit inside them.
+        </p>
+
+        <h2 id="limits">Limits</h2>
+        <ul>
+          <li>
+            These are results from AORC and from the University of Arizona snow analysis. Other data sets give
+            different amounts and can reorder the years, as PRISM and SNODAS do above.
+          </li>
+          <li>
+            A grid cell is an average over an area, and it reads lower than a gauge at the core of a storm. For Hokah
+            the largest 24-hour cell value is {inches(hokah.max_24h_point_in, 1)} inches, against 15.10 at the gauge.
+          </li>
+          <li>
+            The window is fixed at {hours} hours and the year runs January through December. A different window length
+            would reorder some years.
+          </li>
+          <li>
+            For a few of the {count} events, AORC differs from PRISM or from the gauges by up to about 20 percent, so
+            small differences between years carry little weight.
+          </li>
+          <li>
+            The count by month reaches back to {season.first_year}, when AORC was built from coarser inputs. I trust
+            those early years for the date of a storm more than for its map.
+          </li>
+          <li>
+            Snow water in Minnesota is estimated from snow depth. The two snow products also disagree on how fast the
+            snow leaves. A week after the 2019 peak, SNODAS had lost about 40 percent of the water and the Arizona grid
+            about 10 percent.
+          </li>
+          <li>
+            The statewide snow peak is one day for the whole state. The north usually peaks later than the south, so on
+            that day the south may already be melting.
+          </li>
+          <li>Twenty-six years is a short record for extremes.</li>
+        </ul>
+
+        <h2 id="outside">Before {rain.first_year} and after {rain.last_year}</h2>
+        <p>
+          The rankings start in {rain.first_year}. For older storms, the DNR's
+          <a href={DNR_MEGA} target="_blank" rel="noopener">mega-rain list</a> reaches back much further. It includes
+          the <a href={`${DNR_FILES}notes_of_a_remarkable_storm.pdf`} target="_blank" rel="noopener">flood of July 1867</a>,
+          the <a href={`${DNR_FILES}COEstormsSo.pdf#page=29`} target="_blank" rel="noopener">July 1909 storm</a> that
+          dropped 10.75 inches in a day at Beaulieu, the
+          <a href={`${DNR_FILES}ff1972.PDF#page=3`} target="_blank" rel="noopener">Fort Ripley storm of July 1972</a>,
+          and <a href={`${DNR_FILES}ff1975.PDF#page=2`} target="_blank" rel="noopener">two events in northwest Minnesota</a>
+          in the summer of 1975.
+        </p>
+        <p>
+          At the other end, AORC stops at December 2025 for now. The mega-rain of July 1 and 2, 2026 in southeast
+          Minnesota, with 8.28 inches at Mabel and six inches or more over slightly more than 1,000 square miles, is
+          too recent to appear here. The <a href={DNR_2026} target="_blank" rel="noopener">DNR</a>, the
+          <a href={NWS_ARX_2026} target="_blank" rel="noopener">National Weather Service in La Crosse</a>, and
+          <a href={KTTC_2026} target="_blank" rel="noopener">KTTC</a> have the details. The snow files I used also end
+          in December 2025, so the winter of 2025-26 is not included.
+        </p>
+        <p>
+          For snow, the largest winter in the Arizona data falls just outside the window. The winter of 1996-97 peaks
+          at {inches(winter1997.mean_in)} inches on {longDate(winter1997.peak_date)}, above every winter since
+          {snow.first_year}. That was the spring the Red River reached
+          <a href={`${NWPS}egfm5`} target="_blank" rel="noopener">its record crest at Grand Forks</a>.
+        </p>
+
+        <h2 id="colors">About the colors</h2>
+        <p>
+          The rain maps use Nasir and the snow maps use Iwan. Both are palettes from
+          <a href={RANG} target="_blank" rel="noopener">Rang</a>, my collection of color palettes drawn from Persian
+          art, which I wrote about in <a href={RANG_STORY}>The story behind Rang</a>.
+        </p>
+        <p>
+          Nasir comes from the stained glass of the Nasir al-Mulk Mosque in Shiraz. It runs from violet through cobalt,
+          cyan, and green to gold and vermilion, so light rain stays dark and quiet while the heaviest totals glow.
+          Iwan comes from the tiled entrance of the Shah Mosque in Isfahan. It runs from gold to deep blue, so bare
+          ground shows as gold and the deepest snow as navy.
+        </p>
+        <p class="cite">
+          Tahmasebi Nasab, M. (2026). Rang: color palettes from Persian art, version 0.3.0.
+          <a href={RANG} target="_blank" rel="noopener">github.com/mohsennasab/Rang</a>
+        </p>
+
+        <h2 id="sources">Sources</h2>
+        <ol class="post-sources">
+          <li>
+            NOAA National Weather Service, Office of Water Prediction.
+            <a href={AORC_REGISTRY} target="_blank" rel="noopener">Analysis of Record for Calibration, version 1.1</a>,
+            accessed October 10, 2026. Methods:
+            <a href={AORC_METHODS} target="_blank" rel="noopener">Sources, Methods, and Verification</a>. Paper:
+            <a href={AORC_PAPER} target="_blank" rel="noopener">Fall and others, 2023</a>.
+          </li>
+          <li>
+            Broxton, P., X. Zeng, and N. Dawson. University of Arizona
+            <a href={UA_SWE} target="_blank" rel="noopener">daily SWE and snow depth</a>, 800 m, with its
+            <a href={UA_README} target="_blank" rel="noopener">readme</a>. The 4 km version is archived at
+            <a href={UA_NSIDC} target="_blank" rel="noopener">NSIDC</a>. Papers:
+            <a href={UA_PAPER} target="_blank" rel="noopener">Zeng, Broxton, and Dawson, 2018</a>, and
+            <a href={UA_PAPER_800} target="_blank" rel="noopener">Broxton and others, 2024</a>.
+          </li>
+          <li>
+            National Operational Hydrologic Remote Sensing Center.
+            <a href={SNODAS} target="_blank" rel="noopener">Snow Data Assimilation System (SNODAS) data products at NSIDC</a>.
+          </li>
+          <li>
+            Minnesota DNR State Climatology Office.
+            <a href={DNR_MEGA} target="_blank" rel="noopener">Historic Mega-Rain Events in Minnesota</a>, and the
+            climate journal pages for
+            <a href={DNR_2003} target="_blank" rel="noopener">June 2003</a>,
+            <a href={DNR_2007} target="_blank" rel="noopener">August 2007</a>,
+            <a href={DNR_2010} target="_blank" rel="noopener">September 2010</a>,
+            <a href={DNR_2014} target="_blank" rel="noopener">May 31 to June 2, 2014</a>,
+            <a href={DNR_JUNE_2014} target="_blank" rel="noopener">June 2014</a>,
+            <a href={DNR_2016} target="_blank" rel="noopener">July 2016</a>,
+            <a href={DNR_XMAS} target="_blank" rel="noopener">Christmas 2023</a>,
+            <a href={DNR_2024} target="_blank" rel="noopener">June 2024</a>, and
+            <a href={DNR_2026} target="_blank" rel="noopener">July 2026</a>.
+          </li>
+          <li>
+            Minnesota DNR State Climatology Office, on snow:
+            <a href={DNR_DOME} target="_blank" rel="noopener">the December 2010 blizzard</a>,
+            <a href={DNR_MAY_2013} target="_blank" rel="noopener">the May 2013 snowstorm</a>,
+            <a href={DNR_FEB_2019} target="_blank" rel="noopener">record snows of February 2019</a>,
+            <a href={DNR_WINTER_2023} target="_blank" rel="noopener">the winter of 2022-23</a>,
+            <a href={DNR_HEAT_2023} target="_blank" rel="noopener">the April 2023 heat wave</a>, and
+            <a href={DNR_LOST} target="_blank" rel="noopener">the lost winter of 2023-24</a>. HydroClim Minnesota for
+            <a href={DNR_HC_APR_2001} target="_blank" rel="noopener">April 2001</a>,
+            <a href={DNR_HC_MAY_2001} target="_blank" rel="noopener">May 2001</a>,
+            <a href={DNR_HC_MAR_2011} target="_blank" rel="noopener">March 2011</a>,
+            <a href={DNR_HC_APR_2013} target="_blank" rel="noopener">April 2013</a>,
+            <a href={DNR_HC_MAY_2013} target="_blank" rel="noopener">May 2013</a>, and
+            <a href={DNR_HC_2014} target="_blank" rel="noopener">July 2014</a>.
+          </li>
+          <li>
+            Minnesota DNR. <a href={DNR_BOUNDARY} target="_blank" rel="noopener">State Boundary, Minnesota</a>. County
+            outlines and the Lake Superior shoreline are from U.S. Census Bureau cartographic boundary files.
+          </li>
+          <li>
+            <a href={PRISM} target="_blank" rel="noopener">PRISM Climate Group</a>, Oregon State University, daily
+            precipitation, and daily rain gauge records, both through the
+            <a href={ACIS} target="_blank" rel="noopener">Applied Climate Information System</a> of the NOAA Regional
+            Climate Centers.
+          </li>
+          <li>
+            NCEP Stage IV hourly precipitation analysis, from the
+            <a href={STAGE4} target="_blank" rel="noopener">Iowa Environmental Mesonet archive</a>.
+          </li>
+          <li>
+            National Weather Service pages on the
+            <a href={NWS_MPX_2003} target="_blank" rel="noopener">June 24, 2003 tornado outbreak</a>, the
+            <a href={NWS_MAR_2019} target="_blank" rel="noopener">March 2019 flooding</a>, the
+            <a href={NWS_DLH_2024} target="_blank" rel="noopener">June 2024 flood in northeast Minnesota</a>, and the
+            <a href={NWS_ARX_2026} target="_blank" rel="noopener">July 2026 heavy rain</a>. River crests are from the
+            National Water Prediction Service pages for
+            <a href={`${NWPS}stpm5`} target="_blank" rel="noopener">St. Paul</a>,
+            <a href={`${NWPS}stlm5`} target="_blank" rel="noopener">Stillwater</a>, and
+            <a href={`${NWPS}fgon8`} target="_blank" rel="noopener">Fargo</a>. Storm reports are from the NOAA
+            <a href={STORM_EVENTS} target="_blank" rel="noopener">Storm Events Database</a>.
+          </li>
+          <li>
+            U.S. Geological Survey. <a href={USGS_2001} target="_blank" rel="noopener">Fact sheet on the spring 2001 flooding in Minnesota</a>.
+            USDA Natural Resources Conservation Service,
+            <a href={SNOTEL_MAP} target="_blank" rel="noopener">map of SNOTEL stations</a>.
+          </li>
+          <li>
+            News coverage from the
+            <a href={REFORMER_COOK} target="_blank" rel="noopener">Minnesota Reformer</a>,
+            <a href={MPR_RAPIDAN} target="_blank" rel="noopener">MPR News and the Associated Press</a>,
+            <a href={MPR_2019} target="_blank" rel="noopener">MPR News on the 2019 flood</a>, and
+            <a href={KTTC_2026} target="_blank" rel="noopener">KTTC</a>.
+          </li>
+        </ol>
+
+        <p class="post-signoff">
+          If you are at either conference, come say hello.<br />Mohsen :)
+        </p>
+
+        <p class="post-back"><a href="/blog">← Back to blog</a></p>
+      </div>
+    </section>
+  </article>
+</Base>
+
+<style>
+  .post-hero :global(.page-header.has-bg) {
+    padding-top: clamp(5.5rem, 14vw, 9.5rem);
+    padding-bottom: clamp(3.6rem, 9vw, 6rem);
+  }
+  .post-byline { margin-top: 1.1rem; font: 600 1rem/1.3 var(--font-sans); color: var(--text); }
+  .post-meta {
+    margin-top: 0.35rem; font: 600 0.82rem/1 var(--font-sans);
+    letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-faint);
+  }
+
+  .section--flush { padding-block: 0; }
+  .post { max-width: 820px; }
+  .post > p, .post > ul, .post > ol { color: var(--text-dim); line-height: 1.75; margin: 0 0 1.15rem; font-size: 1.03rem; }
+  .post > p.post-intro { color: var(--text); font-size: 1.12rem; }
+  .post a { color: var(--accent); }
+  .post a:hover { text-decoration: underline; }
+  .post h2 { margin: 2.6rem 0 1rem; font-size: clamp(1.35rem, 1.05rem + 1.2vw, 1.7rem); line-height: 1.25; scroll-margin-top: 90px; }
+  .post > ul, .post > ol { padding-left: 1.4rem; }
+  .post li { margin: 0.45rem 0; }
+
+  .storm {
+    display: flex; align-items: baseline; justify-content: space-between; gap: 1rem;
+    margin: 2rem 0 0.7rem; padding-bottom: 0.5rem; border-bottom: 1px solid var(--border-soft);
+    font-size: 1.18rem; line-height: 1.3;
+  }
+  .storm-value { flex: none; color: var(--accent); font-variant-numeric: tabular-nums; }
+  .maplink { white-space: nowrap; font-weight: 600; }
+  .maplink::after { content: ' ↑'; }
+
+  .dash-help { margin: 0.8rem auto 0; max-width: 820px; color: var(--text-faint); font-size: 0.88rem; text-align: center; }
+
+  .post-fig { margin: 1.9rem 0; }
+  .post-fig :global(img) {
+    width: 100%; height: auto; display: block;
+    border-radius: var(--radius-sm); border: 1px solid var(--border-soft);
+  }
+  .post-fig figcaption { margin-top: 0.6rem; font-size: 0.84rem; color: var(--text-faint); line-height: 1.55; }
+  .post-fig figcaption a { color: var(--text-dim); text-decoration: underline; }
+  .post-pair { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; margin: 1.9rem 0; }
+  .post-pair .post-fig { margin: 0; }
+  .post-pair .post-fig :global(img) { aspect-ratio: 3 / 2; object-fit: cover; }
+  @media (max-width: 620px) { .post-pair { grid-template-columns: 1fr; } }
+
+  .post-table-scroll {
+    overflow-x: auto; margin: 0 0 1.4rem;
+    border: 1px solid var(--border-soft); border-radius: var(--radius-sm); background: var(--bg-elev);
+  }
+  .post-table { width: 100%; border-collapse: collapse; font-size: 0.9rem; color: var(--text-dim); }
+  .post-table th {
+    text-align: left; padding: 0.7rem 0.85rem; background: var(--bg-elev-2); color: var(--text);
+    font: 600 0.78rem/1.3 var(--font-sans); border-bottom: 1px solid var(--border);
+  }
+  .post-table td { padding: 0.55rem 0.85rem; border-top: 1px solid var(--border-soft); line-height: 1.45; vertical-align: top; }
+  .post-table .num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .post-table .nowrap { white-space: nowrap; }
+  .post-table strong { color: var(--text); }
+
+  .months { margin: 1.4rem 0 1.6rem; font-family: Arial, Helvetica, sans-serif; }
+  .months-key {
+    display: flex; flex-wrap: wrap; gap: 0.3rem 1.4rem; margin: 0 0 0.6rem;
+    font-size: 0.82rem; color: var(--text-dim);
+  }
+  .months-key span { display: inline-flex; align-items: center; gap: 0.45rem; }
+  .months-swatch { width: 0.8rem; height: 0.8rem; border-radius: 2px; background: var(--accent); flex: none; }
+  .months-swatch--snow { background: var(--text-dim); }
+  .months-bars {
+    display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: clamp(3px, 1vw, 10px);
+    height: 220px; padding: 0.4rem 0.2rem 0;
+  }
+  .months-col { display: grid; grid-template-rows: minmax(0, 1fr) 1.4rem; justify-items: center; min-width: 0; }
+  .months-pair { display: flex; align-items: flex-end; gap: 2px; width: 100%; max-width: 56px; height: 100%; }
+  .months-one {
+    flex: 1 1 0; min-width: 0; height: 100%;
+    display: flex; flex-direction: column; justify-content: flex-end; align-items: center;
+  }
+  .months-n { font-size: 0.74rem; font-weight: 700; line-height: 1.2rem; color: var(--text); }
+  .months-bar { width: 100%; min-height: 2px; border-radius: 3px 3px 0 0; background: var(--accent); }
+  .months-bar--snow { background: var(--text-dim); }
+  .months-name { font-size: 0.76rem; color: var(--text-faint); align-self: center; }
+  .months figcaption { margin-top: 0.4rem; font-size: 0.84rem; color: var(--text-faint); text-align: center; }
+
+  .cite {
+    padding: 0.7rem 0.9rem; border-left: 3px solid var(--accent-line);
+    background: var(--bg-elev); border-radius: 0 var(--radius-sm) var(--radius-sm) 0; font-size: 0.94rem !important;
+  }
+  .post-sources { font-size: 0.94rem !important; }
+  .post-signoff { margin-top: 2rem !important; font-style: italic; }
+  .post-back { margin-top: 2.2rem !important; padding-top: 1.3rem; border-top: 1px solid var(--border-soft); font: 600 0.85rem/1 var(--font-sans); }
+  .post-back a { color: var(--text-faint); }
+</style>

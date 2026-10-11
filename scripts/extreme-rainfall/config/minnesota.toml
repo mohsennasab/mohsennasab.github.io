@@ -1,0 +1,382 @@
+# Region settings for the extreme rainfall workflow.
+# Copy this file, change the values, and pass it with --config to run another state.
+
+[region]
+name = "Minnesota"
+slug = "minnesota"
+# Polygon of the region in any CRS geopandas can read. See 00_get_boundary.py.
+boundary = "boundaries/minnesota.geojson"
+# Extra margin around the boundary, in degrees, kept in the cache so storms
+# can be seen arriving from outside the region.
+buffer_deg = 0.5
+# Local time zone used for dates and clock times shown to readers.
+timezone = "America/Chicago"
+# Projected CRS used for maps and for areas (UTM zone 15N covers Minnesota).
+projected_crs = "EPSG:26915"
+
+# Two-letter postal code, used to ask the ACIS service for the PRISM statewide
+# average in the screening step. Leave it out for a region that is not a state.
+state_postal = "MN"
+
+[period]
+# Years that are ranked and mapped. The last complete year of AORC v1.1 at the
+# time of writing is 2025. Events outside this range are described in the post
+# from other sources.
+start_year = 2000
+end_year = 2025
+# The count of annual events by month uses a longer record. AORC v1.1 starts
+# on 1979-02-01, so 1980 is its first complete year. Remove the line to use
+# the same years as above.
+season_start_year = 1980
+
+[paths]
+# The hourly cache is about 0.3 GB per year for Minnesota. Keep it off any
+# synced folder.
+cache_dir = "G:/Python Package/ExtremeRainfall/aorc_cache/minnesota"
+work_dir = "G:/Python Package/ExtremeRainfall/work/minnesota"
+
+[analysis]
+# Length of the rolling window, in hours.
+duration_hours = 72
+# How many of the largest annual events get an hourly animation.
+top_n = 5
+# Rain depths, in inches, used to report how much of the region got at least that much.
+thresholds_in = [1, 2, 3, 4, 6]
+# AORC counts rain and melted snow together. With this set, each event also
+# reports the share of its water that fell while the air was at or below this
+# temperature, in degrees Fahrenheit. Remove the line to skip the check.
+cold_threshold_f = 34
+# Two-digit state FIPS code, used to pull county outlines from the Census.
+state_fips = "27"
+
+# Places used to describe where the heaviest rain fell. Those with label = true
+# are also drawn on the web map.
+[[cities]]
+name = "Minneapolis"
+lat = 44.9778
+lon = -93.2650
+label = true
+[[cities]]
+name = "Duluth"
+lat = 46.7867
+lon = -92.1005
+label = true
+anchor = "end"
+[[cities]]
+name = "Rochester"
+lat = 44.0121
+lon = -92.4802
+label = true
+[[cities]]
+name = "St. Cloud"
+lat = 45.5579
+lon = -94.1632
+label = true
+[[cities]]
+name = "Mankato"
+lat = 44.1636
+lon = -93.9994
+label = true
+[[cities]]
+name = "Moorhead"
+lat = 46.8738
+lon = -96.7678
+label = true
+[[cities]]
+name = "Bemidji"
+lat = 47.4716
+lon = -94.8827
+label = true
+[[cities]]
+name = "International Falls"
+lat = 48.6011
+lon = -93.4105
+label = true
+[[cities]]
+name = "Marshall"
+lat = 44.4469
+lon = -95.7883
+label = true
+[[cities]]
+name = "Brainerd"
+lat = 46.3580
+lon = -94.2008
+label = true
+[[cities]]
+name = "Grand Marais"
+lat = 47.7505
+lon = -90.3343
+label = true
+anchor = "end"
+[[cities]]
+name = "Worthington"
+lat = 43.6200
+lon = -95.5964
+label = true
+[[cities]]
+name = "Roseau"
+lat = 48.8461
+lon = -95.7628
+label = true
+[[cities]]
+name = "St. Paul"
+lat = 44.9537
+lon = -93.0900
+[[cities]]
+name = "Winona"
+lat = 44.0499
+lon = -91.6393
+[[cities]]
+name = "Alexandria"
+lat = 45.8852
+lon = -95.3775
+[[cities]]
+name = "Hibbing"
+lat = 47.4272
+lon = -92.9377
+[[cities]]
+name = "Willmar"
+lat = 45.1219
+lon = -95.0433
+[[cities]]
+name = "Thief River Falls"
+lat = 48.1191
+lon = -96.1812
+[[cities]]
+name = "Albert Lea"
+lat = 43.6480
+lon = -93.3683
+[[cities]]
+name = "Fergus Falls"
+lat = 46.2830
+lon = -96.0776
+[[cities]]
+name = "Grand Rapids"
+lat = 47.2372
+lon = -93.5302
+[[cities]]
+name = "Ely"
+lat = 47.9032
+lon = -91.8671
+[[cities]]
+name = "Austin"
+lat = 43.6666
+lon = -92.9746
+[[cities]]
+name = "Red Wing"
+lat = 44.5625
+lon = -92.5338
+[[cities]]
+name = "Pipestone"
+lat = 44.0005
+lon = -96.3175
+[[cities]]
+name = "Morris"
+lat = 45.5863
+lon = -95.9139
+[[cities]]
+name = "Hinckley"
+lat = 46.0113
+lon = -92.9444
+[[cities]]
+name = "Fairmont"
+lat = 43.6522
+lon = -94.4611
+[[cities]]
+name = "Owatonna"
+lat = 44.0839
+lon = -93.2261
+[[cities]]
+name = "Crookston"
+lat = 47.7741
+lon = -96.6081
+[[cities]]
+name = "Baudette"
+lat = 48.7125
+lon = -94.5999
+[[cities]]
+name = "Montevideo"
+lat = 44.9425
+lon = -95.7236
+[[cities]]
+name = "Hokah"
+lat = 43.7594
+lon = -91.3465
+[[cities]]
+name = "Caledonia"
+lat = 43.6344
+lon = -91.4968
+[[cities]]
+name = "Two Harbors"
+lat = 47.0227
+lon = -91.6707
+[[cities]]
+name = "Wadena"
+lat = 46.4425
+lon = -95.1361
+[[cities]]
+name = "Park Rapids"
+lat = 46.9222
+lon = -95.0586
+[[cities]]
+name = "Litchfield"
+lat = 45.1272
+lon = -94.5281
+[[cities]]
+name = "Faribault"
+lat = 44.2950
+lon = -93.2688
+[[cities]]
+name = "New Ulm"
+lat = 44.3125
+lon = -94.4605
+[[cities]]
+name = "Redwood Falls"
+lat = 44.5394
+lon = -95.1169
+[[cities]]
+name = "Waseca"
+lat = 44.0777
+lon = -93.5074
+[[cities]]
+name = "Aitkin"
+lat = 46.5330
+lon = -93.7102
+[[cities]]
+name = "Cloquet"
+lat = 46.7216
+lon = -92.4594
+
+[web]
+# Size of the cells sent to the browser, and the margin kept around the region.
+cell_km = 2.0
+margin_km = 14
+# Rang palette used for the maps. See https://github.com/mohsennasab/Rang
+palette = "Nasir"
+# Where the dashboard files go, relative to this folder.
+data_dir = "../../public/blog/minnesota-rainfall"
+json_path = "../../src/data/minnesota-rainfall.json"
+# Top of the color scale, in inches. Larger values share the last color.
+total_scale_max_in = 10
+hourly_scale_max_in = 1.5
+total_scale_ticks = [0.25, 1, 2, 3, 4, 6, 8, 10]
+hourly_scale_ticks = [0.05, 0.25, 0.5, 1, 1.5]
+
+# Snow water equivalent, from the University of Arizona daily 800 m grids.
+# The snow_*.py scripts read this section. A winter is named for the year in
+# which it ends: winter 2019 runs from the fall of 2018 to the spring of 2019.
+[snow]
+# Folder that holds the national daily files, UA_SWE_Depth_800m_v1_YYYYMMDD_stable.nc
+# https://climate.arizona.edu/data/UA_SWE/DailyData_800m/
+source_dir = "G:/Python Package/uasnow/data/raw/All_NC_Files"
+cache_dir = "G:/Python Package/ExtremeRainfall/swe_cache/minnesota"
+work_dir = "G:/Python Package/ExtremeRainfall/work/minnesota_snow"
+first_winter = 2000
+last_winter = 2025
+# The count of peak days by month uses a longer record. The data starts in
+# October 1981, so winter 1982 is the first one. Remove the line to use the
+# same winters as above.
+season_first_winter = 1982
+# Days of each winter that are read, as month-day. The first belongs to the
+# calendar year before the winter's name.
+season_start = "10-01"
+season_end = "06-30"
+# How many of the largest winters get a daily animation.
+top_n = 5
+# Depths of water, in inches, used to report how much of the region held at least that much.
+thresholds_in = [1, 2, 4, 6]
+# A cell counts as snow covered when it holds at least this much water, in inches.
+cover_threshold_in = 0.1
+# The animation of a winter starts and ends where the regional average
+# crosses this depth, in inches, with a few days of margin on both sides.
+animation_floor_in = 0.05
+animation_margin_days = 5
+# Web output.
+data_dir = "../../public/blog/minnesota-snow"
+json_path = "../../src/data/minnesota-snow.json"
+# Rang palette for the snow maps, and whether to run it backwards. Iwan goes
+# from gold to deep blue, so bare ground is gold and the deepest snow is navy.
+palette = "Iwan"
+palette_reversed = false
+scale_max_in = 8
+scale_ticks = [1, 2, 3, 4, 5, 6, 7, 8]
+# Colors follow the depth itself here. The rainfall maps use its square root,
+# which gives more of the color range to small amounts.
+scale_linear = true
+
+# Days on which the AORC total over the state is far from both PRISM and the
+# hourly Stage IV analysis, which agree with each other (found by
+# 04_screen_daily_totals.py). 02_repair_cache.py replaces their hours with
+# Stage IV. Each day is the 24 hours that end at the time given, in UTC.
+[[replace_days]]
+day_ending_utc = "2022-05-30T12:00"
+note = "Statewide: AORC 1.39 in, PRISM 0.54 in, Stage IV 0.49 in"
+[[replace_days]]
+day_ending_utc = "2009-10-02T12:00"
+note = "Statewide: AORC 0.27 in, PRISM 0.89 in, Stage IV 0.97 in"
+
+# Storms documented elsewhere, checked against the ranking by 06_reference_events.py.
+# These are the mega-rains on the Minnesota DNR list that fall inside the period.
+# https://www.dnr.state.mn.us/climate/summaries_and_publications/mega_rain_events.html
+[[reference_events]]
+name = "Central Minnesota"
+start = "1983-06-21"
+end = "1983-06-21"
+[[reference_events]]
+name = "Central Minnesota, near Glencoe"
+start = "1991-09-07"
+end = "1991-09-07"
+listed_peak_in = 11.0
+[[reference_events]]
+name = "Roseau and Lake of the Woods"
+start = "2002-06-09"
+end = "2002-06-10"
+listed_peak_in = 12.0
+[[reference_events]]
+name = "Northern Minnesota"
+start = "2002-06-22"
+end = "2002-06-23"
+[[reference_events]]
+name = "Faribault and Freeborn counties"
+start = "2004-09-14"
+end = "2004-09-15"
+listed_peak_in = 10.0
+[[reference_events]]
+name = "Fairmont and Winnebago"
+start = "2005-09-24"
+end = "2005-09-25"
+listed_peak_in = 9.0
+[[reference_events]]
+name = "East-central Minnesota"
+start = "2005-10-04"
+end = "2005-10-05"
+[[reference_events]]
+name = "Southeast Minnesota, near Hokah"
+start = "2007-08-18"
+end = "2007-08-20"
+listed_peak_in = 15.10
+[[reference_events]]
+name = "Southern Minnesota, Amboy"
+start = "2010-09-22"
+end = "2010-09-23"
+listed_peak_in = 10.68
+[[reference_events]]
+name = "Duluth and the North Shore"
+start = "2012-06-19"
+end = "2012-06-20"
+listed_peak_in = 7.24
+[[reference_events]]
+name = "Brainerd Lakes to Pine County"
+start = "2016-07-11"
+end = "2016-07-12"
+listed_peak_in = 9.34
+[[reference_events]]
+name = "Willmar and Wabasha County"
+start = "2016-08-10"
+end = "2016-08-11"
+listed_peak_in = 9.74
+[[reference_events]]
+name = "Southern Minnesota, near Mankato"
+start = "2020-07-25"
+end = "2020-07-26"
+listed_peak_in = 8.65
