@@ -16,7 +16,8 @@
     "@fontsource-variable/inter": "^5.2.8",
     "@fontsource-variable/jetbrains-mono": "^5.2.8",
     "astro": "^4.16.18",
-    "echarts": "6.1.0"
+    "echarts": "6.1.0",
+    "leaflet": "^1.9.4"
   },
   "engines": {
     "node": ">=18.17.1"

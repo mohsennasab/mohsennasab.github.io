@@ -1,0 +1,1127 @@
+---
+import { Image } from 'astro:assets';
+import Base from '../../layouts/Base.astro';
+import PageHeader from '../../components/PageHeader.astro';
+import data from '../../data/rochester-1978.json';
+
+import headerBg from '../../assets/page-bg/bg-rochester-1978.jpg';
+import corpsPhoto from '../../assets/blog/rochester-1978/corps-flood-1978.jpg';
+import gaugeHouse from '../../assets/blog/rochester-1978/gauge-house.jpg';
+
+// Links. Where a source is a long PDF, the link opens the page that holds the claim.
+const MNAFPM = 'https://www.mnafpm.org/conference';
+const OFR_PLATE_PAGE = 'https://pubs.usgs.gov/publication/ofr791583';
+const OFR_PLATE = 'https://pubs.usgs.gov/of/1979/1583/plate-1.pdf';
+const OFR_REPORT_PAGE = 'https://pubs.usgs.gov/publication/ofr791166';
+const OFR_REPORT = 'https://pubs.usgs.gov/of/1979/1166/report.pdf';
+const OFR_INTRO = `${OFR_REPORT}#page=7`;
+const OFR_WET = `${OFR_REPORT}#page=8`;
+const OFR_STORM = `${OFR_REPORT}#page=11`;
+const OFR_FREQ = `${OFR_REPORT}#page=20`;
+const OFR_GAUGE = `${OFR_REPORT}#page=23`;
+const NWS = 'https://www.weather.gov/arx/flood_1978';
+const DNR_1979 = 'https://www.lrl.mn.gov/docs/pre2003/other/801953.pdf';
+const DNR_DAMAGE = `${DNR_1979}#page=23`;
+const DNR_WET = `${DNR_1979}#page=28`;
+const DNR_STORM = `${DNR_1979}#page=29`;
+const DNR_SEPT = `${DNR_1979}#page=31`;
+const DNR_MEGA = 'https://www.dnr.state.mn.us/climate/summaries_and_publications/mega_rain_events.html';
+const MPR = 'https://archive.mpr.org/stories/1978/07/06/reports-on-rochester-flooding';
+const CORPS = 'https://www.govinfo.gov/content/pkg/GOVPUB-D103-PURL-gpo31117/pdf/GOVPUB-D103-PURL-gpo31117.pdf';
+const CORPS_ROCH = `${CORPS}#page=99`;
+const SUPP_1975 = 'https://www.lrl.mn.gov/docs/2009/other/090700.pdf';
+const SUPP_TABLE = `${SUPP_1975}#page=6`;
+const LAW_1983 = 'https://www.revisor.mn.gov/laws/1983/0/Session+Law/Chapter/14';
+const WRDA_1986 = 'https://www.govinfo.gov/content/pkg/STATUTE-100/pdf/STATUTE-100-Pg4082.pdf#page=36';
+const MSU_2013 = 'https://www.lrl.mn.gov/docs/2014/mandated/140048.pdf';
+const CITY = 'https://www.rochestermn.gov/home-property-utilities/water-services/stormwater/';
+const CITY_RES = 'https://www.rochestermn.gov/media/n4xjiplc/south-zumbro-capital-improvement-project.pdf';
+const SILVER = 'https://www.rochestermn.gov/news/posts/construction-to-begin-on-silver-lake-sediment-removal-and-dam-modification-project/';
+const MAYO = 'https://history.mayoclinic.org/wp-content/uploads/2023/01/MC_Values_Book_Chap9A1.pdf';
+const FEMA = 'https://www.fema.gov/disaster/560';
+const usgsStation = (id: string) => `https://waterdata.usgs.gov/monitoring-location/USGS-${id}/`;
+const usgsPeaks = (id: string) => `https://nwis.waterdata.usgs.gov/nwis/peak?site_no=${id}&agency_cd=USGS&format=html`;
+const PEAKS = usgsPeaks('05372995');
+const PEAKS_BEAR = usgsPeaks('05372930');
+const DAILY_FLOW = 'https://waterservices.usgs.gov/nwis/dv/?sites=05373000&parameterCd=00060&startDT=1978-06-25&endDT=1978-07-12&format=rdb';
+const ATLAS = 'https://hdsc.nws.noaa.gov/pfds/pfds_printpage.html?lat=43.9040&lon=-92.4920&data=depth&units=english&series=pds';
+const NCLIM = 'https://www.ncei.noaa.gov/products/land-based-station/nclimgrid-daily';
+const NCLIM_JUNE = 'https://www.ncei.noaa.gov/data/nclimgrid-daily/access/grids/1978/ncdd-197806-grd-scaled.nc';
+const NCLIM_JULY = 'https://www.ncei.noaa.gov/data/nclimgrid-daily/access/grids/1978/ncdd-197807-grd-scaled.nc';
+const ISD_LOG = 'https://www.ncei.noaa.gov/pub/data/noaa/1978/726440-14925-1978.gz';
+const ISD_FORMAT = 'https://www.ncei.noaa.gov/pub/data/noaa/isd-format-document.pdf';
+const HPD = 'https://www.ncei.noaa.gov/data/coop-hourly-precipitation/v2/';
+const hpdFile = (id: string) => `${HPD}access/${id}.csv`;
+const ACIS = 'https://www.rcc-acis.org/';
+const dailyGauge = (id: string, first: string, last: string) =>
+  `https://www.ncei.noaa.gov/access/services/data/v1?dataset=daily-summaries&stations=${id}&startDate=${first}&endDate=${last}&dataTypes=PRCP&format=csv&units=standard`;
+const AIRPORT_DAILY = dailyGauge('USW00014925', '1978-06-28', '1978-07-09');
+const ELGIN_DAILY = dailyGauge('USC00212486', '1978-06-29', '1978-07-02');
+const IMAGERY = 'https://basemap.nationalmap.gov/arcgis/rest/services/USGSImageryOnly/MapServer';
+const WBD = 'https://hydro.nationalmap.gov/arcgis/rest/services/wbd/MapServer';
+const NHD = 'https://hydro.nationalmap.gov/arcgis/rest/services/nhd/MapServer';
+const MNHS = 'https://storage.googleapis.com/mnhs-finding-aids-public/library/findaids/sv000307.html';
+const RANG = 'https://github.com/mohsennasab/Rang';
+
+// Numbers used in the text come from the same file the page's charts read.
+const stats = data.grid_stats;
+const peakYears = data.peaks.south_fork.filter((p) => p.cfs !== null).length;
+const atlas3h = data.atlas14['3h'];
+const bear = data.peaks.bear_creek.find((p) => p.date === '1978-07-06')!;
+const flow = (day: string) => data.timeline.flow[data.timeline.days.indexOf(day)];
+const wetSpellRain = data.timeline.rain.slice(1, 5).reduce((a, b) => a + b, 0);
+
+// Hourly rain, Central Daylight Time. The airport values are the observers'
+// hourly amounts, which run from 53 minutes past one hour to 53 past the next.
+const firstHour = 15;
+const hourLabels = data.hourly.stations[0].hours.map((_, i) => {
+  const h = (firstHour + i) % 24;
+  return h === 0 ? '12a' : h === 12 ? '12p' : h > 12 ? `${h - 12}p` : `${h}a`;
+});
+const airportRow = [0, 0, 0, 0.08, 0, 2.08, 1.57, 1.38, 0.06, 0.16, null, null, 0.05, 0, 0, 0];
+const rows = data.hourly.stations.map((s) => ({ name: s.name, hours: s.hours as (number | null)[], airport: false }));
+rows.splice(4, 0, { name: 'Rochester airport', hours: airportRow, airport: true });
+
+const ramp = ['#4027e1', '#518ffd', '#74ecf9', '#6dd96f', '#ebc05c', '#f04a23'];
+const mix = (a: string, b: string, t: number) => {
+  const part = (s: string, i: number) => parseInt(s.slice(i, i + 2), 16);
+  return `rgb(${[1, 3, 5].map((i) => Math.round(part(a, i) + (part(b, i) - part(a, i)) * t)).join(',')})`;
+};
+const cellStyle = (v: number | null) => {
+  if (v === null) return 'background:repeating-linear-gradient(45deg,transparent 0 4px,var(--border-soft) 4px 8px)';
+  if (v < 0.005) return '';
+  const position = Math.min(1, Math.sqrt(v / 2.4)) * (ramp.length - 1);
+  const low = Math.min(ramp.length - 2, Math.floor(position));
+  return `background:${mix(ramp[low], ramp[low + 1], position - low)};color:${position < 0.9 ? '#fff' : '#14202b'}`;
+};
+
+const milestones = [
+  { when: 'June 29 to July 2', what: 'Wet spell', text: `Thunderstorms soak the region, and flash floods hit east and southeast Minnesota on June 30 and July 1. The Rochester airport gets ${wetSpellRain.toFixed(2)} inches.`, kind: 'wet' },
+  { when: 'July 3 and 4', what: 'A pause', text: `Almost no rain falls. The South Fork drops back to ${flow('1978-07-04')} cubic feet per second, and the ground stays wet.`, kind: '' },
+  { when: 'July 5, evening', what: 'The storm', text: 'Heavy rain falls through the night, and the airport total reaches 6.74 inches before it ends early on July 6.', kind: 'storm' },
+  { when: 'July 6', what: 'The crest', text: 'The South Fork reaches 23.36 feet and 30,500 cubic feet per second, the largest flood in the USGS record at Rochester.', kind: 'storm' },
+  { when: 'July 8', what: 'Disaster declaration', text: 'The President declares a major disaster covering 17 Minnesota counties, Olmsted among them.', kind: '' },
+];
+
+// The browser needs the map and chart data, and not the airport log or hourly table above.
+const { hourly, airport, atlas14, ...forBrowser } = data;
+const pageData = JSON.stringify(forBrowser).replace(/</g, '\\u003c');
+
+const logRows = [
+  ['6:21 to 6:35 p.m.', 'RB21E35', 'A brief shower. It left 0.08 inch, and the temperature held near 85°F.'],
+  ['7:08 p.m.', 'TB08 NW-NE OCNL LTGCG', 'Thunderstorm begins, northwest to northeast, with occasional cloud-to-ground lightning.'],
+  ['7:50 p.m.', 'RB50', 'Rain begins at the airport.'],
+  ['7:51 p.m.', 'PK WND 0152/51', 'Peak gust of 52 knots, about 60 mph, from the north.'],
+  ['about 7:53 p.m.', 'CITY OF RST RPTS GOLF BALL HAIL', 'Rochester reports golf ball hail. The temperature is down to 73°F.'],
+  ['8:11 p.m.', 'PK WND 0260/11', 'A stronger gust, 60 knots, about 69 mph.'],
+  ['8:53 p.m.', 'PCPN 208', '2.08 inches in the past hour. Thunderstorm overhead.'],
+  ['9:53 p.m.', 'PCPN 157', '1.57 inches in the past hour.'],
+  ['10:53 p.m.', 'PCPN 1.38', '1.38 inches in the past hour.'],
+  ['4:05 a.m.', 'RE05', 'Rain ends at the airport.'],
+];
+---
+
+<Base
+  title="Rochester's Flood of July 1978, Read From One Sheet of Paper"
+  description="Ahead of the Minnesota floodplain managers conference in Rochester, a close look at the USGS plate that recorded the flood of July 1978, with interactive rainfall, river, and then-and-now maps. By Dr. Mohsen Tahmasebi Nasab."
+>
+  <div class="post-hero">
+    <PageHeader
+      eyebrow="// blog"
+      title="Rochester's Flood of July 1978, Investigated From One Sheet of Paper"
+      lede="What does data tell us?"
+      bgImage={headerBg}
+      bgPos="center 45%"
+    >
+      <p class="post-byline">Mohsen Tahmasebi Nasab, PhD</p>
+      <p class="post-meta">Nov 2, 2026 · about a 16 minute read</p>
+    </PageHeader>
+  </div>
+
+  <script type="application/json" data-rf-data set:html={pageData} />
+
+  <article>
+    <section class="section section--tight">
+      <div class="wrap post">
+        <p class="post-intro">
+          This week I will be in Rochester for the
+          <a href={MNAFPM} target="_blank" rel="noopener">Minnesota Association of Floodplain Managers conference</a>,
+          November 4 to 6. I like to know something about a city before I show up in it. For a water resources engineer
+          in Rochester, the place to start is the flood of July 1978.
+        </p>
+        <p>
+          The flood reached me through one sheet of paper. In 1979 the U.S. Geological Survey published
+          <a href={OFR_PLATE_PAGE} target="_blank" rel="noopener">a single large plate</a> on it, with an aerial
+          photomosaic of the flooded river, 14 photographs, a rainfall map, a river graph, and two pieces of the
+          Rochester Post-Bulletin. I take photographs in my free time, so the pictures caught me before the numbers did.
+          A shopping mall, a park entrance, a civic center, each of them standing in brown water.
+        </p>
+        <p>
+          I was not there in 1978, but what I can do is read the record closely, explain some of the engineering, and
+          remember that this was a disaster people in Rochester had to live through. I started out to summarize the plate. Along the way the airport's old weather logs turned
+          up a small puzzle about what time the rain began, which I describe below.
+        </p>
+
+        <figure class="post-fig">
+          <Image
+            src={corpsPhoto}
+            alt="Color aerial photograph of Rochester in July 1978, with brown floodwater surrounding houses and buildings in the foreground and downtown high-rises behind them"
+            widths={[600, 786]}
+            sizes="(min-width: 860px) 780px, 100vw"
+          />
+          <figcaption>
+            Rochester in July 1978, in true color. Photo by Russ Snyder, courtesy of the St. Paul District, U.S. Army
+            Corps of Engineers, from the <a href={CORPS} target="_blank" rel="noopener">district's history</a>.
+          </figcaption>
+        </figure>
+
+        <h2 id="plate">The plate, in black and white and in color</h2>
+        <p>
+          Before getting into the details, let me show you the plate I keep talking about. V. J. Latkovich of the U.S.
+          Geological Survey prepared it with the Minnesota Department of Natural Resources, and USGS published it in 1979 as
+          <a href={OFR_PLATE} target="_blank" rel="noopener">Open-File Report 79-1583</a>. Its two newspaper pieces come from
+          the Rochester Post-Bulletin.
+        </p>
+        <p>
+          Drag across the plate below. The left side shows the original. The right side shows a copy I colorized with
+          code to make the photographs easier to look at. The buttons jump to parts worth a closer look.
+        </p>
+      </div>
+    </section>
+
+    <section class="section section--flush">
+      <div class="wrap">
+        <div class="rf-swipe" data-rf-swipe>
+          <div class="rf-swipe-buttons" role="group" aria-label="Part of the plate to show">
+            <button type="button" data-swipe-view="whole">Whole plate</button>
+            <button type="button" data-swipe-view="paper">Front page</button>
+            <button type="button" data-swipe-view="stage">River graph</button>
+            <button type="button" data-swipe-view="downtown">Downtown</button>
+            <button type="button" data-swipe-view="mall">Apache Mall</button>
+          </div>
+          <div class="rf-swipe-frame" data-swipe-frame>
+            <div class="rf-swipe-layer" data-swipe-layer>
+              <img src="/blog/rochester-1978/plate-color.jpg" alt="The USGS plate with colors added: green vegetation, brown water, and warm paper" width="2600" height="3572" loading="lazy" draggable="false" />
+            </div>
+            <div class="rf-swipe-clip" data-swipe-clip>
+              <div class="rf-swipe-layer" data-swipe-layer>
+                <img src="/blog/rochester-1978/plate-original.jpg" alt="The original black and white USGS plate: an aerial photomosaic of the South Fork Zumbro River through Rochester, surrounded by photographs, a rainfall map, a river graph, and newspaper headlines" width="2600" height="3572" loading="lazy" draggable="false" />
+              </div>
+            </div>
+            <span class="rf-swipe-tag rf-swipe-tag--left">Original</span>
+            <span class="rf-swipe-tag rf-swipe-tag--right">Colors added using a post processing script</span>
+            <div class="rf-swipe-handle" data-swipe-handle><i></i></div>
+          </div>
+          <input class="rf-swipe-range" data-swipe-range type="range" min="0" max="100" value="50" aria-label="Move the divider between the original plate and the colorized copy" />
+        </div>
+      </div>
+    </section>
+
+    <section class="section section--tight">
+      <div class="wrap post">
+        <p class="rf-note rf-note--warn">
+          The added colors are an interpretation. They are no record of what anything looked like in July 1978, and the
+          black-and-white plate remains the source. I would not measure anything from the colorized copy.
+        </p>
+        <p>
+          The method tints each zone of the plate and leaves the lightness of every pixel alone. I compared the two
+          images pixel by pixel, and across all 20.9 million the lightness moved by at most half a step out of 255,
+          which is rounding. So no label, contour, or line has shifted. The true-color photograph above is a useful check
+          on the guess, since the Corps photographer's floodwater is the same muddy brown I chose.
+        </p>
+
+        <h2 id="timeline">Twelve days in 1978</h2>
+        <p>
+          Two rounds of rain run through this story, so here is the whole sequence before the details. A wet spell from
+          June 29 to July 2 soaked the region. The storm that flooded Rochester came three days later, on the evening of
+          July 5, and the river crested the next day.
+        </p>
+      </div>
+    </section>
+
+    <section class="section section--flush">
+      <div class="wrap wrap--wide">
+        <figure class="rf-tl" data-rf-timeline>
+          <figcaption class="rf-chart-title">Rain at the Rochester airport and flow in the South Fork Zumbro River, June 28 to July 9, 1978</figcaption>
+          <div class="rf-chart-svg" data-chart></div>
+          <ol class="rf-tl-steps">
+            {milestones.map((step) => (
+              <li class={step.kind ? `is-${step.kind}` : ''}>
+                <span class="rf-tl-when">{step.when}</span>
+                <strong>{step.what}</strong>
+                <p>{step.text}</p>
+              </li>
+            ))}
+          </ol>
+          <p class="rf-source">
+            Daily rain from <a href={AIRPORT_DAILY} target="_blank" rel="noopener">NOAA's record for the airport</a>. Daily mean
+            flow from <a href={DAILY_FLOW} target="_blank" rel="noopener">USGS gauge 05373000</a>, which is why July 6 shows
+            20,500 cubic feet per second and the instantaneous peak was 30,500. Flash flood dates from the
+            <a href={OFR_WET} target="_blank" rel="noopener">USGS report, page 2</a>. Disaster declaration from
+            <a href={FEMA} target="_blank" rel="noopener">FEMA</a>.
+          </p>
+        </figure>
+      </div>
+    </section>
+
+    <section class="section section--tight">
+      <div class="wrap post">
+        <h2 id="rain">The rain</h2>
+        <p>
+          Wednesday, July 5, 1978 was hot and humid in Rochester. The airport's hourly observers typed short coded
+          remarks into their reports, and <a href={ISD_LOG} target="_blank" rel="noopener">NOAA still keeps them</a>. Reading
+          them is the closest I can get to standing on that ramp. Here is the evening, with the times converted to Central
+          Daylight Time.
+        </p>
+
+        <div class="post-table-scroll">
+          <table class="post-table">
+            <thead><tr><th>Time (CDT)</th><th>Observer's remark</th><th>In plain words</th></tr></thead>
+            <tbody>
+              {logRows.map(([time, code, plain]) => (
+                <tr><td class="nowrap">{time}</td><td><code>{code}</code></td><td>{plain}</td></tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        <p class="rf-source">
+          Rochester airport hourly reports from NOAA's Integrated Surface Database,
+          <a href={ISD_LOG} target="_blank" rel="noopener">station file 726440-14925 for 1978</a>, read with the
+          <a href={ISD_FORMAT} target="_blank" rel="noopener">format guide</a>. The plain-language readings are mine.
+        </p>
+
+        <p>
+          Those three hourly amounts add up to 5.03 inches. The official figure for the heaviest three hours at the
+          airport is 4.99 inches, from the State Climatology Office's account in the
+          <a href={DNR_STORM} target="_blank" rel="noopener">Minnesota DNR's 1979 report, page 21</a>. The storm total
+          at the airport was 6.74 inches, according to the <a href={NWS} target="_blank" rel="noopener">National Weather
+          Service</a>, and <a href={AIRPORT_DAILY} target="_blank" rel="noopener">NOAA's daily record</a> adds up to the same
+          number. In Quincy Township, east of the city, the same DNR account gives 7.30 inches, the highest total of the
+          storm.
+        </p>
+        <p>
+          The rain did not spread evenly. The <a href={OFR_STORM} target="_blank" rel="noopener">USGS report, page 5</a>,
+          describes a band of four inches or more that was only 12 to 15 miles wide and ran east-northeast for about 75 miles,
+          right through Rochester. Heavy rain had also fallen days earlier. The airport measured about 2 inches from
+          June 29 to July 2, and <a href={ELGIN_DAILY} target="_blank" rel="noopener">the gauge at Elgin</a>, about 12 miles
+          northeast of the city, had 4.28 inches on July 1 alone.
+        </p>
+
+        <h3 id="clock">A small puzzle about the clock</h3>
+        <p>
+          The puzzle is that the published reports and the airport's own log disagree by about two hours on when the heavy
+          rain fell.
+        </p>
+        <p>
+          The published time comes from the <a href={DNR_STORM} target="_blank" rel="noopener">DNR's 1979 report</a>. It says
+          the airport's gauge recorded the 4.99 inches between 5:53 and 8:53 p.m. Daylight Time, and the
+          <a href={OFR_STORM} target="_blank" rel="noopener">USGS report</a> and the
+          <a href={NWS} target="_blank" rel="noopener">National Weather Service</a> repeat those times.
+        </p>
+        <p>
+          The <a href={ISD_LOG} target="_blank" rel="noopener">airport log</a> puts that rain later. In the table above, rain
+          begins at 7:50 p.m., and the three big hourly amounts run from 7:53 to 10:53 p.m. Those three amounts add up to
+          5.03 inches, within 0.04 inch of the published 4.99, so the log and the report must be describing the same burst of
+          rain at two different times.
+        </p>
+        <p>Three other records side with the log:</p>
+        <ul>
+          <li>The airport's own six-hour rain total at 7 p.m. was 0.08 inch, far too little if a downpour had started at 5:53.</li>
+          <li>
+            NOAA's recording rain gauges around Rochester, in the table below, show the rain arriving in the evening.
+            <a href={hpdFile('USC00212166')} target="_blank" rel="noopener">Dodge Center</a>, 20 miles west of the airport, was
+            dry until 9 p.m. Daylight Time.
+          </li>
+          <li>
+            On the radio the next day, MPR's Terri Keefe <a href={MPR} target="_blank" rel="noopener">said the rain "began last
+            night about 7:30"</a>, going by the archive's machine transcript.
+          </li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="section section--flush">
+      <div class="wrap wrap--wide">
+        <figure class="rf-hours">
+          <figcaption class="rf-chart-title">Hourly rainfall in inches, July 5 and 6, 1978, Central Daylight Time</figcaption>
+          <div class="post-table-scroll">
+            <table>
+              <thead>
+                <tr>
+                  <th scope="col">Station</th>
+                  {hourLabels.map((label) => <th scope="col">{label}</th>)}
+                </tr>
+              </thead>
+              <tbody>
+                <tr class="rf-hours-published">
+                  <th scope="row">As published for the airport</th>
+                  {hourLabels.map((_, i) => (i === 3 ? <td colspan="3">5:53 to 8:53 p.m.</td> : i === 4 || i === 5 ? null : <td></td>))}
+                </tr>
+                {rows.map((row) => (
+                  <tr class={row.airport ? 'is-airport' : ''}>
+                    <th scope="row">{row.name}</th>
+                    {row.hours.map((v) => (
+                      <td style={cellStyle(v)}>{v !== null && v >= 0.005 ? v.toFixed(2) : ''}</td>
+                    ))}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          <p class="rf-source">
+            Stations run from the first hard rain to the last. Each column is the hour starting at the label. The airport's
+            hours start at 53 minutes before the label. Striped cells are hours with no hourly amount in the log, and 0.46
+            inch fell across those two hours. Other stations are from NOAA's
+            <a href={HPD} target="_blank" rel="noopener">Hourly Precipitation Data, version 2</a>, shifted from standard to
+            daylight time.
+          </p>
+        </figure>
+      </div>
+    </section>
+
+    <section class="section section--tight">
+      <div class="wrap post">
+        <p>
+          My guess is a time-zone slip somewhere between the gauge chart and the printed report, and I cannot prove that.
+          The published end of the rain, 1:50 a.m., fits the same radio report better than it fits the log, which shows
+          light rain until about 4 a.m. So I would treat this as an open question. If anyone in Rochester or at the
+          National Weather Service knows where the original forms are, I would love to see them.
+        </p>
+        <p>
+          Okay, let's be real. This is mostly my nerdiness showing, and when the rain started and ended matters only a
+          little for the story. Sunset that evening was just before 9 p.m. If the log is right, most of the heaviest rain
+          fell after dark, and the water came up through the night.
+        </p>
+
+        <h3 id="grids">The rain on a map</h3>
+        <p>
+          The map below shows both rounds of rain in date order, so you can compare them. The storm of July 5 and 6 is the
+          one that flooded Rochester. The wet spell was the larger rain across the region, and nClimGrid averages
+          {stats.south_fork_before.toFixed(1)} inches for it over the South Fork watershed above the gauge. Even so, the
+          river's daily flow only reached {flow('1978-07-02')} cubic feet per second, because most of that rain appears to
+          have soaked in. Three days later the same watershed had much less room left, and the storm dropped its rain far
+          faster.
+        </p>
+        <p>
+          The colors come from nClimGrid, a NOAA grid built from daily gauges. The dots are individual gauges. Colors and
+          dots are both cumulative totals for the dates on the button, and each view has its own color scale, so the same
+          color means different amounts in the two views. On the storm view, the white lines are the storm contours from the
+          plate, drawn in 1978, which I traced and placed on the map. Hover over the map or a dot for values, or open the list
+          under the map for every gauge and its station number.
+        </p>
+      </div>
+    </section>
+
+    <section class="section section--flush">
+      <div class="wrap wrap--wide">
+        <figure class="rf-rain" data-rf-rain>
+          <figcaption class="rf-rain-title">Cumulative rainfall across southeast Minnesota, before and during the flood</figcaption>
+          <div class="rf-rain-controls">
+            <div role="group" aria-label="Which rain to show">
+              <button type="button" data-rain-event="before">June 29 to July 2: wet spell</button>
+              <button type="button" data-rain-event="storm">July 5 and 6: flood storm</button>
+            </div>
+            <button type="button" class="rf-rain-toggle" data-rain-contours>1978 contours</button>
+          </div>
+          <div class="rf-rain-stage" data-rain-stage>
+            <canvas data-rain-canvas></canvas>
+            <svg data-rain-overlay aria-hidden="true"></svg>
+            <div class="rf-tip" data-rain-tip hidden></div>
+          </div>
+          <div class="rf-rain-legend">
+            <p class="rf-rain-legend-title" data-rain-legend-title></p>
+            <canvas data-rain-legend width="480" height="10"></canvas>
+            <div class="rf-rain-ticks" data-rain-ticks></div>
+          </div>
+          <p class="rf-rain-key">
+            <span><i class="rf-key-zumbro"></i>Zumbro River watershed</span>
+            <span><i class="rf-key-basin"></i>South Fork watershed above the gauge</span>
+            <span><i class="rf-key-river"></i>Zumbro River and its forks</span>
+            <span><i class="rf-key-contour"></i>USGS storm contours</span>
+            <span><i class="rf-key-gauge"></i>Daily gauge</span>
+          </p>
+          <details class="rf-gauges">
+            <summary>Every gauge on the map, with its station number</summary>
+            <div class="post-table-scroll">
+              <table>
+                <thead><tr><th>Gauge</th><th>Station number</th><th>June 29 to July 2, in</th><th>July 5 and 6, in</th></tr></thead>
+                <tbody>
+                  {data.gauges.map((g) => (
+                    <tr>
+                      <td>{g.name}</td>
+                      <td><code>{g.id}</code></td>
+                      <td>{g.before === null ? 'missing' : g.before.toFixed(2)}</td>
+                      <td>{g.storm === null ? 'missing' : g.storm.toFixed(2)}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </details>
+        </figure>
+      </div>
+    </section>
+
+    <section class="section section--tight">
+      <div class="wrap post">
+        <p>
+          nClimGrid is useful for seeing where the rain went, but its values will not match the gauge record, for a simple
+          reason. A gauge measures rain at one point. nClimGrid estimates the rain over a cell about 5 km wide by
+          interpolating between daily gauges, and in 1978 those gauges sat far apart compared with a band 12 to 15 miles wide.
+          The narrow core of the storm fell between them, so the grid spreads it out and flattens it. The airport's cell shows
+          {stats.airport_cell.toFixed(2)} inches against the 6.74 measured there, and the highest cell on the whole map is
+          {stats.storm_max.toFixed(2)}. The grid's {stats.south_fork_storm.toFixed(1)}-inch average for the storm over the
+          South Fork watershed runs low for the same reason.
+        </p>
+        <p>
+          The 1978 analysts had something better. The
+          <a href={DNR_STORM} target="_blank" rel="noopener">DNR says</a> its rainfall map for this storm drew on 64 reports
+          from Future Farmers of America members and 16 from the National Weather Service. I love that detail. A hand-drawn
+          map built on reports from farm country still shows this storm more sharply than the national grid does. I would have
+          used NOAA's AORC hourly grid, as I did for
+          <a href="/blog/minnesota-rain-and-snow-extremes">my Minnesota rain and snow post</a>, but it starts in February 1979,
+          seven months too late.
+        </p>
+
+        <h3 id="rarity">How rare the rain was</h3>
+        <p>
+          The <a href={DNR_STORM} target="_blank" rel="noopener">1979 DNR report</a> called the 4.99 inches "well above the
+          100-year return period." Today's reference is <a href={ATLAS} target="_blank" rel="noopener">NOAA Atlas 14</a>, which
+          gives a 3-hour depth at the airport of {atlas3h[5].toFixed(2)} inches for the 50-year event and
+          {atlas3h[6].toFixed(2)} for the 100-year event. By that measure the airport's burst falls between the two. That
+          comparison is mine, it is for one point and one duration, and the Atlas carries a wide confidence interval.
+        </p>
+        <p>
+          Whatever number you put on the rain, the flood was catastrophic, and
+          <a href={OFR_PLATE_PAGE} target="_blank" rel="noopener">USGS rated it beyond the 100-year level</a>. Rochester is a
+          textbook example of why rainfall frequency and flood frequency are different things. A river responds to the rain
+          and to the state of the ground it lands on, and here the wet spell had already primed the soil. The
+          <a href={OFR_INTRO} target="_blank" rel="noopener">USGS report, page 1</a>, says the July storms were "combined with
+          wet antecedent soil-moisture conditions of late June." The rain also landed in the right place to do damage. The
+          <a href={DNR_DAMAGE} target="_blank" rel="noopener">DNR report, page 15</a>, says more than 5 inches fell in 3 hours
+          "along and through the headwaters of all the streams above Rochester."
+        </p>
+
+        <h2 id="river">The river</h2>
+        <p>
+          The main record comes from USGS station 05373000, on the South Fork Zumbro River 1.6 miles downstream of the city.
+          The chart below shows the river's stage, which I digitized from the graph printed on the plate, so read it as a
+          tracing of a published figure. The map with it shows where the gauge sits. USGS keeps
+          <a href={DAILY_FLOW} target="_blank" rel="noopener">daily mean flows</a> for it, 733 cubic feet per second on July 5,
+          20,500 on July 6, and 4,040 on July 7. For the shape of the rise within a day, this graph is the only record I have
+          found.
+        </p>
+      </div>
+    </section>
+
+    <section class="section section--flush">
+      <div class="wrap wrap--wide">
+        <div class="rf-river-row">
+          <figure class="rf-chart" data-rf-stage>
+            <figcaption class="rf-chart-title">River stage near Rochester, July 5 to 7, 1978</figcaption>
+            <div class="rf-chart-box">
+              <div class="rf-chart-svg" data-chart></div>
+              <div class="rf-tip" data-tip hidden></div>
+            </div>
+            <p class="rf-source">Digitized from Figure 3 of the USGS plate. Flood stage is the value the National Weather Service gives for this historical gauge.</p>
+          </figure>
+          <figure class="rf-gauge-fig">
+            <figcaption class="rf-chart-title">Where the gauges are</figcaption>
+            <div class="rf-gauge-map" data-gauge-map></div>
+            <ul class="rf-gauge-list">
+              {data.stations.slice().reverse().map((station) => (
+                <li>
+                  <a href={usgsStation(station.id)} target="_blank" rel="noopener">{station.id}</a>
+                  {station.name}{station.id === '05373000' ? ', the gauge on the plate' : ''}
+                </li>
+              ))}
+            </ul>
+          </figure>
+        </div>
+      </div>
+    </section>
+
+    <section class="section section--tight">
+      <div class="wrap post">
+        <div class="rf-pair">
+          <figure>
+            <img src="/blog/rochester-1978/figure-3.jpg" alt="The printed USGS graph of river stage from July 5 to 7, 1978, rising from about 4 feet to a labeled peak of 23.36 feet at 1105 hours" width="900" height="1049" loading="lazy" />
+            <figcaption>The printed graph I traced, Figure 3 of the <a href={OFR_PLATE} target="_blank" rel="noopener">USGS plate</a>.</figcaption>
+          </figure>
+          <figure>
+            <Image src={gaugeHouse} alt="A gauge house on a corrugated pipe with a horizontal rod fixed near the top of its platform" widths={[400, 600]} sizes="(min-width: 620px) 380px, 100vw" />
+            <figcaption>The USGS gauge after the flood. The horizontal rod marks the crest. From <a href={OFR_GAUGE} target="_blank" rel="noopener">USGS OFR 79-1166, Figure 7</a>.</figcaption>
+          </figure>
+        </div>
+        <p>
+          The river sat at about 4 feet that evening and crested at 23.36 feet on Thursday, July 6. It is easy to misread
+          that number. It is a water level at a gauge, measured from the gauge's own zero, and it does not mean the city
+          stood under 23 feet of water. The <a href={NWS} target="_blank" rel="noopener">National Weather Service</a> gives
+          12 feet as flood stage at that gauge, and describes water 6 feet deep or more across about a quarter of the city.
+        </p>
+        <p>
+          Peak flow was 30,500 cubic feet per second, against 19,600 in March 1965, the largest flood before it. A
+          <a href={SUPP_TABLE} target="_blank" rel="noopener">flood plain report from 1975</a> had put the 100-year flow at this
+          gauge at 27,500, and <a href={OFR_PLATE_PAGE} target="_blank" rel="noopener">USGS rated 1978</a> beyond a 100-year
+          flood, using the record available then. The plate reminds readers that a large flood does nothing to lower the
+          chance of another one next year, next week, or next day.
+        </p>
+        <p>
+          Even the crest has three times attached to it. The plate's graph says 1105 hours. The Post-Bulletin headline on
+          the same plate says noon, and USGS says its aerial photographs of the peak were taken about noon. The
+          <a href={NWS} target="_blank" rel="noopener">National Weather Service</a> says 10 a.m. If the gauge record is on standard time, as USGS records often are, 1105 hours and
+          noon nearly agree.
+        </p>
+        <p>
+          The tributaries came first. The plate warns that its mapped boundary shows the main river only, and that
+          creeks crested earlier and flooded their own neighborhoods. The number that stopped me is Bear Creek. It peaked
+          at <a href={PEAKS_BEAR} target="_blank" rel="noopener">{bear.cfs!.toLocaleString('en-US')} cubic feet per second</a>
+          that day from a watershed of 80 square miles, while the whole South Fork carried 30,500 from 304 square miles. That
+          is about {Math.round(bear.cfs! / 80)} cubic feet per second for each square mile of Bear Creek and about
+          {Math.round(30500 / 304)} on the South Fork. The two peaks came at different times, so they do not add. The
+          <a href={OFR_FREQ} target="_blank" rel="noopener">USGS report, page 14</a>, notes that the Corps of Engineers put Bear
+          Creek near a 500-year event, and the <a href={SUPP_TABLE} target="_blank" rel="noopener">1975 report</a> had estimated
+          its 100-year flow at {data.estimates_1975.bear_creek.cfs_100yr.toLocaleString('en-US')}.
+        </p>
+
+        <div class="rf-bear">
+          <figure class="rf-chart" data-rf-bear>
+            <figcaption class="rf-chart-title">Bear Creek and the South Fork on July 6, 1978</figcaption>
+            <div class="rf-chart-svg" data-chart></div>
+            <p class="rf-source">
+              Peaks from USGS <a href={PEAKS_BEAR} target="_blank" rel="noopener">05372930</a> and
+              <a href={PEAKS} target="_blank" rel="noopener">05372995</a>. Estimates from
+              <a href={SUPP_TABLE} target="_blank" rel="noopener">Table I.1 of the 1975 report</a>, at the USGS gauge and at the
+              mouth of Bear Creek (82.3 square miles).
+            </p>
+          </figure>
+          <figure>
+            <img src="/blog/rochester-1978/photos/bear-creek.jpg" alt="Black and white aerial photograph of brown floodwater spreading across fields and streets where Bear Creek meets the South Fork Zumbro River, July 1978" width="1100" height="852" loading="lazy" />
+            <figcaption>Where Bear Creek meets the South Fork, July 1978. From the <a href={OFR_PLATE} target="_blank" rel="noopener">USGS plate</a>, which credits its flood photographs to the Corps of Engineers.</figcaption>
+          </figure>
+        </div>
+
+        <h2 id="map">Where the water went</h2>
+        <p>
+          This is the part I most wanted to build. <a href={OFR_FREQ} target="_blank" rel="noopener">USGS flew the river</a>
+          at about the time of the crest and drew the edge of the water on the photographs. I placed that mosaic on a live map over current USGS imagery. The dark shading and
+          the thin black line are the flooded area as USGS mapped it. Slide the control to fade from 1978 to today, and
+          click a gold dot or a thumbnail to see the photograph from that spot.
+        </p>
+      </div>
+    </section>
+
+    <section class="section section--flush">
+      <div class="wrap wrap--wide">
+        <div class="rf-flood" data-rf-flood>
+          <div class="rf-flood-main">
+            <div class="rf-flood-map" data-flood-map></div>
+            <div class="rf-flood-bar">
+              <label>
+                <span>Today</span>
+                <input type="range" min="0" max="100" value="100" data-flood-opacity aria-label="Fade between current imagery and the 1978 mosaic" />
+                <span>1978</span>
+              </label>
+              <div class="rf-flood-views" role="group" aria-label="Jump to a place on the map">
+                <button type="button" data-flood-view="44.0,-92.478,15">Apache Mall</button>
+                <button type="button" data-flood-view="44.024,-92.458,15">Downtown</button>
+                <button type="button" data-flood-view="44.062,-92.466,14">Gauge</button>
+              </div>
+            </div>
+          </div>
+          <figure class="rf-flood-photo">
+            <img data-flood-photo alt="" width="1100" height="855" />
+            <figcaption data-flood-caption></figcaption>
+          </figure>
+          <div class="rf-flood-strip" data-flood-strip></div>
+        </div>
+        <p class="dash-help">
+          Photographs and mosaic from USGS Open-File Report 79-1583. The plate credits the flood photographs to the U.S.
+          Army Corps of Engineers, St. Paul District, and the aerial photography to Mark Hurd Aerial Surveys. Black
+          diagonal lines on the mosaic are the plate's own leaders to its photographs.
+        </p>
+      </div>
+    </section>
+
+    <section class="section section--tight">
+      <div class="wrap post">
+        <p>
+          The <a href={OFR_PLATE} target="_blank" rel="noopener">plate</a> cautions that water may have reached beyond the line
+          in some places. The line shows the main river, and it is no modern regulatory floodplain.
+        </p>
+
+        <h2 id="people">The people</h2>
+        <p>
+          The <a href={OFR_PLATE_PAGE} target="_blank" rel="noopener">USGS summary of the plate</a> says the flood claimed at
+          least 5 lives and forced 5,000 people from their homes. The
+          <a href={NWS} target="_blank" rel="noopener">National Weather Service</a> gives the details, and puts the number
+          displaced at nearly 5,000. Four people drowned when they were trapped in a nursing home elevator, a nurse's aide and
+          three patients in wheelchairs. A fifth person died when her car went off County Road 10 southwest of Rochester.
+          <a href={MPR} target="_blank" rel="noopener">MPR reported the same five deaths</a> the day of the flood, and
+          <a href={MAYO} target="_blank" rel="noopener">Mayo Clinic's history</a> also counts five. The one source I found that
+          differs is the <a href={DNR_DAMAGE} target="_blank" rel="noopener">DNR's 1979 report</a>, which says 4.
+        </p>
+        <p>
+          The <a href={NWS} target="_blank" rel="noopener">National Weather Service account</a> estimates that 80 percent of the
+          city lost power, and it records that the sewage treatment plant was out of commission and that several bridges were
+          swept away. <a href={MAYO} target="_blank" rel="noopener">Mayo Clinic's history</a> recalls Saint Marys Hospital,
+          already full, taking in people who needed shelter. The President declared
+          <a href={FEMA} target="_blank" rel="noopener">a major disaster</a> two days after the crest, on July 8, covering
+          17 Minnesota counties, Olmsted among them.
+        </p>
+        <p>
+          I went looking for one damage figure and found a range. The mayor said
+          <a href={MPR} target="_blank" rel="noopener">$30 to $40 million on the radio</a> that first day. The
+          <a href={CORPS_ROCH} target="_blank" rel="noopener">Corps history</a> says $60 million, and the
+          <a href={DNR_DAMAGE} target="_blank" rel="noopener">State Climatology Office</a> said over $100 million. Those were
+          counted at different times and on different terms, and I have not tried to reconcile them.
+        </p>
+        <p>
+          I keep coming back to the photographs of ordinary places. A flooded park entrance is still a park entrance. A road
+          intersection is still somewhere people needed to get through. We spend a lot of time at floodplain conferences on
+          elevations, models, and maps. Reading about Rochester is a good reminder to ask what those numbers mean for someone
+          trying to get home, keep a business open, or reach a person who needs help.
+        </p>
+
+        <h2 id="after">Documents from before and after the flood</h2>
+        <p>
+          Rochester's flood control story is long, and the people who lived it can tell it better than I can. If you want to
+          follow it yourself, these are the documents I found most useful, in date order.
+        </p>
+        <h3>Before the flood</h3>
+        <ul>
+          <li>
+            <a href={SUPP_1975} target="_blank" rel="noopener">Flood plain information supplemental report, South Fork Zumbro
+            River and tributaries, Rochester</a> (1975). Updates the Corps of Engineers' 1968 flood plain study. It gives 100-year
+            flows and flood profiles for the river and its creeks, a floodway plan, and a description of the Corps plan and the
+            seven headwater dams under study at the time.
+          </li>
+        </ul>
+        <h3>After the flood</h3>
+        <ul>
+          <li>
+            <a href={OFR_PLATE_PAGE} target="_blank" rel="noopener">USGS Open-File Report 79-1583</a> (1979). The plate this post
+            is built on, with the flooded area, photographs, rainfall map, and river graph.
+          </li>
+          <li>
+            <a href={OFR_REPORT_PAGE} target="_blank" rel="noopener">USGS Open-File Report 79-1166</a> (1979). Flood data for 34
+            gauges across southeast Minnesota and southwest Wisconsin, with the storm accounts and more photographs.
+          </li>
+          <li>
+            <a href={DNR_1979} target="_blank" rel="noopener">Minnesota DNR hydrologic data for 1978</a> (1979). Rainfall maps for
+            each of the year's flash floods, including a <a href={DNR_SEPT} target="_blank" rel="noopener">second Rochester flood
+            on September 12</a> with 7.07 inches downtown.
+          </li>
+          <li>
+            <a href={LAW_1983} target="_blank" rel="noopener">Laws of Minnesota 1983, chapter 14</a>. Lets Olmsted County and the
+            Olmsted County Soil and Water Conservation District carry out flood control work in the South Fork watershed under
+            a joint powers agreement with the city.
+          </li>
+          <li>
+            <a href={WRDA_1986} target="_blank" rel="noopener">Water Resources Development Act of 1986, section 401(a)</a>.
+            Authorizes the federal project for the South Fork Zumbro River at Rochester, based on a Chief of Engineers report
+            dated February 23, 1979.
+          </li>
+          <li>
+            <a href={CORPS_ROCH} target="_blank" rel="noopener">Steward of Headwaters</a>, the St. Paul District's history of
+            itself, pages 96 to 101. The Corps' account of the project, from its first study in 1936 through construction, local
+            funding, design changes, and public response.
+          </li>
+          <li>
+            <a href={CITY} target="_blank" rel="noopener">City of Rochester stormwater page</a> and
+            <a href={CITY_RES} target="_blank" rel="noopener">South Zumbro capital improvement project summary</a>. The City's
+            description of the system today, with its list of upstream reservoirs.
+          </li>
+          <li>
+            <a href={MSU_2013} target="_blank" rel="noopener">Flood Mitigation Study, Zumbro River Watershed</a> (2013). A
+            Minnesota State University, Mankato study of flood mitigation across the whole watershed, prepared for the state.
+          </li>
+        </ul>
+        <p>
+          The USGS peak record gives the longer view. In {peakYears} years the 1978 peak still stands alone, and the next
+          largest are 19,600 in 1965 and 18,000 in 1962.
+        </p>
+      </div>
+    </section>
+
+    <section class="section section--flush">
+      <div class="wrap">
+        <figure class="rf-chart" data-rf-peaks>
+          <figcaption class="rf-chart-title">Largest flow of each water year, South Fork Zumbro River at Rochester, 1951 to 2025</figcaption>
+          <div class="rf-chart-box">
+            <div class="rf-chart-svg" data-chart></div>
+            <div class="rf-tip" data-tip hidden></div>
+          </div>
+          <p class="rf-source">
+            <a href={PEAKS} target="_blank" rel="noopener">USGS peak streamflow, station 05372995</a>. Hover over a bar for the date,
+            discharge, and gauge height.
+          </p>
+        </figure>
+      </div>
+    </section>
+
+    <section class="section section--tight">
+      <div class="wrap post">
+        <p>
+          Work on the river continues. Silver Lake, the dark bulge in the river on the plate, is
+          <a href={SILVER} target="_blank" rel="noopener">being drawn down this fall</a> so the old low-head dam can become a
+          rock arch rapids, due by September 2027. The lake I see next week will look like neither the plate nor the imagery.
+        </p>
+
+        <h2 id="data">The data, and how far to trust it</h2>
+        <p>
+          Here is where each number and map layer came from, with direct links to the files where I could.
+        </p>
+        <ul>
+          <li>
+            Storm contours and the stage curve are my tracings of Figures 1 and 3 of the
+            <a href={OFR_PLATE} target="_blank" rel="noopener">USGS plate</a>, so they carry the error of the print and of my
+            tracing. I placed the contours using the plate's latitude and longitude marks, good to about a mile.
+          </li>
+          <li>
+            Map colors are <a href={NCLIM} target="_blank" rel="noopener">NOAA nClimGrid-Daily</a>, from the
+            <a href={NCLIM_JUNE} target="_blank" rel="noopener">June</a> and
+            <a href={NCLIM_JULY} target="_blank" rel="noopener">July</a> 1978 files. NOAA advises against reading individual grid
+            points or days closely. Each map adds the grid days listed on its button, because an observer's day ends in the
+            morning and a storm can land on either date.
+          </li>
+          <li>
+            Gauge totals come from the <a href={ACIS} target="_blank" rel="noopener">ACIS</a> service. They add the same
+            calendar dates, and observers read their gauges at different hours. Trace amounts count as zero. Station numbers on
+            the map are NOAA's Global Historical Climatology Network IDs, which you can look up in
+            <a href={AIRPORT_DAILY} target="_blank" rel="noopener">NOAA's daily summaries</a>.
+          </li>
+          <li>
+            The airport's hourly remarks are the observers' own, from the
+            <a href={ISD_LOG} target="_blank" rel="noopener">Integrated Surface Database file</a>, and they total less than the
+            official storm figure. By morning they reach about 5.8 inches, against the official 6.74, and I cannot account for
+            the difference. I read them for timing and shape.
+          </li>
+          <li>
+            Hourly amounts at the other stations are from NOAA's
+            <a href={HPD} target="_blank" rel="noopener">Hourly Precipitation Data</a> files for
+            <a href={hpdFile('USC00470124')} target="_blank" rel="noopener">Alma Dam 4</a>,
+            <a href={hpdFile('USC00478589')} target="_blank" rel="noopener">Trempealeau Dam 6</a>,
+            <a href={hpdFile('USC00214418')} target="_blank" rel="noopener">La Crescent Dam 7</a>,
+            <a href={hpdFile('USC00217184')} target="_blank" rel="noopener">Rushford</a>,
+            <a href={hpdFile('USC00212166')} target="_blank" rel="noopener">Dodge Center</a>, and
+            <a href={hpdFile('USC00217941')} target="_blank" rel="noopener">Spring Valley</a>.
+          </li>
+          <li>
+            River numbers are from USGS: <a href={DAILY_FLOW} target="_blank" rel="noopener">daily mean flows at 05373000</a>,
+            <a href={PEAKS} target="_blank" rel="noopener">annual peaks at 05372995</a>, and
+            <a href={PEAKS_BEAR} target="_blank" rel="noopener">annual peaks at 05372930</a> on Bear Creek.
+          </li>
+          <li>
+            The 3-hour rainfall depths are from the <a href={ATLAS} target="_blank" rel="noopener">NOAA Atlas 14 table for the
+            airport</a>.
+          </li>
+          <li>
+            Watershed outlines come from the <a href={WBD} target="_blank" rel="noopener">Watershed Boundary Dataset</a>, HUC
+            07040004 for the whole Zumbro, and USGS's Network Linked Data Index for the South Fork above the gauge. River lines
+            are from the <a href={NHD} target="_blank" rel="noopener">National Hydrography Dataset</a>.
+          </li>
+          <li>
+            The "1-in-so-many-years" labels in this post come from their sources. I did no new flood-frequency analysis.
+          </li>
+          <li>
+            Map colors use Nasir from <a href={RANG} target="_blank" rel="noopener">Rang</a>, my palette collection.
+          </li>
+        </ul>
+        <p>
+          There are more photographs than I could use. The <a href={NWS} target="_blank" rel="noopener">National Weather
+          Service page</a> has six from the City of Rochester, and the Minnesota Historical Society
+          <a href={MNHS} target="_blank" rel="noopener">holds 81 Corps of Engineers photographs</a> dated July 6, 1978.
+        </p>
+
+        <h2 id="sources">Sources</h2>
+        <ol class="post-sources">
+          <li>Latkovich, V. J. (1979). <a href={OFR_PLATE_PAGE} target="_blank" rel="noopener">Flood of July 5-7, 1978, on the South Fork Zumbro River at Rochester, Minnesota</a>. USGS Open-File Report 79-1583, prepared with the Minnesota DNR. <a href={OFR_PLATE} target="_blank" rel="noopener">Plate 1</a>.</li>
+          <li>Latkovich, V. J. (1979). <a href={OFR_REPORT_PAGE} target="_blank" rel="noopener">Hydrologic data for floods of July 1978 in southeast Minnesota and southwest Wisconsin</a>. USGS Open-File Report 79-1166.</li>
+          <li>National Weather Service, La Crosse. <a href={NWS} target="_blank" rel="noopener">Summer of 1978: Flash Floods</a>.</li>
+          <li>Minnesota DNR. <a href={DNR_1979} target="_blank" rel="noopener">Hydrologic data for 1978</a>, with the State Climatology Office storm account. See also the DNR's <a href={DNR_MEGA} target="_blank" rel="noopener">list of mega-rains</a>.</li>
+          <li>U.S. Geological Survey. <a href={PEAKS} target="_blank" rel="noopener">Peak streamflow for station 05372995</a>, South Fork Zumbro River at Rochester, <a href={PEAKS_BEAR} target="_blank" rel="noopener">station 05372930</a>, Bear Creek at Rochester, and <a href={DAILY_FLOW} target="_blank" rel="noopener">daily flow for station 05373000</a>.</li>
+          <li>NOAA NCEI. <a href={ISD_LOG} target="_blank" rel="noopener">Integrated Surface Database</a>, station 726440-14925, Rochester. <a href={HPD} target="_blank" rel="noopener">Hourly Precipitation Data, version 2</a>. <a href={NCLIM} target="_blank" rel="noopener">nClimGrid-Daily</a>. Daily gauge records through the <a href={ACIS} target="_blank" rel="noopener">Applied Climate Information System</a>.</li>
+          <li>Perica and others (2013). <a href={ATLAS} target="_blank" rel="noopener">NOAA Atlas 14, Volume 8</a>, Precipitation-Frequency Atlas of the United States, Midwestern States.</li>
+          <li>Flood plain information supplemental report on South Fork Zumbro River and tributaries, vicinity of Rochester, Minnesota. <a href={SUPP_1975} target="_blank" rel="noopener">Minnesota DNR, Division of Waters</a>, with plates dated October 1975.</li>
+          <li>U.S. Army Corps of Engineers, St. Paul District. <a href={CORPS_ROCH} target="_blank" rel="noopener">Steward of Headwaters: U.S. Army Corps of Engineers, St. Paul District, 1975-2000</a>, pages 96 to 101.</li>
+          <li>City of Rochester. <a href={CITY} target="_blank" rel="noopener">Stormwater</a>, <a href={CITY_RES} target="_blank" rel="noopener">South Zumbro capital improvement project</a>, and <a href={SILVER} target="_blank" rel="noopener">Silver Lake project notice</a>.</li>
+          <li><a href={LAW_1983} target="_blank" rel="noopener">Laws of Minnesota 1983, chapter 14</a>. <a href={WRDA_1986} target="_blank" rel="noopener">Water Resources Development Act of 1986</a>, Public Law 99-662, section 401(a).</li>
+          <li>Druschel, S. J., and others (2013). <a href={MSU_2013} target="_blank" rel="noopener">Flood Mitigation Study, Zumbro River Watershed, Minnesota</a>. Minnesota State University, Mankato.</li>
+          <li>MPR News. <a href={MPR} target="_blank" rel="noopener">Reports on Rochester flooding</a>, July 6, 1978, machine-generated transcript. Mayo Clinic. <a href={MAYO} target="_blank" rel="noopener">Values history, chapter 9</a>. FEMA. <a href={FEMA} target="_blank" rel="noopener">DR-560</a>.</li>
+          <li>Map layers from <a href={IMAGERY} target="_blank" rel="noopener">USGS The National Map</a>, the <a href={WBD} target="_blank" rel="noopener">Watershed Boundary Dataset</a>, and the <a href={NHD} target="_blank" rel="noopener">National Hydrography Dataset</a>.</li>
+        </ol>
+
+        <p class="post-signoff">
+          If you remember 1978, or you know this river well, I would love to hear about it. A technical report can keep
+          measurements and photographs. It cannot tell the whole story of what a flood meant to a city. And if you are at the
+          conference next week, come say hello.<br />Mohsen :)
+        </p>
+
+        <p class="post-back"><a href="/blog">← Back to blog</a></p>
+      </div>
+    </section>
+  </article>
+</Base>
+
+<script>
+  import '../../scripts/rochester-1978';
+</script>
+
+<style>
+  .post-hero :global(.page-header.has-bg) {
+    padding-top: clamp(5.5rem, 14vw, 9.5rem);
+    padding-bottom: clamp(3.6rem, 9vw, 6rem);
+  }
+  .post-byline { margin-top: 1.1rem; font: 600 1rem/1.3 var(--font-sans); color: var(--text); }
+  .post-meta {
+    margin-top: 0.35rem; font: 600 0.82rem/1 var(--font-sans);
+    letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-faint);
+  }
+
+  .section--flush { padding-block: 0; }
+  .post { max-width: 820px; }
+  .post > p, .post > ul, .post > ol { color: var(--text-dim); line-height: 1.75; margin: 0 0 1.15rem; font-size: 1.03rem; }
+  .post > p.post-intro { color: var(--text); font-size: 1.12rem; }
+  .post a { color: var(--accent); }
+  .post a:hover { text-decoration: underline; }
+  .post h2 { margin: 2.6rem 0 1rem; font-size: clamp(1.35rem, 1.05rem + 1.2vw, 1.7rem); line-height: 1.25; scroll-margin-top: 90px; }
+  .post h3 { margin: 2rem 0 0.7rem; font-size: 1.18rem; line-height: 1.3; scroll-margin-top: 90px; }
+  .post > ul, .post > ol { padding-left: 1.4rem; }
+  .post li { margin: 0.45rem 0; }
+
+  .dash-help { margin: 0.8rem auto 0; max-width: 820px; color: var(--text-faint); font-size: 0.86rem; text-align: center; }
+
+  .post-fig { margin: 1.9rem 0; }
+  .post-fig :global(img) {
+    width: 100%; height: auto; display: block;
+    border-radius: var(--radius-sm); border: 1px solid var(--border-soft);
+  }
+  .post-fig figcaption { margin-top: 0.6rem; font-size: 0.84rem; color: var(--text-faint); line-height: 1.55; }
+  .post-fig figcaption a, .rf-source a { color: var(--text-dim); text-decoration: underline; }
+
+  .post-table-scroll {
+    overflow-x: auto; margin: 0 0 0.6rem;
+    border: 1px solid var(--border-soft); border-radius: var(--radius-sm); background: var(--bg-elev);
+  }
+  .post-table { width: 100%; border-collapse: collapse; font-size: 0.9rem; color: var(--text-dim); }
+  .post-table th {
+    text-align: left; padding: 0.7rem 0.85rem; background: var(--bg-elev-2); color: var(--text);
+    font: 600 0.78rem/1.3 var(--font-sans); border-bottom: 1px solid var(--border);
+  }
+  .post-table td { padding: 0.55rem 0.85rem; border-top: 1px solid var(--border-soft); line-height: 1.45; vertical-align: top; }
+  .post-table .nowrap { white-space: nowrap; }
+  .post-table code { font-size: 0.8rem; color: var(--text); white-space: nowrap; }
+
+  .rf-note {
+    padding: 0.75rem 1rem; border-left: 3px solid var(--accent-line); background: var(--bg-elev);
+    border-radius: 0 var(--radius-sm) var(--radius-sm) 0; color: var(--text) !important; font-size: 0.97rem !important;
+  }
+  .rf-note--warn { background: #ffdf9e; border-left: 5px solid #e8890c; color: #4a2e00 !important; font-weight: 500; }
+  .rf-source { color: var(--text-faint) !important; font-size: 0.84rem !important; line-height: 1.55 !important; margin-top: 0.5rem !important; }
+
+  .post h2 { clear: both; }
+  .rf-pair { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; margin: 0 0 1.4rem; align-items: start; }
+  .rf-pair figure, .rf-bear figure { margin: 0; }
+  .rf-pair :global(img), .rf-bear img { width: 100%; height: auto; display: block; border-radius: var(--radius-sm); border: 1px solid var(--border-soft); }
+  .rf-pair figcaption, .rf-bear figure:not(.rf-chart) figcaption { margin-top: 0.5rem; font-size: 0.82rem; color: var(--text-faint); line-height: 1.5; }
+  .rf-pair a, .rf-bear a { color: var(--text-dim); text-decoration: underline; }
+  .rf-bear { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: 1.2rem; margin: 0.4rem 0 1.5rem; align-items: start; }
+  @media (max-width: 620px) { .rf-pair, .rf-bear { grid-template-columns: minmax(0, 1fr); } }
+
+  .post-sources { font-size: 0.94rem !important; }
+  .post-signoff { margin-top: 2rem !important; font-style: italic; }
+  .post-back { margin-top: 2.2rem !important; padding-top: 1.3rem; border-top: 1px solid var(--border-soft); font: 600 0.85rem/1 var(--font-sans); }
+  .post-back a { color: var(--text-faint); }
+</style>
+
+<style is:global>
+  /* Plate comparison */
+  .rf-swipe { max-width: 660px; margin: 0.4rem auto 1.4rem; }
+  .rf-swipe-buttons, .rf-rain-controls [role='group'], .rf-flood-views { display: flex; flex-wrap: wrap; gap: 0.35rem; }
+  .rf-swipe-buttons { justify-content: center; margin-bottom: 0.7rem; }
+  .rf-swipe button, .rf-flood-views button {
+    padding: 0.35rem 0.75rem; border: 1px solid var(--border); border-radius: 999px; background: var(--bg-elev);
+    color: var(--text-dim); font: 500 0.82rem/1.2 var(--font-sans); cursor: pointer;
+  }
+  .rf-swipe button[aria-pressed='true'] { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+  .rf-swipe-frame {
+    position: relative; overflow: hidden; aspect-ratio: 2600 / 3572; border-radius: var(--radius-sm);
+    border: 1px solid var(--border); background: #e5e2dc; cursor: ew-resize; touch-action: pan-y; user-select: none;
+  }
+  .rf-swipe-layer { position: absolute; inset: 0; transition: transform 0.45s var(--ease); transform-origin: 50% 50%; }
+  .rf-swipe-layer img { display: block; width: 100%; height: 100%; }
+  .rf-swipe-clip { position: absolute; inset: 0; overflow: hidden; }
+  .rf-swipe-handle { position: absolute; top: 0; bottom: 0; width: 2px; margin-left: -1px; background: #fff; box-shadow: 0 0 6px rgba(0, 0, 0, 0.6); pointer-events: none; }
+  .rf-swipe-handle i {
+    position: absolute; top: 50%; left: 50%; width: 34px; height: 34px; margin: -17px 0 0 -17px; border-radius: 50%;
+    background: var(--accent); border: 2px solid #fff; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.45);
+  }
+  .rf-swipe-tag {
+    position: absolute; top: 0.6rem; padding: 0.2rem 0.55rem; border-radius: 6px; background: rgba(20, 28, 36, 0.82);
+    color: #fff; font: 600 0.74rem/1.3 var(--font-sans); pointer-events: none;
+  }
+  .rf-swipe-tag--left { left: 0.6rem; }
+  .rf-swipe-tag--right {
+    right: 0.6rem; max-width: 46%; text-align: right; background: #fff; color: #d3201a; border: 1.5px solid #d3201a; font-weight: 700;
+  }
+  .rf-swipe-range { position: absolute; width: 1px; height: 1px; opacity: 0; }
+  .rf-swipe-range:focus-visible + * { outline: 2px solid var(--accent); }
+
+  /* Hourly table */
+  .rf-hours { margin: 0.6rem auto 0; max-width: 1040px; }
+  .rf-chart-title { margin-bottom: 0.6rem; font: 600 0.95rem/1.35 var(--font-sans); color: var(--text); }
+  .rf-hours table { border-collapse: separate; border-spacing: 2px; width: 100%; font: 500 0.78rem/1.2 var(--font-sans); color: var(--text-dim); }
+  .rf-hours th { font-weight: 500; white-space: nowrap; padding: 0.3rem 0.45rem; text-align: center; color: var(--text-faint); }
+  .rf-hours tbody th { text-align: left; color: var(--text-dim); }
+  .rf-hours td { min-width: 2.5rem; height: 2rem; padding: 0.15rem; text-align: center; border-radius: 3px; font-variant-numeric: tabular-nums; background: var(--bg-elev-2); }
+  .rf-hours .is-airport th { color: var(--text); font-weight: 700; }
+  .rf-hours-published td { background: transparent; }
+  .rf-hours-published td[colspan] { background: var(--accent-soft); border: 1px dashed var(--accent-line); color: var(--text); }
+  .rf-hours-published th { font-style: italic; }
+
+  /* Timeline */
+  .rf-tl { max-width: 1040px; margin: 0.6rem auto 0; }
+  .rf-tl .rf-chart-svg { height: 400px; }
+  .rf-tl-band--wet { fill: rgba(136, 189, 242, 0.14); }
+  .rf-tl-band--storm { fill: rgba(240, 74, 35, 0.12); }
+  .rf-tl-phase { font: 700 12.5px var(--font-sans); }
+  .rf-tl-phase--wet { fill: var(--accent); }
+  .rf-tl-phase--storm { fill: #f04a23; }
+  .rf-tl-bar { fill: var(--accent); }
+  .rf-tl-bar--hot { fill: #f04a23; }
+  .rf-tl-value { fill: var(--text-dim); font-weight: 600; font-variant-numeric: tabular-nums; }
+  .rf-tl-steps { list-style: none; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 0.6rem; margin: 0.9rem 0 0; padding: 0; }
+  .rf-tl-steps li { padding: 0.65rem 0.75rem; border: 1px solid var(--border-soft); border-top: 3px solid var(--text-faint); border-radius: var(--radius-sm); background: var(--bg-elev); }
+  .rf-tl-steps li.is-wet { border-top-color: var(--accent); }
+  .rf-tl-steps li.is-storm { border-top-color: #f04a23; }
+  .rf-tl-when { display: block; color: var(--text-faint); font: 600 0.74rem/1.3 var(--font-sans); }
+  .rf-tl-steps strong { display: block; margin: 0.15rem 0 0.25rem; color: var(--text); font: 700 0.92rem/1.3 var(--font-sans); }
+  .rf-tl-steps p { margin: 0; color: var(--text-dim); font-size: 0.82rem; line-height: 1.45; }
+  .rf-tl .rf-source a { color: var(--text-dim); text-decoration: underline; }
+  @media (max-width: 920px) { .rf-tl-steps { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (max-width: 520px) { .rf-tl-steps { grid-template-columns: minmax(0, 1fr); } .rf-swipe-tag { font-size: 0.66rem; } }
+
+  /* Rainfall map */
+  .rf-rain {
+    --rf-ink: #eef4fb; --rf-dim: #b6c7d9;
+    margin: 0.6rem auto 0; max-width: 1040px; padding: clamp(0.8rem, 2vw, 1.2rem); border-radius: 14px;
+    background: #17212a; color: var(--rf-ink); border: 1px solid #33465a;
+  }
+  .rf-rain-title { font: 600 1rem/1.3 var(--font-sans); margin-bottom: 0.7rem; }
+  .rf-rain-controls { display: flex; flex-wrap: wrap; gap: 0.5rem 1rem; align-items: center; margin-bottom: 0.7rem; }
+  .rf-rain-controls button {
+    padding: 0.33rem 0.7rem; border: 1px solid #40566b; border-radius: 999px; background: #223040;
+    color: var(--rf-dim); font: 500 0.8rem/1.2 var(--font-sans); cursor: pointer;
+  }
+  .rf-rain-controls button[aria-pressed='true'] { background: #88bdf2; border-color: #88bdf2; color: #14202b; }
+  .rf-rain-controls button:disabled { opacity: 0.4; cursor: default; }
+  .rf-rain-stage { position: relative; width: 100%; background: #101820; border-radius: 8px; overflow: hidden; }
+  .rf-rain-stage canvas, .rf-rain-stage svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+  .rf-m-county { fill: none; stroke: rgba(255, 255, 255, 0.22); stroke-width: 0.7; }
+  .rf-m-river { fill: none; stroke: rgba(190, 228, 255, 0.28); stroke-width: 0.7; }
+  .rf-m-basin { fill: none; stroke: #fff; stroke-width: 1.8; stroke-dasharray: 5 3; }
+  .rf-m-zumbro { fill: none; stroke: #ffe28a; stroke-width: 2.2; paint-order: stroke; }
+  .rf-m-zumbro-river { fill: none; stroke: #d6f0ff; stroke-width: 1.6; stroke-linejoin: round; }
+  .rf-m-contour { fill: none; stroke: #fff; stroke-width: 2; paint-order: stroke; }
+  .rf-m-contour-label { fill: #fff; font: 700 15px Arial, Helvetica, sans-serif; paint-order: stroke; stroke: #101820; stroke-width: 4px; }
+  .rf-m-town { fill: #fff; font: 600 14px Arial, Helvetica, sans-serif; paint-order: stroke; stroke: rgba(0, 0, 0, 0.75); stroke-width: 3px; }
+  .rf-m-town-dot { fill: #fff; }
+  .rf-m-gauge { stroke: #fff; stroke-width: 1.4; cursor: pointer; outline: none; }
+  .rf-m-gauge:hover, .rf-m-gauge:focus { stroke-width: 3; }
+  .rf-rain-legend { position: relative; max-width: 480px; margin-top: 0.8rem; padding-bottom: 1.1rem; }
+  .rf-rain-legend-title { margin: 0 0 0.35rem; color: var(--rf-ink); font: 600 0.82rem/1.3 var(--font-sans); }
+  .rf-rain-legend canvas { display: block; width: 100%; height: 10px; border-radius: 3px; }
+  .rf-rain-ticks { position: absolute; left: 0; right: 0; bottom: 0; height: 1rem; }
+  .rf-rain-ticks span { position: absolute; transform: translateX(-50%); color: var(--rf-dim); font: 500 0.72rem/1 var(--font-sans); }
+  .rf-rain-ticks span:first-child { transform: none; }
+  .rf-rain-ticks span:last-child { transform: translateX(-100%); }
+  .rf-rain-key { display: flex; flex-wrap: wrap; gap: 0.3rem 1.2rem; margin: 0.3rem 0 0; color: var(--rf-dim); font: 500 0.78rem/1.3 var(--font-sans); }
+  .rf-rain-key span { display: inline-flex; align-items: center; gap: 0.4rem; }
+  .rf-rain-key i { display: inline-block; flex: none; }
+  .rf-key-zumbro { width: 18px; border-top: 2.5px solid #ffe28a; }
+  .rf-key-river { width: 18px; border-top: 2px solid #d6f0ff; }
+  .rf-key-basin { width: 18px; border-top: 2px dashed #fff; }
+  .rf-key-contour { width: 18px; border-top: 2px solid #fff; }
+  .rf-key-gauge { width: 10px; height: 10px; border-radius: 50%; border: 1.5px solid #fff; background: #518ffd; }
+  .rf-gauges { margin-top: 0.7rem; color: var(--rf-dim); font: 500 0.8rem/1.4 var(--font-sans); }
+  .rf-gauges summary { cursor: pointer; color: var(--rf-ink); font-weight: 600; }
+  .rf-gauges .post-table-scroll { margin-top: 0.5rem; background: #101820; border-color: #33465a; max-height: 340px; overflow-y: auto; }
+  .rf-gauges table { width: 100%; border-collapse: collapse; }
+  .rf-gauges th { position: sticky; top: 0; background: #223040; color: var(--rf-ink); text-align: left; padding: 0.4rem 0.6rem; font-weight: 600; }
+  .rf-gauges td { padding: 0.32rem 0.6rem; border-top: 1px solid #2a3a4a; font-variant-numeric: tabular-nums; }
+  .rf-gauges code { color: var(--rf-ink); font-size: 0.76rem; }
+
+  @media (max-width: 620px) {
+    .rf-m-town { font-size: 30px; stroke-width: 6px; }
+    .rf-m-contour-label { font-size: 30px; stroke-width: 7px; }
+    .rf-m-contour { stroke-width: 3.5; }
+    .rf-m-basin { stroke-width: 3; }
+  }
+
+  /* Tooltips */
+  .rf-tip {
+    position: absolute; z-index: 5; display: grid; gap: 1px; padding: 0.35rem 0.55rem; transform: translate(12px, -50%);
+    border-radius: 6px; border: 1px solid #40566b; background: rgba(16, 24, 32, 0.95); color: #eef4fb;
+    white-space: nowrap; pointer-events: none; font: 500 0.76rem/1.3 var(--font-sans);
+  }
+  .rf-tip[hidden] { display: none; }
+  .rf-tip[data-side='left'] { transform: translate(calc(-100% - 12px), -50%); }
+  .rf-tip strong { font-size: 0.86rem; }
+  .rf-tip span { color: #b6c7d9; }
+
+  /* Charts */
+  .rf-chart { max-width: 820px; margin: 0.6rem auto 0; }
+  .rf-chart-box .rf-chart-svg, .rf-bear .rf-chart-svg { min-width: 0; }
+  .rf-bear .rf-chart { margin: 0; }
+  .rf-bear .rf-chart-svg { height: 284px; }
+  .rf-river-row { display: grid; grid-template-columns: minmax(0, 1.65fr) minmax(0, 1fr); gap: 1.2rem; max-width: 1040px; margin: 0.6rem auto 0; align-items: start; }
+  .rf-river-row .rf-chart, .rf-gauge-fig { margin: 0; max-width: none; }
+  .rf-gauge-map { height: 320px; border-radius: 10px; border: 1px solid var(--border); background: #17212a; z-index: 0; }
+  .rf-gauge-tip { padding: 1px 5px; border: 0; border-radius: 4px; background: rgba(16, 24, 32, 0.9); color: #fff; font: 700 11px/1.3 var(--font-sans); box-shadow: none; }
+  .rf-gauge-tip::before { display: none; }
+  .rf-gauge-list { list-style: none; margin: 0.55rem 0 0; padding: 0; color: var(--text-dim); font: 500 0.8rem/1.35 var(--font-sans); }
+  .rf-gauge-list li { margin: 0.25rem 0; }
+  .rf-gauge-list a { color: var(--accent); font-weight: 700; margin-right: 0.3rem; text-decoration: underline; }
+  @media (max-width: 860px) { .rf-river-row { grid-template-columns: minmax(0, 1fr); } }
+  .rf-chart-box { position: relative; }
+  .rf-chart-svg { height: 320px; }
+  .rf-chart-svg svg { display: block; width: 100%; height: 100%; overflow: visible; }
+  .rf-grid { stroke: var(--border-soft); stroke-width: 1; }
+  .rf-axis { fill: var(--text-faint); font: 500 11.5px var(--font-sans); }
+  .rf-axis--strong { fill: var(--text-dim); font-weight: 600; }
+  .rf-axis--peak { fill: #f04a23; font-weight: 700; }
+  .rf-mark { stroke: var(--text-faint); stroke-width: 1; stroke-dasharray: 5 4; }
+  .rf-area { fill: var(--accent-soft); }
+  .rf-line { fill: none; stroke: var(--accent); stroke-width: 2.4; stroke-linejoin: round; }
+  .rf-peak-dot { fill: #f04a23; stroke: #fff; stroke-width: 1.5; }
+  .rf-hover-dot { fill: var(--accent); stroke: #fff; stroke-width: 1.5; pointer-events: none; }
+  .rf-bar { fill: var(--text-faint); opacity: 0.75; }
+  .rf-bar--named { fill: var(--accent); opacity: 1; }
+  .rf-bar--hot { fill: #f04a23; opacity: 1; }
+  .rf-span { fill: var(--accent-soft); }
+
+  /* Flood map */
+  .rf-flood { display: grid; gap: 0.8rem 1rem; max-width: 1040px; margin: 0.6rem auto 0; grid-template-columns: minmax(0, 1.55fr) minmax(0, 1fr); }
+  .rf-flood-main { min-width: 0; }
+  .rf-flood-map { height: min(66vh, 600px); min-height: 380px; border-radius: 10px; border: 1px solid var(--border); background: #17212a; z-index: 0; }
+  .rf-flood-bar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 0.5rem 1rem; margin-top: 0.6rem; }
+  .rf-flood-bar label { display: flex; flex: 1 1 240px; align-items: center; gap: 0.6rem; color: var(--text-dim); font: 600 0.82rem/1 var(--font-sans); }
+  .rf-flood-bar input { flex: 1; accent-color: var(--accent); }
+  .rf-flood-photo { margin: 0; }
+  .rf-flood-photo img { display: block; width: 100%; height: auto; border-radius: 10px; border: 1px solid var(--border); background: var(--bg-elev); }
+  .rf-flood-photo figcaption { margin-top: 0.55rem; color: var(--text); font: 600 0.92rem/1.4 var(--font-sans); }
+  .rf-flood-strip { grid-column: 1 / -1; display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 0.45rem; }
+  .rf-thumb {
+    display: block; padding: 0; border: 2px solid transparent; border-radius: 7px; background: var(--bg-elev);
+    overflow: hidden; cursor: pointer; text-align: left; color: var(--text-dim);
+  }
+  .rf-thumb img { display: block; width: 100%; height: auto; aspect-ratio: 4 / 3; object-fit: cover; }
+  .rf-thumb span { display: block; padding: 0.25rem 0.35rem; font: 500 0.68rem/1.25 var(--font-sans); }
+  .rf-thumb[aria-pressed='true'] { border-color: #f04a23; }
+  @media (max-width: 860px) {
+    .rf-flood { grid-template-columns: minmax(0, 1fr); }
+    .rf-flood-strip { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  }
+  @media (max-width: 520px) { .rf-flood-strip { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+</style>
