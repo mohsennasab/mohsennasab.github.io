@@ -62,6 +62,23 @@ const WBD = 'https://hydro.nationalmap.gov/arcgis/rest/services/wbd/MapServer';
 const NHD = 'https://hydro.nationalmap.gov/arcgis/rest/services/nhd/MapServer';
 const MNHS = 'https://storage.googleapis.com/mnhs-finding-aids-public/library/findaids/sv000307.html';
 const RANG = 'https://github.com/mohsennasab/Rang';
+const FIELD_TOUR = 'https://www.mnafpm.org/conference/2026-field-tour';
+
+// Conference photos (small carousel, not meant to be opened or saved) and field tour photos (open larger on click).
+const MN_DIR = '/blog/rochester-1978/mnafpm';
+const talkSlides = [
+  { file: 'award-2.jpg', caption: 'With the award.', alt: 'Mohsen smiling and holding the speaker award, a small trophy topped with three blue water drops' },
+  { file: 'talk.jpg', caption: 'Giving my talk at the conference.', alt: 'Mohsen Tahmasebi Nasab presenting to a room of conference attendees, with his title slide on the screen behind him' },
+  { file: 'award.jpg', caption: 'Receiving one of the best speaker awards.', alt: 'Mohsen shaking hands with a conference organizer while receiving a speaker award, as people in the audience take photos' },
+];
+const tourPhotos = [
+  { caption: 'Silver Lake Dam, with the lake drawn down and the old dam coming out.', alt: 'Excavators working beside the gated Silver Lake Dam on the South Fork Zumbro River, with water pouring through the gates and an apartment tower behind' },
+  { caption: 'Looking upstream over the drained lake bed at Silver Lake.', alt: 'Two excavators breaking up a concrete wall in the river below the Silver Lake Dam control house, with the drawn-down lake and mud flats beyond' },
+  { caption: 'Water through the Silver Lake Dam gates during the work.', alt: 'Wide view of the Silver Lake Dam gates and walkway, with white water below the gates and excavators at work to the left' },
+  { caption: 'A drop on Bear Creek, near the levee stop.', alt: 'Water spilling over a long stepped concrete drop across Bear Creek, between fenced concrete walls, with bare trees under a gray sky' },
+  { caption: 'Gamehaven Reservoir and its outlet tower.', alt: 'A concrete outlet tower standing in the water near the grassy dam slope at Gamehaven Reservoir, with wooded hills behind' },
+  { caption: 'Looking downstream from the Gamehaven dam.', alt: 'View from the top of the grassy dam down to a small creek winding through a mowed valley with a footbridge and a large bare tree' },
+];
 
 // Numbers used in the text come from the same file the page's charts read.
 const stats = data.grid_stats;
@@ -123,7 +140,7 @@ const logRows = [
 
 <Base
   title="Rochester's Flood of July 1978, Read From One Sheet of Paper"
-  description="Ahead of the Minnesota floodplain managers conference in Rochester, a close look at the USGS plate that recorded the flood of July 1978, with interactive rainfall, river, and then-and-now maps. By Dr. Mohsen Tahmasebi Nasab."
+  description="Notes from the Minnesota floodplain managers conference in Rochester and its tour of the city's flood control system, then a close look at the USGS plate that recorded the flood of July 1978, with interactive rainfall, river, and then-and-now maps. By Dr. Mohsen Tahmasebi Nasab."
 >
   <div class="post-hero">
     <PageHeader
@@ -134,7 +151,7 @@ const logRows = [
       bgPos="center 45%"
     >
       <p class="post-byline">Mohsen Tahmasebi Nasab, PhD</p>
-      <p class="post-meta">Nov 2, 2026 · about a 16 minute read</p>
+      <p class="post-meta">Nov 2, 2026 · updated Nov 7, 2026 · about a 19 minute read</p>
     </PageHeader>
   </div>
 
@@ -143,11 +160,130 @@ const logRows = [
   <article>
     <section class="section section--tight">
       <div class="wrap post">
+        <h2 id="conference" class="post-first">Back from Rochester</h2>
+
+        <figure class="mn-carousel" data-mn-carousel aria-roledescription="carousel" aria-label="Photos from the conference">
+          <div class="mn-frame">
+            {talkSlides.map((s, i) => (
+              <div
+                class={i === 0 ? 'mn-slide is-on' : 'mn-slide'}
+                role="img"
+                aria-label={s.alt}
+                aria-hidden={i === 0 ? undefined : 'true'}
+                data-caption={s.caption}
+                style={`background-image:url(${MN_DIR}/${s.file})`}
+              ></div>
+            ))}
+            <button type="button" class="mn-nav mn-nav--prev" data-mn-step="-1" aria-label="Previous photo">‹</button>
+            <button type="button" class="mn-nav mn-nav--next" data-mn-step="1" aria-label="Next photo">›</button>
+          </div>
+          <div class="mn-dots" role="group" aria-label="Choose a photo">
+            {talkSlides.map((_, i) => (
+              <button type="button" data-mn-go={i} aria-label={`Photo ${i + 1} of ${talkSlides.length}`} aria-current={i === 0 ? 'true' : undefined}></button>
+            ))}
+          </div>
+          <figcaption data-mn-caption>{talkSlides[0].caption}</figcaption>
+        </figure>
+
         <p class="post-intro">
-          This week I will be in Rochester for the
-          <a href={MNAFPM} target="_blank" rel="noopener">Minnesota Association of Floodplain Managers conference</a>,
-          November 4 to 6. I like to know something about a city before I show up in it. For a water resources engineer
-          in Rochester, the place to start is the flood of July 1978.
+          I spent November 4 and 5 in Rochester at the
+          <a href={MNAFPM} target="_blank" rel="noopener">Minnesota Association of Floodplain Managers conference</a>, and
+          I came home with a full notebook. I learned a lot about how floodplains are managed across Minnesota, from
+          mapping and regulations to the local projects that protect homes and businesses. I also heard the first ideas
+          for a Minnesota Flood Center, and I am curious to see where that goes.
+        </p>
+        <p>
+          My own talk was about communication. I argued that we should design our communication as carefully as we
+          design our technical solutions, and that the design should start with the people who need to understand and use
+          the results. I also showed how supervised agentic AI is helping us try new ways of communicating, with an
+          engineer checking what the agents produce at every step. To my surprise, the talk won one of the conference's
+          best speaker awards.
+        </p>
+        <p>
+          It was great to see that floodplain professionals in our state agree that communication is a key part of what
+          we do. That talk is also the reason this post exists. Before the conference I wanted to try what I was about to
+          recommend, so I took Rochester's flood of 1978 and tried to tell its story with maps and charts that someone
+          without an engineering degree could follow. Most of this post is that work. First, though, the part of the
+          trip I had been waiting for.
+        </p>
+
+        <h2 id="tour">The field tour</h2>
+        <p>
+          On the afternoon of November 4, the <a href={FIELD_TOUR} target="_blank" rel="noopener">conference field
+          tour</a> took us around Rochester's flood control system. I had spent weeks with a plate printed in 1979, so it
+          was a treat to stand at the places it shows and see what was built after the water went down. We made five stops.
+        </p>
+        <ul>
+          <li>
+            Silver Lake Dam, just north of downtown, where the old low-head dam that holds Silver Lake is
+            <a href={SILVER} target="_blank" rel="noopener">being replaced with a rock arch rapids</a>, and we watched
+            excavators breaking it up while the lake was drawn down.
+          </li>
+          <li>
+            The Bear Creek levee, about 3,100 feet long, which protects Mayo High School, Holy Trinity Church, and the
+            properties west of the Bear Creek channel.
+          </li>
+          <li>
+            Gamehaven Reservoir, one of the flood control reservoirs on Willow Creek south of the city, where an earthen dam
+            holds back runoff before it reaches Rochester.
+          </li>
+          <li>
+            Willow Creek Reservoir, a second reservoir on the creek's west fork, about 70 acres in size according to the
+            <a href={CITY_RES} target="_blank" rel="noopener">2003 South Zumbro watershed plan</a>.
+          </li>
+          <li>
+            The upstream drop structure on the South Fork Zumbro River, a concrete step that lowers the river at one
+            controlled spot so the enlarged flood channel downstream does not erode its own bed.
+          </li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="section section--flush">
+      <div class="wrap">
+        <div class="mn-tour" data-mn-tour>
+          {tourPhotos.map((p, i) => (
+            <figure>
+              <button type="button" data-mn-open={i} aria-label={`Open a larger view: ${p.caption}`}>
+                <img src={`${MN_DIR}/tour-${i + 1}-thumb.jpg`} alt={p.alt} width="640" height="480" loading="lazy" />
+              </button>
+              <figcaption>{p.caption}</figcaption>
+            </figure>
+          ))}
+        </div>
+        <p class="dash-help">Select a photo to see it larger.</p>
+        <dialog class="mn-box" data-mn-box aria-label="Field tour photo">
+          <img data-mn-box-img alt="" />
+          <p data-mn-box-cap></p>
+          <button type="button" class="mn-box-close" data-mn-box-close aria-label="Close">×</button>
+          <button type="button" class="mn-nav mn-nav--prev" data-mn-box-step="-1" aria-label="Previous photo">‹</button>
+          <button type="button" class="mn-nav mn-nav--next" data-mn-box-step="1" aria-label="Next photo">›</button>
+        </dialog>
+      </div>
+    </section>
+
+    <section class="section section--tight">
+      <div class="wrap post">
+        <p>
+          Every stop on the tour traces back to the flood in this post. After July 1978 the Corps of Engineers, Olmsted
+          County, and the City built the project in stages, and the
+          <a href={CORPS_ROCH} target="_blank" rel="noopener">Corps history</a> and the documents listed
+          <a href="#after">further down</a> tell that story. Willow Creek, where we saw the two reservoirs, drains into Bear
+          Creek, and Bear Creek's peak in 1978 is one of the numbers on the plate that surprised me most.
+          hills south of town.
+        </p>
+        <p>
+          The tour also changed how I read one of my own maps. Silver Lake is the dark bulge in the river on the 1979
+          photomosaic, and today's imagery in the then-and-now map below still shows a lake there. By next fall that spot
+          will be a set of rapids.
+        </p>
+
+        <h2 id="why">Why I went looking at 1978</h2>
+        <p>
+          I like to know something about a city before I show up in it, and for a water resources engineer in Rochester,
+          the place to start is the flood of July 1978. It also fit my talk. If I was going to tell a room of floodplain
+          managers that the way we present our work deserves as much care as the analysis, I wanted to try that on a real
+          event first. I wrote what follows the week before the conference.
         </p>
         <p>
           The flood reached me through one sheet of paper. In 1979 the U.S. Geological Survey published
@@ -765,7 +901,8 @@ const logRows = [
         <p>
           Work on the river continues. Silver Lake, the dark bulge in the river on the plate, is
           <a href={SILVER} target="_blank" rel="noopener">being drawn down this fall</a> so the old low-head dam can become a
-          rock arch rapids, due by September 2027. The lake I see next week will look like neither the plate nor the imagery.
+          rock arch rapids, due by September 2027. The <a href="#tour">field tour photos</a> near the top of this post show it
+          on November 4, with the lake drawn down and the excavators at work on the dam.
         </p>
 
         <h2 id="data">The data, and how far to trust it</h2>
@@ -854,8 +991,8 @@ const logRows = [
 
         <p class="post-signoff">
           If you remember 1978, or you know this river well, I would love to hear about it. A technical report can keep
-          measurements and photographs. It cannot tell the whole story of what a flood meant to a city. And if you are at the
-          conference next week, come say hello.<br />Mohsen :)
+          measurements and photographs. It cannot tell the whole story of what a flood meant to a city. And to everyone I
+          met in Rochester, thank you for the conversations, the tour, and the award.<br />Mohsen :)
         </p>
 
         <p class="post-back"><a href="/blog">← Back to blog</a></p>
@@ -866,6 +1003,72 @@ const logRows = [
 
 <script>
   import '../../scripts/rochester-1978';
+
+  // Conference carousel. The photos are drawn as backgrounds and are not meant to be opened or saved.
+  function initCarousel(root: HTMLElement): void {
+    const slides = [...root.querySelectorAll<HTMLElement>('.mn-slide')];
+    const dots = [...root.querySelectorAll<HTMLButtonElement>('[data-mn-go]')];
+    const caption = root.querySelector<HTMLElement>('[data-mn-caption]');
+    let current = 0;
+    const show = (n: number) => {
+      current = (n + slides.length) % slides.length;
+      slides.forEach((s, i) => {
+        s.classList.toggle('is-on', i === current);
+        if (i === current) s.removeAttribute('aria-hidden');
+        else s.setAttribute('aria-hidden', 'true');
+      });
+      dots.forEach((d, i) => (i === current ? d.setAttribute('aria-current', 'true') : d.removeAttribute('aria-current')));
+      if (caption) caption.textContent = slides[current].dataset.caption ?? '';
+    };
+    root.querySelectorAll<HTMLButtonElement>('[data-mn-step]').forEach((b) =>
+      b.addEventListener('click', () => show(current + Number(b.dataset.mnStep))),
+    );
+    dots.forEach((d) => d.addEventListener('click', () => show(Number(d.dataset.mnGo))));
+    let startX: number | null = null;
+    const frame = root.querySelector<HTMLElement>('.mn-frame');
+    frame?.addEventListener('touchstart', (e) => (startX = e.touches[0].clientX), { passive: true });
+    frame?.addEventListener('touchend', (e) => {
+      if (startX === null) return;
+      const dx = e.changedTouches[0].clientX - startX;
+      if (Math.abs(dx) > 40) show(current + (dx < 0 ? 1 : -1));
+      startX = null;
+    });
+    root.addEventListener('contextmenu', (e) => e.preventDefault());
+    root.addEventListener('dragstart', (e) => e.preventDefault());
+  }
+
+  // Field tour photos open larger in a dialog.
+  function initTour(grid: HTMLElement, box: HTMLDialogElement): void {
+    const buttons = [...grid.querySelectorAll<HTMLButtonElement>('[data-mn-open]')];
+    const img = box.querySelector<HTMLImageElement>('[data-mn-box-img]')!;
+    const cap = box.querySelector<HTMLElement>('[data-mn-box-cap]')!;
+    let current = 0;
+    const show = (n: number) => {
+      current = (n + buttons.length) % buttons.length;
+      const thumb = buttons[current].querySelector('img')!;
+      img.src = thumb.src.replace('-thumb.jpg', '.jpg');
+      img.alt = thumb.alt;
+      cap.textContent = buttons[current].parentElement?.querySelector('figcaption')?.textContent ?? '';
+    };
+    buttons.forEach((b, i) => b.addEventListener('click', () => { show(i); box.showModal(); }));
+    box.querySelectorAll<HTMLButtonElement>('[data-mn-box-step]').forEach((b) =>
+      b.addEventListener('click', () => show(current + Number(b.dataset.mnBoxStep))),
+    );
+    box.querySelector('[data-mn-box-close]')?.addEventListener('click', () => box.close());
+    box.addEventListener('click', (e) => { if (e.target === box) box.close(); });
+    box.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight') show(current + 1);
+      if (e.key === 'ArrowLeft') show(current - 1);
+    });
+  }
+
+  document.addEventListener('astro:page-load', () => {
+    const carousel = document.querySelector<HTMLElement>('[data-mn-carousel]');
+    if (carousel && !carousel.dataset.ready) { carousel.dataset.ready = '1'; initCarousel(carousel); }
+    const grid = document.querySelector<HTMLElement>('[data-mn-tour]');
+    const box = document.querySelector<HTMLDialogElement>('[data-mn-box]');
+    if (grid && box && !grid.dataset.ready) { grid.dataset.ready = '1'; initTour(grid, box); }
+  });
 </script>
 
 <style>
@@ -928,6 +1131,69 @@ const logRows = [
   .rf-pair a, .rf-bear a { color: var(--text-dim); text-decoration: underline; }
   .rf-bear { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: 1.2rem; margin: 0.4rem 0 1.5rem; align-items: start; }
   @media (max-width: 620px) { .rf-pair, .rf-bear { grid-template-columns: minmax(0, 1fr); } }
+
+  .post h2.post-first { margin-top: 0; }
+
+  /* Conference carousel, small and floated beside the text */
+  .mn-carousel {
+    float: right; width: 280px; margin: 0.3rem 0 1.2rem 2rem;
+    user-select: none; -webkit-user-select: none; -webkit-touch-callout: none;
+  }
+  .mn-frame {
+    position: relative; aspect-ratio: 3 / 4; overflow: hidden;
+    border-radius: var(--radius-sm); border: 1px solid var(--border-soft); background: var(--bg-elev);
+  }
+  .mn-slide {
+    position: absolute; inset: 0; background-size: cover; background-position: center;
+    opacity: 0; transition: opacity 0.35s ease; pointer-events: none;
+  }
+  .mn-slide.is-on { opacity: 1; }
+  .mn-nav {
+    position: absolute; top: 50%; transform: translateY(-50%);
+    width: 34px; height: 34px; border-radius: 50%; border: 0; cursor: pointer;
+    background: rgba(20, 30, 40, 0.6); color: #fff; font: 600 1.35rem/1 var(--font-sans);
+    display: grid; place-items: center; padding: 0 0 3px;
+  }
+  .mn-nav:hover, .mn-nav:focus-visible { background: rgba(20, 30, 40, 0.85); }
+  .mn-nav--prev { left: 8px; }
+  .mn-nav--next { right: 8px; }
+  .mn-dots { display: flex; justify-content: center; gap: 0.45rem; margin-top: 0.6rem; }
+  .mn-dots button {
+    width: 9px; height: 9px; padding: 0; border-radius: 50%; cursor: pointer;
+    border: 1px solid var(--accent); background: transparent;
+  }
+  .mn-dots button[aria-current='true'] { background: var(--accent); }
+  .mn-carousel figcaption {
+    margin-top: 0.45rem; font-size: 0.82rem; color: var(--text-faint); line-height: 1.5;
+    text-align: center; font-style: italic; min-height: 2.5em;
+  }
+  @media (max-width: 640px) {
+    .mn-carousel { float: none; width: min(280px, 100%); margin: 0.4rem auto 1.4rem; }
+  }
+
+  /* Field tour photos */
+  .mn-tour { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0.9rem; max-width: 980px; margin: 0 auto; }
+  .mn-tour figure { margin: 0; }
+  .mn-tour button {
+    display: block; width: 100%; padding: 0; border: 1px solid var(--border-soft); border-radius: var(--radius-sm);
+    overflow: hidden; cursor: zoom-in; background: var(--bg-elev);
+  }
+  .mn-tour img { display: block; width: 100%; height: auto; transition: transform 0.3s ease; }
+  .mn-tour button:hover img, .mn-tour button:focus-visible img { transform: scale(1.03); }
+  .mn-tour figcaption { margin-top: 0.45rem; font-size: 0.82rem; color: var(--text-faint); line-height: 1.5; }
+  @media (max-width: 760px) { .mn-tour { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+
+  .mn-box {
+    max-width: min(94vw, 1200px); max-height: 94vh; padding: 0; border: 0; border-radius: var(--radius-sm);
+    background: #0d141b; color: #fff; overflow: visible;
+  }
+  .mn-box::backdrop { background: rgba(5, 10, 15, 0.85); }
+  .mn-box img { display: block; max-width: min(94vw, 1200px); max-height: calc(94vh - 3rem); width: auto; height: auto; margin: 0 auto; border-radius: var(--radius-sm) var(--radius-sm) 0 0; }
+  .mn-box p { margin: 0; padding: 0.7rem 1rem; font-size: 0.9rem; color: #d6e2ee; text-align: center; }
+  .mn-box-close {
+    position: absolute; top: 8px; right: 8px; width: 36px; height: 36px; border-radius: 50%; border: 0; cursor: pointer;
+    background: rgba(20, 30, 40, 0.7); color: #fff; font: 600 1.4rem/1 var(--font-sans);
+  }
 
   .post-sources { font-size: 0.94rem !important; }
   .post-signoff { margin-top: 2rem !important; font-style: italic; }
