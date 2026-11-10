@@ -1,0 +1,253 @@
+---
+import Base from '../../layouts/Base.astro';
+import PageHeader from '../../components/PageHeader.astro';
+import headerBg from '../../assets/photos/photo-13.jpg';
+
+const DIR = '/blog/a-small-act-of-kindness';
+---
+
+<Base
+  title="An Email and a Small Act of Kindness"
+  description="A long email from a graduate student in Tehran, a patient reply from Heidi Nepf at MIT, and meeting her in person 17 years later. By Dr. Mohsen Tahmasebi Nasab."
+  image={`${DIR}/share.jpg`}
+>
+  <PageHeader
+    eyebrow="// blog"
+    title="An Email and a Small Act of Kindness"
+    lede="A small act of kindness that stayed with me."
+    bgImage={headerBg}
+    bgPos="center 50%"
+  >
+    <p class="post-meta">Nov 8, 2026 · about a 4 minute read</p>
+  </PageHeader>
+
+  <article class="section">
+    <div class="wrap post">
+      <p class="kind-lead">
+        We spend a lot of time talking about the technical side of engineering and science, and
+        rightfully so. But I sometimes think we underestimate the human side of what we do. The way we
+        interact with students, young engineers, and early-career scientists can shape their lives and
+        careers in ways that neither they nor we may ever realize. I want to share a personal story
+        about this.
+      </p>
+      <p>
+        About 17 years ago, when I was starting my master's degree at the University of Tehran, I spent
+        a lot of time reading journal papers, trying to figure out what interested me and what direction
+        I wanted to take in research. One day, I came across a fascinating paper from Dr. Heidi Nepf's
+        lab at MIT about the hydraulics of submerged vegetated channels. I was amazed by the physics of
+        it all. And to be completely honest, most of the concepts and equations went right over my head!
+        :) But I was curious. Really curious. So I decided to email Heidi.
+      </p>
+      <p>
+        I wrote a long email, probably in pretty broken English, filled with questions, requests, and
+        things I didn't understand. Looking back, I'm sure some of my questions were very basic.
+        A few days later, I received a reply. Heidi had taken the time to
+        respond to my questions, patiently share additional resources, and encourage me to keep reading
+        and exploring.
+      </p>
+      <p>
+        I still remember how that email made me feel. Here I was, a young graduate student in Tehran,
+        thousands of miles away from MIT, and a world-renowned researcher had taken the time to help me
+        simply because I was curious and wanted to learn. It meant a lot to me.
+      </p>
+      <p>
+        Years later, I became a faculty member myself. And suddenly, that email meant even more. I began
+        to understand how busy professors can be, how many emails and competing priorities fill their
+        days, and how easy it would have been for Heidi to simply move on to the next email.
+        But she didn't. And without knowing it, she had taught me something
+        beyond hydraulics.
+      </p>
+      <blockquote class="kind-quote">
+        She had shown me the kind of professor, mentor, and person I wanted to be.
+      </blockquote>
+
+      <figure class="post-fig kind-photo">
+        <div
+          class="kind-photo-img"
+          role="img"
+          aria-label="Heidi Nepf and Mohsen Tahmasebi Nasab standing together and smiling in front of a wood-paneled wall"
+          style={`background-image:url(${DIR}/photo.jpg)`}
+        ></div>
+        <figcaption>With Heidi in Minneapolis, November 2026.</figcaption>
+      </figure>
+      <p>
+        Fast forward about 17 years. I learned that Heidi was coming to Minneapolis to give a presentation.
+        There was no way I was going to miss it! I attended her presentation and finally had the
+        opportunity to meet her in person. I told her about that email from 17 years ago. I told her how
+        much her kindness had meant to a young student in Tehran.
+      </p>
+      <p>
+        I also shared a funny coincidence: Years after our email exchange, I became a visiting assistant
+        professor at Bucknell University, the same university where she had earned her undergraduate
+        degree back in the 1980s. What a small world!
+      </p>
+      <p>
+        But most importantly, I got to tell her something she probably never knew: her
+        kindness had shaped a part of my life, my career, and the way I try to treat others.
+        And we took a photo together. That moment has earned a special place among my favorite memories.
+      </p>
+      <p>
+        I keep thinking about how easy it would have been for Heidi to ignore that long email from a
+        student with limited knowledge of hydrodynamics and imperfect English. She probably doesn't
+        remember writing that email. For her, it might have been just another ordinary day. But for me,
+        it was anything but ordinary.
+      </p>
+
+      <div class="kind-box">
+        <p>
+          And that's really the point of sharing this story. We don't always know the impact we
+          have on others. Sometimes it's a thoughtful response to an email. Sometimes it's a few
+          words of encouragement, a little patience, or simply taking someone seriously when they're
+          still trying to find their way. Those moments may seem small to us, but they can stay with
+          someone for a lifetime.
+        </p>
+      </div>
+
+      <p>
+        And I believe kindness is something worth standing up for, even when it isn't the easiest or
+        most convenient choice. I remember a time in my academic career when I strongly advocated for
+        university leadership to send simple, personal messages to students who had been affected by a
+        crisis. I was surprised by how much effort it took to make the case for something that seemed so
+        basic to me. At one point, I received a response from leadership that felt completely
+        disconnected from the human side of what those students were experiencing.
+      </p>
+      <p>
+        I remember reminding them that their legacy wouldn't be defined by bigger buildings, fancier
+        facilities, or higher rankings. Their real legacy would be the lives they touched and how they made people feel.
+
+        I still believe that. And perhaps that's one of the most valuable lessons I learned from Heidi's
+        email all those years ago.
+      </p>
+      <p>
+        Kindness isn't always a grand gesture. Sometimes it's simply choosing to see the person on the
+        other side.
+      </p>
+
+      <div class="kind-thanks">
+        <p>
+          Thank you, Heidi, and thank you to everyone who chooses to be kind, patient, and encouraging,
+          especially when they don't have to. You may be making a bigger difference than you
+          realize.
+        </p>
+        <p class="post-signoff">Mohsen :)</p>
+      </div>
+
+      <p class="post-back"><a href="/blog">← Back to blog</a></p>
+    </div>
+  </article>
+</Base>
+
+<script>
+  // The photo is shown small and is not meant to be opened or saved: block the right-click menu and dragging on it.
+  document.addEventListener('contextmenu', (e) => {
+    if ((e.target as Element | null)?.closest?.('.kind-photo')) e.preventDefault();
+  });
+  document.addEventListener('dragstart', (e) => {
+    if ((e.target as Element | null)?.closest?.('.kind-photo')) e.preventDefault();
+  });
+</script>
+
+<style>
+  .post-meta {
+    margin-top: 1rem;
+    font: 600 0.82rem/1 var(--font-sans);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-faint);
+  }
+
+  .post > p {
+    color: var(--text-dim);
+    line-height: 1.75;
+    margin: 0 0 1.15rem;
+    font-size: 1.03rem;
+  }
+
+  .post-fig {
+    margin: 0.35rem 0 1.2rem 2rem;
+  }
+  .kind-photo {
+    float: right;
+    width: 300px;
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-touch-callout: none;
+  }
+  .kind-photo-img {
+    aspect-ratio: 640 / 768;
+    background-size: cover;
+    background-position: center;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border-soft);
+    pointer-events: none;
+  }
+  .post-fig figcaption {
+    margin-top: 0.7rem;
+    font-size: 0.82rem;
+    color: var(--text-faint);
+    line-height: 1.55;
+    text-align: center;
+    font-style: italic;
+  }
+
+  @media (max-width: 640px) {
+    .kind-photo { float: none; width: min(300px, 100%); margin: 1.6rem auto; }
+  }
+
+  .post > p.kind-lead {
+    font-size: 1.15rem;
+    color: var(--text);
+  }
+
+  .kind-quote {
+    margin: 0.4rem 0 1.8rem;
+    padding: 0.4rem 0 0.4rem 1.4rem;
+    border-left: 4px solid var(--accent);
+    font-size: 1.4rem;
+    line-height: 1.45;
+    font-weight: 600;
+    color: var(--accent-2);
+  }
+
+  .kind-box {
+    clear: both;
+    margin: 1.8rem 0;
+    padding: 1.4rem 1.6rem;
+    background: var(--accent-soft);
+    border: 1px solid var(--accent-line);
+    border-radius: var(--radius-sm);
+  }
+  .kind-box p, .kind-thanks p { margin: 0; color: var(--text-dim); line-height: 1.75; font-size: 1.03rem; }
+
+  .kind-thanks {
+    margin-top: 2rem;
+    padding: 1.4rem 1.6rem;
+    background: var(--bg-elev);
+    border: 1px solid var(--border-soft);
+    border-radius: var(--radius-sm);
+  }
+  .kind-thanks .post-signoff { margin-top: 1rem; }
+
+  @media (max-width: 760px) {
+    .kind-quote { font-size: 1.2rem; }
+  }
+
+  @media (max-width: 640px) {
+    .kind-photo { float: none; width: min(300px, 100%); margin: 1.6rem auto; }
+  }
+
+  .post-signoff {
+    clear: both;
+    margin-top: 2rem;
+    font-style: italic;
+    color: var(--text-dim);
+  }
+  .post-back {
+    margin-top: 2.4rem;
+    padding-top: 1.4rem;
+    border-top: 1px solid var(--border-soft);
+    font: 600 0.85rem/1 var(--font-sans);
+  }
+  .post-back a { color: var(--text-faint); }
+  .post-back a:hover { color: var(--accent); }
+</style>
