@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fundamentals of Python for H&amp;H Modeling and Analysis</title>
+  <meta name="description" content="A practical, interactive Python course for water resources, hydrology, and hydraulics engineers running free in Google Colab.">
+  <link rel="icon" type="image/png" href="./assets/favicon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script>
+    (function () {
+      try {
+        var saved = localStorage.getItem("hh_python_theme");
+        var prefersDark = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
+        document.documentElement.dataset.theme = saved || (prefersDark ? "dark" : "light");
+      } catch (e) {
+        document.documentElement.dataset.theme = "light";
+      }
+    })();
+  </script>
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+
+  <!-- Header -->
+  <header class="site-header">
+    <div class="container nav-inner">
+      <a class="brand" href="#top">
+        <img src="./assets/logo-pixel.png" alt="Python for H&amp;H logo" width="32" height="32">
+        <span>Python for H&amp;H</span>
+      </a>
+
+      <nav class="nav-links" aria-label="Course sections">
+        <a href="#modules">Modules</a>
+        <a href="#code">Code Preview</a>
+        <a href="#start">Getting Started</a>
+        <a href="#tools">Tools</a>
+        <a href="#contribute">Contribute</a>
+      </nav>
+
+      <div class="nav-actions">
+        <button type="button" class="btn btn-sm theme-toggle" id="themeToggleBtn" aria-label="Toggle dark mode" aria-pressed="false"></button>
+        <a class="btn btn-sm hide-sm" href="https://hydromohsen.com" target="_blank" rel="noopener noreferrer">hydromohsen.com</a>
+        <a class="btn btn-sm btn-primary" href="https://github.com/mohsennasab/python-fundamentals-hh" target="_blank" rel="noopener noreferrer">GitHub Repo</a>
+      </div>
+    </div>
+  </header>
+
+  <main id="top">
+
+    <!-- Hero + Interactive Water & Python Animation -->
+    <section class="hero">
+      <div class="container hero-grid">
+        <div>
+          <span class="eyebrow">Open Course &middot; 10 Modules &middot; 17 Colab Notebooks</span>
+          <h1>Fundamentals of Python for H&amp;H Modeling and Analysis</h1>
+          <p class="hero-lead">
+            A practical Python course for water resources engineers who want usable scripting skills for hydrologic and hydraulic modeling without turning into software engineers. Learn with real USGS streamflow, spatial vector and raster layers, Atlas 14 design storms, soils, NLCD, NAIP imagery, and snowpack grids directly in Google Colab.
+          </p>
+          <div class="hero-ctas">
+            <a class="btn btn-primary" href="https://colab.research.google.com/github/mohsennasab/python-fundamentals-hh/blob/main/notebooks/01_setup_and_fundamentals/01_01_introduction_fundamentals.ipynb" target="_blank" rel="noopener noreferrer">
+              Start Module 1 in Colab
+            </a>
+            <a class="btn" href="#modules">Browse All 10 Modules</a>
+          </div>
+          <div class="hero-meta-strip">
+            <span class="hero-meta-item"><strong>Zero setup</strong> in Google Colab</span>
+            <span class="hero-meta-item"><strong>100% public</strong> USGS, NOAA, NRCS &amp; NSIDC datasets</span>
+            <span class="hero-meta-item"><strong>Personal educational use</strong> free forever</span>
+          </div>
+        </div>
+
+        <div class="sim-card" aria-label="Interactive watershed runoff and hydrograph animation">
+          <div class="sim-header">
+            <span class="sim-title">watershed_hydrograph.py</span>
+            <span class="sim-hint">Click sky for rain or adjust CN</span>
+          </div>
+          <div class="sim-canvas-wrap">
+            <canvas id="hydroCanvas" aria-label="Animated watershed hillslope with rainfall, river flow, and live discharge hydrograph"></canvas>
+          </div>
+          <div class="sim-controls">
+            <div class="sim-btn-group">
+              <button type="button" class="btn btn-sm btn-primary" id="triggerStormBtn">Trigger Storm</button>
+            </div>
+            <div class="sim-btn-group">
+              <label class="cn-control" for="cnSlider">
+                CN <input type="range" id="cnSlider" min="55" max="92" value="78">
+                <strong id="cnValue">78</strong>
+              </label>
+              <button type="button" class="btn btn-sm" id="pauseSimBtn">Pause</button>
+            </div>
+          </div>
+          <pre class="sim-code-readout" id="simReadout"></pre>
+        </div>
+      </div>
+    </section>
+
+    <!-- What Makes This Course Different -->
+    <section class="section section-muted">
+      <div class="container">
+        <div class="section-header">
+          <h2>What Makes This Course Different</h2>
+          <p>Designed for practicing engineers who already understand runoff, gauges, and watersheds and want clear code that fits daily engineering work.</p>
+        </div>
+        <div class="pillars-grid">
+          <article class="card">
+            <h3>Real-World Focus</h3>
+            <p>Every lesson works through daily H&amp;H tasks (time series, vector watersheds, DEMs, USGS stream gauges, precipitation frequency storms, soils, land cover, imagery, and snowpack volume) with real public datasets.</p>
+          </article>
+          <article class="card">
+            <h3>Clarity Over Complexity</h3>
+            <p>The emphasis stays on readable, commented code that replaces repetitive spreadsheet steps, documents engineering assumptions, and creates reproducible tables and figures.</p>
+          </article>
+          <article class="card">
+            <h3>AI-Assisted Learning</h3>
+            <p>AI assistants have changed how engineers write and debug scripts. Each module includes practical prompts that help you inspect unfamiliar libraries, spot unit or projection mistakes, and adapt code with engineering judgment.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- Course Modules Directory -->
+    <section class="section" id="modules">
+      <div class="container">
+        <div class="section-header">
+          <h2>Course Modules</h2>
+          <p>Select a learning track, filter by level or keyword, and open any notebook straight into Google Colab. Check off lessons as you finish them to track progress in this browser.</p>
+        </div>
+
+        <div class="path-row" id="pathRow"></div>
+        <p class="path-note" id="pathNote"></p>
+
+        <div class="curriculum-toolbar">
+          <div class="filter-group">
+            <div class="level-pills" role="group" aria-label="Filter by difficulty level">
+              <button type="button" class="pill active" data-level="all">All Levels</button>
+              <button type="button" class="pill" data-level="beginner">Beginner</button>
+              <button type="button" class="pill" data-level="intermediate">Intermediate</button>
+              <button type="button" class="pill" data-level="advanced">Advanced</button>
+            </div>
+            <div class="search-box">
+              <svg class="search-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+                <circle cx="7" cy="7" r="4.5"></circle>
+                <path d="M10.5 10.5L14 14"></path>
+              </svg>
+              <input type="search" id="moduleSearch" placeholder="Search topic, dataset, or library..." aria-label="Search modules">
+            </div>
+          </div>
+
+          <div class="progress-wrap">
+            <span id="progressText">0 / 17 lessons completed</span>
+            <div class="progress-track" aria-hidden="true">
+              <div class="progress-fill" id="progressFill"></div>
+            </div>
+            <button type="button" class="reset-link" id="resetProgressBtn">Reset</button>
+          </div>
+        </div>
+
+        <div class="module-list" id="moduleList"></div>
+      </div>
+    </section>
+
+    <!-- Mental Models Code Explorer -->
+    <section class="section section-muted" id="code">
+      <div class="container">
+        <div class="section-header">
+          <h2>From Spreadsheets and GIS Clicks to Readable Python</h2>
+          <p>Inspect four real patterns taught across the course and compare manual workflows against short, repeatable Python scripts.</p>
+        </div>
+
+        <div class="code-tabs" id="codeTabs"></div>
+        <div class="code-panel" id="codePanel"></div>
+      </div>
+    </section>
+
+    <!-- Getting Started, Units Note & Video -->
+    <section class="section" id="start">
+      <div class="container start-grid">
+        <div>
+          <div class="section-header">
+            <h2>Getting Started</h2>
+            <p>Everything runs online in a free Google Colab account, or locally if you prefer cloning the GitHub repository.</p>
+          </div>
+
+          <ol class="step-list">
+            <li><span class="step-badge">1</span><span><strong>Download or open online.</strong> Launch any notebook directly in Google Colab from the course table above or clone the repository for local work.</span></li>
+            <li><span class="step-badge">2</span><span><strong>Set up your workspace.</strong> Walk through Module 1 to connect spreadsheet mental models to variables, loops, and functions.</span></li>
+            <li><span class="step-badge">3</span><span><strong>Work sequentially.</strong> Run code cells from top to bottom, verify every QA/QC printout, and try the practice debugging exercises.</span></li>
+          </ol>
+
+          <div class="info-note">
+            <h4>A Note on Units</h4>
+            <p>Many examples use U.S. customary units alongside SI units (such as <code>cfs</code> alongside <code>cms</code>, or inches alongside millimeters) to match USGS and NOAA agency conventions. Practice converting between systems as you work through the notebooks.</p>
+          </div>
+
+          <div class="levels-table-wrap">
+            <table class="simple-table">
+              <thead>
+                <tr>
+                  <th>Level</th>
+                  <th>Expectations</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>Beginner</strong></td>
+                  <td>No prior Python experience needed. Concepts are explained from scratch with H&amp;H analogies.</td>
+                </tr>
+                <tr>
+                  <td><strong>Intermediate</strong></td>
+                  <td>Assumes comfort with Python basics (variables, loops, functions, pandas). Focuses on applied workflows.</td>
+                </tr>
+                <tr>
+                  <td><strong>Advanced</strong></td>
+                  <td>Assumes working knowledge of Python and H&amp;H modeling tools for large mosaics or model classification.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div>
+          <a class="video-card" href="https://youtu.be/XCqIm18dVT4" target="_blank" rel="noopener noreferrer">
+            <div class="video-thumb">
+              <img src="https://img.youtube.com/vi/XCqIm18dVT4/0.jpg" alt="Getting Started with Python for H&amp;H video walkthrough thumbnail" loading="lazy">
+              <div class="play-badge" aria-hidden="true">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                  <polygon points="8,5 19,12 8,19"></polygon>
+                </svg>
+              </div>
+            </div>
+            <div class="video-caption">
+              <strong>Getting Started Video Walkthrough</strong>
+              <span>A short tour showing how to navigate this repository, open notebooks in Google Colab, and follow the module structure.</span>
+            </div>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Open-Source H&H Python Ecosystem -->
+    <section class="section section-muted" id="tools">
+      <div class="container">
+        <div class="section-header">
+          <h2>More H&amp;H Python Tools to Explore</h2>
+          <p>Once you are comfortable with the core workflows in Modules 1 to 10, explore these actively maintained open-source libraries used across hydrology and hydraulics.</p>
+        </div>
+
+        <div class="tools-filters" id="toolsFilters"></div>
+        <div class="tools-grid" id="toolsGrid"></div>
+      </div>
+    </section>
+
+    <!-- What Participants Are Saying -->
+    <section class="section" id="feedback">
+      <div class="container">
+        <div class="section-header">
+          <h2>What Participants Are Saying</h2>
+          <p>Feedback from water resources engineers and learners who completed early course modules.</p>
+        </div>
+
+        <div class="quotes-grid" id="quotesGrid"></div>
+        <p class="roadmap-note">Participants have also suggested upcoming topics including running Python inside QGIS, HDF5 workflows, and reusable pipeline templates for probabilistic and simulation-based modeling.</p>
+      </div>
+    </section>
+
+    <!-- Author, Review, Contributing, Data Sharing & License -->
+    <section class="section section-muted" id="contribute">
+      <div class="container">
+        <div class="author-bar">
+          <div class="author-info">
+            <img src="./assets/logo-pixel.png" alt="HydroMohsen Python for H&amp;H icon" width="52" height="52">
+            <div>
+              <h3>Mohsen Tahmasebi Nasab, PhD</h3>
+              <p>Water Resources Engineer</p>
+            </div>
+          </div>
+          <div class="author-links">
+            <a class="btn btn-sm" href="https://hydromohsen.com" target="_blank" rel="noopener noreferrer">hydromohsen.com</a>
+            <a class="btn btn-sm" href="https://www.youtube.com/@HydroMohsen" target="_blank" rel="noopener noreferrer">YouTube (@HydroMohsen)</a>
+            <a class="btn btn-sm" href="https://buymeacoffee.com/HydroMohsen" target="_blank" rel="noopener noreferrer">Support the Course</a>
+          </div>
+        </div>
+
+        <div class="accordion-group">
+          <details class="doc-details">
+            <summary>How This Course Was Reviewed and How You Can Report Issues</summary>
+            <div class="doc-body">
+              <p>This course has been assembled and reviewed manually with AI-assisted coding tools helping check explanations, formatting consistency, and edge cases. Every lesson is reviewed by the author before publication.</p>
+              <p>Because Python geospatial libraries update over time, a cell that runs cleanly today may need an adjustment later. If you encounter an issue or outdated server URL, please <a href="https://github.com/mohsennasab/python-fundamentals-hh/issues" target="_blank" rel="noopener noreferrer">open an issue on GitHub</a>.</p>
+            </div>
+          </details>
+
+          <details class="doc-details">
+            <summary>Contributing a New Module or Lesson</summary>
+            <div class="doc-body">
+              <h4>Submission Steps</h4>
+              <ol>
+                <li>Open a GitHub issue proposing your topic before writing full code.</li>
+                <li>Fork <code>mohsennasab/python-fundamentals-hh</code> and build your lesson on a feature branch.</li>
+                <li>Include Lesson Level, Purpose, Learning Objectives, Prerequisites, and 2 to 3 practical AI prompts at the top of the notebook.</li>
+                <li>Verify the notebook runs cleanly end-to-end in a fresh Google Colab session and submit a pull request.</li>
+              </ol>
+              <h4>Content Standards</h4>
+              <ul>
+                <li>Ground examples in real H&amp;H engineering tasks (flood mapping, frequency curves, hydrographs, soils, snow).</li>
+                <li>Write clear, readable Python with helpful comments where beginners could get stuck.</li>
+                <li>Include only public or anonymized sample datasets placed inside a module <code>data/</code> folder.</li>
+              </ul>
+            </div>
+          </details>
+
+          <details class="doc-details">
+            <summary>Data Sharing Guidelines for Public Repositories</summary>
+            <div class="doc-body">
+              <p>Every dataset committed to the course repository must be safe for open educational distribution.</p>
+              <h4>Acceptable Sources</h4>
+              <ul>
+                <li>Public agency datasets (USGS, NOAA, USDA/NRCS, NSIDC, state DNRs, EPA).</li>
+                <li>Synthetic or randomized teaching datasets and anonymized watershed excerpts.</li>
+              </ul>
+              <h4>Before Committing New Data</h4>
+              <ol>
+                <li>Confirm no client, employer, or proprietary project files are traceable inside code, attributes, or metadata tags.</li>
+                <li>Verify that no credentials, API keys, tokens, or internal server paths remain printed inside notebook outputs.</li>
+                <li>Verify clearance for public educational release before pushing.</li>
+              </ol>
+            </div>
+          </details>
+
+          <details class="doc-details">
+            <summary>Disclaimer and License (Personal Educational Use)</summary>
+            <div class="doc-body">
+              <p><strong>Disclaimer.</strong> This course, including its notebooks, code, datasets, and examples, is provided for educational purposes only without warranty of any kind. Independently verify all inputs, assumptions, calculations, and outputs before applying them to engineering design, modeling, or regulatory submittals.</p>
+              <table class="simple-table">
+                <thead>
+                  <tr>
+                    <th>You May</th>
+                    <th>You May Not (Without Written Permission)</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>Use all materials for personal learning and self-study</td>
+                    <td>Redistribute, republish, or mirror the course materials</td>
+                  </tr>
+                  <tr>
+                    <td>Contribute pull requests and improvements to the repo</td>
+                    <td>Use materials to instruct others, free or paid, online or in person</td>
+                  </tr>
+                  <tr>
+                    <td>Link others directly to the repository or course page</td>
+                    <td>Sell, monetize, or build derivative training products</td>
+                  </tr>
+                </tbody>
+              </table>
+              <pre class="license-pre">License for Personal Educational Use
+
+Copyright (c) 2026 Mohsen Tahmasebi Nasab. All rights reserved.
+
+Permission is hereby granted, free of charge, to any individual obtaining a
+copy of these materials and associated documentation files (the "Course
+Materials"), to access and use the Course Materials solely for that
+individual's own personal, non-commercial learning and self-study, subject to
+the following conditions. All rights not expressly granted here are reserved by
+the copyright holder.
+
+1. PERSONAL USE ONLY: The Course Materials may be used by individuals for their
+   own self-study, personal skill development, and private educational
+   purposes. This grant is personal to each user and is not transferable.
+
+2. NO REDISTRIBUTION OR INSTRUCTIONAL USE WITHOUT PERMISSION: The Course
+   Materials may not be redistributed, republished, mirrored, or used to
+   teach, train, present to, or otherwise instruct any other person or group,
+   whether free or paid, online or in person, without prior written permission
+   from the copyright holder.
+
+3. NO DERIVATIVE WORKS WITHOUT PERMISSION: Adapted, translated, or derivative
+   versions of the Course Materials may not be created for distribution,
+   publication, or presentation without prior written permission from the
+   copyright holder.
+
+4. NO COMMERCIAL USE: The Course Materials may not be sold, licensed, or used
+   as part of any paid training program, commercial product, or for-profit
+   service. This includes, without limitation, monetized video content, online
+   courses, and ad-supported tutorials that reproduce or are derived from the
+   Course Materials.
+
+5. CONTRIBUTIONS: Submitting a contribution (such as a pull request) to this
+   repository is permitted and encouraged. By doing so, you grant the copyright
+   holder the right to use and publish your contribution as part of the Course
+   Materials under these same license terms, with attribution to you as the
+   contributor.
+
+6. PERMISSIONS: Requests to teach with, adapt, redistribute, or otherwise use
+   the Course Materials beyond personal self-study may be directed to the
+   author at https://hydromohsen.com. Any such use requires written permission
+   granted in advance, and where granted must credit the original author and
+   link to the original repository at
+   https://github.com/mohsennasab/python-fundamentals-hh
+
+THE COURSE MATERIALS ARE PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO
+EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES
+OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
+ARISING FROM, OUT OF OR IN CONNECTION WITH THE COURSE MATERIALS OR THE USE OR
+OTHER DEALINGS IN THE COURSE MATERIALS.</pre>
+            </div>
+          </details>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <span>Fundamentals of Python for H&amp;H Modeling and Analysis &middot; Mohsen Tahmasebi Nasab, PhD</span>
+      <div class="footer-links">
+        <a href="https://github.com/mohsennasab/python-fundamentals-hh" target="_blank" rel="noopener noreferrer">Course Repository</a>
+        <a href="https://hydromohsen.com" target="_blank" rel="noopener noreferrer">hydromohsen.com</a>
+        <a href="https://github.com/mohsennasab/python-fundamentals-hh/blob/main/DATA_SHARING.md" target="_blank" rel="noopener noreferrer">Data Sharing</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="./data.js"></script>
+  <script src="./app.js"></script>
+</body>
+</html>
